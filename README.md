@@ -80,7 +80,6 @@ Copies of `splits.json` and `ignored_regions.json` are kept in `reports/`; if th
 `data/processed/detrac_yolo/`, copy them there:
 
 ```bash
-# Windows: Copy-Item reports\splits.json,reports\ignored_regions.json data\processed\detrac_yolo\ -Force
 cp reports/splits.json reports/ignored_regions.json data/processed/detrac_yolo/
 ```
 

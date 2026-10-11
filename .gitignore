@@ -1,4 +1,7 @@
 /data/
+/outputs/
+/models/*
+
 
 *.pt
 
