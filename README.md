@@ -26,7 +26,6 @@ Python 3.12+ (developed on 3.13 and 3.14). Run every command **from the reposito
 
 ```bash
 python -m venv venv
-# Windows (PowerShell): venv\Scripts\Activate.ps1      Linux/macOS: source venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -45,7 +44,7 @@ use into `models/` (git-ignored), so the repository root stays clean.
 ## 2. Dataset
 
 UA-DETRAC is not stored in git (`/data/` is ignored). The official site is no longer available, so we use a
-Kaggle mirror (version 2, ~9.5 GB): **TODO(Artem): add the exact mirror URL here.**
+Kaggle mirror (version 2, ~9.5 GB): https://www.kaggle.com/datasets/bratjay/ua-detrac-orig .
 
 Download **DETRAC-Images, DETRAC-Train-Annotations-XML, DETRAC-Test-Annotations-XML, DETRAC-MOT-toolkit**
 and unpack them so that the layout is exactly (note the double `DETRAC-Images`, specific to this mirror):
