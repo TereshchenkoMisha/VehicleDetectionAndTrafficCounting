@@ -2,6 +2,8 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from tqdm import tqdm
+
 from .config import RAW_ROOT
 
 
@@ -109,7 +111,7 @@ def _parse_meta_root(root) -> SequenceMeta:
 
 def load_all(root=RAW_ROOT):
     anns, metas = {}, {}
-    for p in sorted(Path(root).rglob("MVI_*.xml")):
+    for p in tqdm(sorted(Path(root).rglob("MVI_*.xml")), desc="parse XML", unit="file"):
         r = ET.parse(p).getroot()
         if r.find("weather") is not None:
             m = _parse_meta_root(r)

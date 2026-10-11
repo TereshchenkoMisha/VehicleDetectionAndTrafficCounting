@@ -4,6 +4,7 @@ from pathlib import Path
 
 import numpy as np
 import torch
+from tqdm import tqdm
 from torchmetrics.detection import MeanAveragePrecision
 
 from ultralytics import YOLO
@@ -78,9 +79,11 @@ def evaluate_detector(weights, data_root, split="test", imgsz=960, device=None) 
     seen_pred, seen_gt = set(), set()
     n_frames, t0 = 0, time.perf_counter()
 
-    for res in model.predict(source=str(data_root / "images" / split), stream=True,
-                             imgsz=imgsz, conf=0.001, device=device,
-                             classes=sorted(COCO_ID_TO_LOCAL), verbose=False):
+    src = data_root / "images" / split
+    n_total = sum(1 for _ in src.glob("*.jpg"))
+    stream = model.predict(source=str(src), stream=True, imgsz=imgsz, conf=0.001, device=device,
+                           classes=sorted(COCO_ID_TO_LOCAL), verbose=False)
+    for res in tqdm(stream, total=n_total, unit="frame", desc=f"eval {Path(str(weights)).stem} [{split}]"):
         n_frames += 1
         stem = Path(res.path).stem
         H, W = res.orig_shape

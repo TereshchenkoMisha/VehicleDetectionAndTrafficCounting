@@ -1,6 +1,7 @@
 import json, shutil
 from pathlib import Path
 from PIL import Image
+from tqdm import tqdm
 
 from .config import CLASSES, DETRAC_TO_ID, RAW_ROOT, OUT_DIR
 from .detrac_parser import find_sequence_dir
@@ -27,8 +28,12 @@ def _yolo_line(cls_id, b, W, H):
 
 def convert(anns, split, frame_step=1, copy=False, out_dir=OUT_DIR, frames_root=RAW_ROOT):
     stats, ignored_out = {"dev": {}, "test": {}}, {}
+    total = sum(sum(1 for f in anns[s].frames if not f % frame_step)
+                for sp in ("dev", "test") for s in split[sp])
+    bar = tqdm(total=total, unit="frame", desc="convert")
     for split_name in ("dev", "test"):
         for seq_name in split[split_name]:
+            bar.set_postfix(seq=seq_name)
             ann = anns[seq_name]
             seq_dir = find_sequence_dir(frames_root, seq_name)
             if seq_dir is None:
@@ -68,6 +73,7 @@ def convert(anns, split, frame_step=1, copy=False, out_dir=OUT_DIR, frames_root=
                     except OSError:
                         shutil.copy2(img_path, dst)
                 n_frames += 1
+                bar.update(1)
             if n_frames == 0:
                 raise RuntimeError(f"{seq_name}: 0 frames — check the raw dataset layout")
 
@@ -75,6 +81,7 @@ def convert(anns, split, frame_step=1, copy=False, out_dir=OUT_DIR, frames_root=
                                            "frames": n_frames, "boxes": per_class}
             ignored_out[seq_name] = [list(r.as_xyxy()) for r in ann.ignored_regions]
 
+    bar.close()
     (out_dir / "detrac.yaml").write_text(
         f"path: {out_dir.resolve()}\n"
         "train: images/dev   # not used (fine-tuning is not planned)\n"

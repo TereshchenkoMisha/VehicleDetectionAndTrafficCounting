@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 from pathlib import Path
 
+from tqdm import tqdm
+
 from .config import RAW_ROOT
 from .detrac_parser import SequenceMeta, find_sequence_dir
 
@@ -23,7 +25,7 @@ def mean_brightness(seq_dir: Path) -> float | None:
 
 def build_proxy_metas(anns: dict, frames_root=RAW_ROOT) -> dict:
     metas, report = {}, []
-    for name in sorted(anns):
+    for name in tqdm(sorted(anns), desc="brightness proxy", unit="seq"):
         d = find_sequence_dir(frames_root, name)
         b = mean_brightness(d) if d else None
         if b is None:
