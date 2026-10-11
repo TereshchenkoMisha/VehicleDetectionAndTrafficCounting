@@ -15,7 +15,7 @@ import ultralytics
 from tqdm import tqdm
 from ultralytics import YOLO
 
-from ..data.config import OUT_DIR
+from ..data.config import OUT_DIR, REPORTS_DIR
 from ..tracking.pipeline import (build_tracker, list_frames, load_ignored, run_sequence,
                                  warmup, write_mot)
 
@@ -28,6 +28,15 @@ def _device_name(device):
     return platform.processor() or "cpu"
 
 
+def _find(name, data_dir):
+    """splits.json / ignored_regions.json: processed-data dir first, then the committed copy in reports/."""
+    for d in (data_dir, REPORTS_DIR):
+        if (d / name).exists():
+            return d / name
+    raise FileNotFoundError(f"{name} not found in {data_dir} or {REPORTS_DIR} - run prepare_dataset "
+                            f"or copy it from the data branch (see README)")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     ap.add_argument("--models", nargs="+", default=["yolov8n.pt", "yolov8s.pt"])
@@ -35,7 +44,7 @@ def main():
                     help="names of configs/<name>.yaml")
     ap.add_argument("--split", choices=["dev", "test"], default="dev")
     ap.add_argument("--seqs", nargs="+", default=None, help="subset of sequences (default: whole split)")
-    ap.add_argument("--data", default=str(OUT_DIR), help="dir with splits.json and ignored_regions.json")
+    ap.add_argument("--data", default=str(OUT_DIR), help="processed-data dir with splits.json and ignored_regions.json (fallback: reports/)")
     ap.add_argument("--conf", type=float, default=0.25)
     ap.add_argument("--iou", type=float, default=0.7, help="detector NMS IoU")
     ap.add_argument("--imgsz", type=int, default=960)
@@ -47,8 +56,8 @@ def main():
 
     device = args.device if args.device is not None else (0 if torch.cuda.is_available() else "cpu")
     data = Path(args.data)
-    splits = json.loads((data / "splits.json").read_text())
-    ignored = load_ignored(data / "ignored_regions.json")
+    splits = json.loads(_find("splits.json", data).read_text())
+    ignored = load_ignored(_find("ignored_regions.json", data))
     seqs = args.seqs or splits[args.split]
     if args.split == "test":
         print("!! TEST split: configs, conf, and counting line must be frozen on dev before this run.")
