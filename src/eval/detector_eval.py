@@ -8,7 +8,7 @@ from torchmetrics.detection import MeanAveragePrecision
 
 from ultralytics import YOLO
 
-from ..data.config import CLASSES
+from ..data.config import CLASSES, weights_path
 
 COCO_ID_TO_LOCAL = {2: 0, 5: 1, 7: 2}
 
@@ -72,7 +72,7 @@ def evaluate_detector(weights, data_root, split="test", imgsz=960, device=None) 
     data_root = Path(data_root)
     metric = MeanAveragePrecision(iou_type="bbox", class_metrics=True)
     metric.warn_on_many_detections = False
-    model = YOLO(weights)
+    model = YOLO(weights_path(weights))
     ignored = json.loads((data_root / "ignored_regions.json").read_text())
     agg = {c: {"tp": 0, "fp": 0, "fn": 0} for c in CLASSES}
     seen_pred, seen_gt = set(), set()

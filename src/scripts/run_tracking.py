@@ -15,7 +15,7 @@ import ultralytics
 from tqdm import tqdm
 from ultralytics import YOLO
 
-from ..data.config import OUT_DIR, REPORTS_DIR
+from ..data.config import OUT_DIR, REPORTS_DIR, weights_path
 from ..tracking.pipeline import (build_tracker, list_frames, load_ignored, run_sequence,
                                  warmup, write_mot)
 
@@ -77,7 +77,7 @@ def main():
         det_name = Path(weights).stem
         cfg_name = f"{det_name}_{trk_name}_conf{args.conf:g}"
         out_dir = Path(args.out) / args.split / cfg_name
-        model = YOLO(weights)
+        model = YOLO(weights_path(weights))
         warmup(model, first, args.imgsz, device)
         first_seq = next(iter(seq_frames))                         # also warm up the tracker (GMC, lap, ...)
         run_sequence(model, build_tracker(trk_name, device), seq_frames[first_seq][:10],

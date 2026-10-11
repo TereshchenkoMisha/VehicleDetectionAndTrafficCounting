@@ -40,7 +40,7 @@ python -c "import torch; print(torch.cuda.is_available())"   # must print True
 
 Reference environment of the reported runs: Ultralytics 8.4.175, torch 2.14.1+cu126, OpenCV 5.0.0,
 NVIDIA GTX 1070 Ti. Pretrained weights (`yolov8n.pt`, `yolov8s.pt`) are downloaded automatically on first
-use and are git-ignored.
+use into `models/` (git-ignored), so the repository root stays clean.
 
 ## 2. Dataset
 
@@ -169,6 +169,7 @@ Run `--split test` only after the configurations, `conf` and counting line are f
 
 ```
 configs/            tracker configs (shared thresholds)
+models/             pretrained weights, downloaded automatically (git-ignored)
 src/data/           UA-DETRAC parser, YOLO conversion, split
 src/eval/           detector evaluation, counting metrics (MAE, WAPE, SCE)
 src/tracking/       detector + tracker loop
