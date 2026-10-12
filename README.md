@@ -82,6 +82,12 @@ Copies of `splits.json` and `ignored_regions.json` are kept in `reports/`; if th
 cp reports/splits.json reports/ignored_regions.json data/processed/detrac_yolo/
 ```
 
+And for Windows:
+```powershell
+cp reports/splits.json data/processed/detrac_yolo/    
+cp reports/ignored_regions.json data/processed/detrac_yolo/ 
+```
+
 Visual check of the converted GT boxes: `python scripts/peek_labels.py` (writes to `reports/sanity/`).
 
 ### Split (fixed, seed 42)
