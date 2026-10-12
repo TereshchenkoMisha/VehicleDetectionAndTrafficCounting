@@ -1,0 +1,15 @@
+# BoT-SORT - same shared association settings as bytetrack.yaml (plan 3.1).
+# Only differences: camera motion compensation (default sparseOptFlow); ReID disabled -> purely motion-based.
+tracker_type: botsort
+track_high_thresh: 0.25
+track_low_thresh: 0.1
+new_track_thresh: 0.25
+track_buffer: 30
+match_thresh: 0.8
+fuse_score: True
+
+gmc_method: sparseOptFlow
+proximity_thresh: 0.5     # only used together with ReID
+appearance_thresh: 0.8    # only used together with ReID
+with_reid: False
+model: auto

@@ -1,0 +1,58 @@
+{
+  "detector": "yolov8s.pt",
+  "tracker": "botsort",
+  "split": "dev",
+  "conf": 0.25,
+  "iou": 0.7,
+  "imgsz": 960,
+  "frames": 5924,
+  "det_ms_per_frame": 14.50398934841862,
+  "trk_ms_per_frame": 6.284944108721766,
+  "total_ms_per_frame": 20.788933457140388,
+  "fps": 48.10251579580334,
+  "per_seq": {
+    "MVI_20033": {
+      "frames": 784,
+      "det_ms": 13.9786195153234,
+      "trk_ms": 6.005558928596396,
+      "tracks": 54,
+      "rows": 4674
+    },
+    "MVI_40141": {
+      "frames": 1600,
+      "det_ms": 14.15594206249807,
+      "trk_ms": 5.416377062498441,
+      "tracks": 151,
+      "rows": 9036
+    },
+    "MVI_40171": {
+      "frames": 1150,
+      "det_ms": 14.660588086952213,
+      "trk_ms": 6.463304434820083,
+      "tracks": 105,
+      "rows": 6845
+    },
+    "MVI_40773": {
+      "frames": 985,
+      "det_ms": 14.745863654822786,
+      "trk_ms": 6.0544635532969,
+      "tracks": 45,
+      "rows": 7179
+    },
+    "MVI_63553": {
+      "frames": 1405,
+      "det_ms": 14.895755088986451,
+      "trk_ms": 7.445552099651329,
+      "tracks": 245,
+      "rows": 9356
+    }
+  },
+  "env": {
+    "device": "NVIDIA GeForce GTX 1070 Ti",
+    "torch": "2.14.1+cu126",
+    "ultralytics": "8.4.175",
+    "python": "3.13.14",
+    "date": "2026-10-11 23:03:11"
+  },
+  "note": "image reading excluded; detector = predict (pre+infer+NMS+GPU->CPU); tracker = ignored-region mask + tracker.update"
+}
