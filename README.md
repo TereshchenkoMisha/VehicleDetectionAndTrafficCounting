@@ -128,10 +128,10 @@ Writes `reports/detection_<model>_<split>.json`. Settings: `imgsz=960`, `conf=0.
 
 | | YOLOv8n | YOLOv8s |
 |---|---|---|
-| mAP@0.5 | 0.5829 | 0.6111 |
-| mAP@0.5:0.95 | 0.4290 | 0.4695 |
+| mAP@0.5 | 0.5829 | 0.6132 |
+| mAP@0.5:0.95 | 0.4290 | 0.4707 |
 | car P / R @0.25 | 0.827 / 0.738 | 0.829 / 0.798 |
-| bus P / R @0.25 | 0.744 / 0.914 | 0.754 / 0.919 |
+| bus P / R @0.25 | 0.744 / 0.914 | 0.755 / 0.921 |
 | truck P / R @0.25 | 0.065 / 0.277 | 0.082 / 0.447 |
 
 The test split is reserved for the final run (`--split test`).
