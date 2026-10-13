@@ -12,8 +12,9 @@ Team: Mikhail Tereshchenko, Kamil Gainutdinov, Artem Salakhutdinov, Danis Abdulo
 | Stage | State |
 |---|---|
 | Data pipeline (parse, YOLO conversion, split) | done |
-| Detector evaluation (mAP, P/R) on dev | done |
-| Detection + tracking, 4 configurations, timing | done (`run_tracking`) |
+| Detector evaluation (mAP, P/R) on dev and test | done |
+| Detection + tracking, 4 configurations, timing, on dev and test | done (`run_tracking`) |
+| Results table and plot (`scripts/results.ipynb`) | done (committed for dev only) |
 | Ground-truth counts, counting line, line counter | todo |
 | Tracking metrics (TrackEval: IDF1, IDSW), counting metrics tables | todo |
 | Confidence-threshold ablation | todo |
@@ -21,11 +22,12 @@ Team: Mikhail Tereshchenko, Kamil Gainutdinov, Artem Salakhutdinov, Danis Abdulo
 
 ## 1. Setup
 
-Python 3.12+ (developed on 3.13 and 3.14). Run every command **from the repository root**
+Python 3.12+ (reference runs on 3.13). Run every command **from the repository root**
 (`python -m src....` does not work from other directories).
 
 ```bash
 python -m venv venv
+source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -37,8 +39,10 @@ pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
 python -c "import torch; print(torch.cuda.is_available())"   # must print True
 ```
 
-Reference environment of the reported runs: Ultralytics 8.4.175, torch 2.14.1+cu126, OpenCV 5.0.0,
-NVIDIA GTX 1070 Ti. Pretrained weights (`yolov8n.pt`, `yolov8s.pt`) are downloaded automatically on first
+Reference environment of the reported runs: Ultralytics 8.4.175, torch 2.14.1+cu126, Python 3.13.14,
+NVIDIA GTX 1070 Ti (OpenCV 5.0.0 was installed, but older `timing.json` files do not record it).
+Re-running on Ultralytics 8.4.176 / CUDA 13.2 / RTX 2080 Super reproduced the metrics and tracks up to GPU
+numerical noise (see "Reproducibility" below); timings differ strongly between machines. Pretrained weights (`yolov8n.pt`, `yolov8s.pt`) are downloaded automatically on first
 use into `models/` (git-ignored), so the repository root stays clean.
 
 ## 2. Dataset
@@ -75,17 +79,19 @@ python -m src.scripts.prepare_dataset --frame-step 5 --copy
 
 Output in `data/processed/detrac_yolo/`: `images/{dev,test}`, `labels/{dev,test}` (YOLO format),
 `detrac.yaml`, `splits.json`, `ignored_regions.json` (absolute xyxy pixels), `stats.json`.
-Copies of `splits.json` and `ignored_regions.json` are kept in `reports/`; if they are missing from
-`data/processed/detrac_yolo/`, copy them there:
+Copies of `splits.json` and `ignored_regions.json` are kept in `reports/`. The split is deterministic
+(seed 42), so a fresh `prepare_dataset` run reproduces `reports/splits.json` exactly (checked). `run_tracking`
+falls back to the copies in `reports/`; `evaluate_detectors` needs them in `data/processed/detrac_yolo/`,
+so copy them there if they are missing:
 
 ```bash
 cp reports/splits.json reports/ignored_regions.json data/processed/detrac_yolo/
 ```
 
-And for Windows:
+And for Windows (PowerShell):
 ```powershell
-cp reports/splits.json data/processed/detrac_yolo/    
-cp reports/ignored_regions.json data/processed/detrac_yolo/ 
+cp reports/splits.json data/processed/detrac_yolo/
+cp reports/ignored_regions.json data/processed/detrac_yolo/
 ```
 
 Visual check of the converted GT boxes: `python scripts/peek_labels.py` (writes to `reports/sanity/`).
@@ -134,7 +140,19 @@ Writes `reports/detection_<model>_<split>.json`. Settings: `imgsz=960`, `conf=0.
 | bus P / R @0.25 | 0.744 / 0.914 | 0.755 / 0.921 |
 | truck P / R @0.25 | 0.065 / 0.277 | 0.082 / 0.447 |
 
-The test split is reserved for the final run (`--split test`).
+Test results (`--split test`, 1704 frames; the test run was executed before the counting line was
+frozen, only detection and tracking, no counting numbers exist yet):
+
+| | YOLOv8n | YOLOv8s |
+|---|---|---|
+| mAP@0.5 | 0.5887 | 0.6341 |
+| mAP@0.5:0.95 | 0.4010 | 0.4546 |
+| car P / R @0.25 | 0.831 / 0.723 | 0.826 / 0.751 |
+| bus P / R @0.25 | 0.741 / 0.781 | 0.809 / 0.887 |
+| truck P / R @0.25 | 0.106 / 0.440 | 0.124 / 0.420 |
+
+The `ms_per_frame` field in these reports includes image loading and has no warm-up; do not use it as a speed
+measure (it varied 2-3x between runs). Speed comes only from `run_tracking`.
 
 ## 5. Detection + tracking (4 configurations)
 
@@ -167,24 +185,59 @@ Output, per configuration, in `outputs/tracks/<split>/<det>_<trk>_conf<conf>/`:
   2 truck, local ids);
 - `timing.json`: ms/frame for the detector and the tracker, FPS, per-sequence stats, environment.
 
-Run `--split test` only after the configurations, `conf` and counting line are frozen on dev.
+Speed (single runs on the reference machine, GTX 1070 Ti; dev = 5924 frames, test = 8590 frames; latency =
+detector + tracker, ms/frame; FPS = 1000 / latency):
+
+| Config | Dev FPS | Dev total (det / trk) ms | Test FPS | Test total (det / trk) ms |
+|---|---|---|---|---|
+| YOLOv8n + ByteTrack | 109.9 | 9.10 (8.27 / 0.83) | 109.4 | 9.14 (8.25 / 0.89) |
+| YOLOv8n + BoT-SORT | 67.2 | 14.87 (8.59 / 6.29) | 72.3 | 13.82 (7.91 / 5.91) |
+| YOLOv8s + ByteTrack | 70.4 | 14.20 (13.39 / 0.81) | 70.8 | 14.12 (13.28 / 0.85) |
+| YOLOv8s + BoT-SORT | 48.1 | 20.79 (14.50 / 6.28) | 51.9 | 19.27 (13.40 / 5.88) |
+
+The tracker cost of BoT-SORT (about 6 ms vs 0.8 ms) is the camera motion compensation overhead.
+
+The test split must be used for final numbers only; the counting line and `conf` are to be frozen on dev.
+
+## 6. Results table and plot
+
+`scripts/results.ipynb` builds the comparison table (`scripts/results/metrics_table.md`, `.tex`) and the plot
+(`scripts/results/models_comparison_charts.png`) from `reports/detection_<det>_<SPLIT>.json` and
+`outputs/tracks/<SPLIT>/*/timing.json`. Open it with the working directory `scripts/` (otherwise outputs land
+elsewhere) and run all cells. `SPLIT` is set in the third code cell; **the committed files are for `dev`**, and
+switching to `test` overwrites the same file names. mAP is a detector property, so it is identical for both
+trackers of one detector; "Latency_ms" is detector + tracker time from `run_tracking`.
+
+## 7. Reproducibility
+
+Re-run on another machine (RTX 2080 Super, Ultralytics 8.4.176, torch 2.14.1+cu132) from `main`:
+
+- split, ignored regions and all box counts: identical;
+- detector mAP/P/R: identical on dev, within 0.0006 on test;
+- tracks (403 820 rows): same frames and rows per file, classes equal except 2 rows, boxes within 0.63 px,
+  track IDs equal in 99.0% of rows (not byte-identical: GPU numerics, no seeds are set in tracking);
+- timings: **not** reproducible across machines (2-3x lower FPS on the laptop GPU, same ordering of the four
+  configurations). Compare timings only on one machine.
 
 ## Repository layout
 
 ```
 configs/            tracker configs (shared thresholds)
 models/             pretrained weights, downloaded automatically (git-ignored)
-src/data/           UA-DETRAC parser, YOLO conversion, split
+src/data/           UA-DETRAC parser, YOLO conversion, split, brightness proxy
 src/eval/           detector evaluation, counting metrics (MAE, WAPE, SCE)
 src/tracking/       detector + tracker loop
 src/scripts/        prepare_dataset, evaluate_detectors, run_tracking
-reports/            detector metrics, split and ignored-region copies
-scripts/            helpers (peek_labels)
+reports/            detector metrics (dev/test), split and ignored-region copies
+outputs/tracks/     MOTChallenge tracks + timing.json per split and configuration
+outputs/vis/        annotated example videos
+scripts/            peek_labels.py, results.ipynb, results/ (table and plot)
 ```
 
 ## Known pitfalls
 
 - Run `python -m src.scripts.*` from the repository root.
 - `data/` and `*.pt` are not in git; a fresh clone needs sections 1-3 first.
+- `--iou 0.7` (detector NMS) is fixed for all configurations and recorded in `timing.json`.
 - Detector mAP uses the COCO protocol with at most 100 detections per frame (measured effect on mAP@0.5/0.75
   versus a limit of 300: none).

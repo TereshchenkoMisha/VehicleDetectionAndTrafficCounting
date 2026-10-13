@@ -10,3 +10,4 @@ seaborn
 tabulate
 pillow
 tqdm
+jupyter

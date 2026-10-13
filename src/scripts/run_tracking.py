@@ -34,7 +34,7 @@ def _find(name, data_dir):
         if (d / name).exists():
             return d / name
     raise FileNotFoundError(f"{name} not found in {data_dir} or {REPORTS_DIR} - run prepare_dataset "
-                            f"or copy it from the data branch (see README)")
+                            f"or copy it from reports/ (see README, section 3)")
 
 
 def main():
@@ -121,7 +121,7 @@ def main():
             "fps": tot_f / (tot_det + tot_trk),
             "per_seq": per_seq,
             "env": {"device": _device_name(device), "torch": torch.__version__,
-                    "ultralytics": ultralytics.__version__, "python": platform.python_version(),
+                    "ultralytics": ultralytics.__version__, "opencv": cv2.__version__, "python": platform.python_version(),
                     "date": time.strftime("%Y-%m-%d %H:%M:%S")},
             "note": "image reading excluded; detector = predict (pre+infer+NMS+GPU->CPU); "
                     "tracker = ignored-region mask + tracker.update",
