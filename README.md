@@ -12,9 +12,9 @@ Team: Mikhail Tereshchenko, Kamil Gainutdinov, Artem Salakhutdinov, Danis Abdulo
 | Stage | State |
 |---|---|
 | Data pipeline (parse, YOLO conversion, split) | done |
-| Detector evaluation (mAP, P/R) on dev and test | done |
-| Detection + tracking, 4 configurations, timing, on dev and test | done (`run_tracking`) |
-| Results table and plot (`scripts/results.ipynb` -> `reports/charts/`) | done (dev and test) |
+| Detector evaluation (mAP, P/R) on dev | done |
+| Detection + tracking, 4 configurations, timing, on dev | done (`run_tracking`) |
+| Results table and plot (`scripts/results.ipynb` -> `reports/charts/`) | done (dev) |
 | Ground-truth counts, counting line, line counter | todo |
 | Tracking metrics (TrackEval: IDF1, IDSW), counting metrics tables | todo |
 | Confidence-threshold ablation | todo |
@@ -140,16 +140,7 @@ Writes `reports/detection_<model>_<split>.json`. Settings: `imgsz=960`, `conf=0.
 | bus P / R @0.25 | 0.744 / 0.914 | 0.755 / 0.921 |
 | truck P / R @0.25 | 0.065 / 0.277 | 0.082 / 0.447 |
 
-Test results (`--split test`, 1704 frames; the test run was executed before the counting line was
-frozen, only detection and tracking, no counting numbers exist yet):
-
-| | YOLOv8n | YOLOv8s |
-|---|---|---|
-| mAP@0.5 | 0.5887 | 0.6341 |
-| mAP@0.5:0.95 | 0.4010 | 0.4546 |
-| car P / R @0.25 | 0.831 / 0.723 | 0.826 / 0.751 |
-| bus P / R @0.25 | 0.741 / 0.781 | 0.809 / 0.887 |
-| truck P / R @0.25 | 0.106 / 0.440 | 0.124 / 0.420 |
+The test split is reserved for the final run (`--split test`).
 
 The `ms_per_frame` field in these reports includes image loading and has no warm-up; do not use it as a speed
 measure (it varied 2-3x between runs). Speed comes only from `run_tracking`.
@@ -185,19 +176,19 @@ Output, per configuration, in `outputs/tracks/<split>/<det>_<trk>_conf<conf>/`:
   2 truck, local ids);
 - `timing.json`: ms/frame for the detector and the tracker, FPS, per-sequence stats, environment.
 
-Speed (single runs on the reference machine, GTX 1070 Ti; dev = 5924 frames, test = 8590 frames; latency =
+Speed (single runs on the reference machine, GTX 1070 Ti; dev = 5924 frames; latency =
 detector + tracker, ms/frame; FPS = 1000 / latency):
 
-| Config | Dev FPS | Dev total (det / trk) ms | Test FPS | Test total (det / trk) ms |
-|---|---|---|---|---|
-| YOLOv8n + ByteTrack | 109.9 | 9.10 (8.27 / 0.83) | 109.4 | 9.14 (8.25 / 0.89) |
-| YOLOv8n + BoT-SORT | 67.2 | 14.87 (8.59 / 6.29) | 72.3 | 13.82 (7.91 / 5.91) |
-| YOLOv8s + ByteTrack | 70.4 | 14.20 (13.39 / 0.81) | 70.8 | 14.12 (13.28 / 0.85) |
-| YOLOv8s + BoT-SORT | 48.1 | 20.79 (14.50 / 6.28) | 51.9 | 19.27 (13.40 / 5.88) |
+| Config | FPS | Total (det / trk) ms |
+|---|---|---|
+| YOLOv8n + ByteTrack | 109.9 | 9.10 (8.27 / 0.83) |
+| YOLOv8n + BoT-SORT | 67.2 | 14.87 (8.59 / 6.29) |
+| YOLOv8s + ByteTrack | 70.4 | 14.20 (13.39 / 0.81) |
+| YOLOv8s + BoT-SORT | 48.1 | 20.79 (14.50 / 6.28) |
 
 The tracker cost of BoT-SORT (about 6 ms vs 0.8 ms) is the camera motion compensation overhead.
 
-The test split must be used for final numbers only; the counting line and `conf` are to be frozen on dev.
+Run `--split test` only after the configurations, `conf` and the counting line are frozen on dev.
 
 ## 6. Results table and plot
 
@@ -221,9 +212,9 @@ detector; "Latency_ms" is detector + tracker time from `run_tracking`.
 Re-run on another machine (RTX 2080 Super, Ultralytics 8.4.176, torch 2.14.1+cu132) from `main`:
 
 - split, ignored regions and all box counts: identical;
-- detector mAP/P/R: identical on dev, within 0.0006 on test;
-- tracks (403 820 rows): same frames and rows per file, classes equal except 2 rows, boxes within 0.63 px,
-  track IDs equal in 99.0% of rows (not byte-identical: GPU numerics, no seeds are set in tracking);
+- detector mAP/P/R: identical on dev;
+- dev tracks (141 858 rows): same frames, rows, classes and track IDs, boxes within 0.27 px (files are not
+  byte-identical: GPU numerics, no seeds are set in tracking);
 - timings: **not** reproducible across machines (2-3x lower FPS on the laptop GPU, same ordering of the four
   configurations). Compare timings only on one machine.
 
@@ -236,7 +227,7 @@ src/data/           UA-DETRAC parser, YOLO conversion, split, brightness proxy
 src/eval/           detector evaluation, counting metrics (MAE, WAPE, SCE)
 src/tracking/       detector + tracker loop
 src/scripts/        prepare_dataset, evaluate_detectors, run_tracking
-reports/            detector metrics (dev/test), split and ignored-region copies
+reports/            detector metrics, split and ignored-region copies
 outputs/tracks/     MOTChallenge tracks + timing.json per split and configuration
 outputs/vis/        annotated example videos
 scripts/            peek_labels.py, results.ipynb
