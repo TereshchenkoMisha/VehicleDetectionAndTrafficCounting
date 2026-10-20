@@ -17,7 +17,7 @@ Team: Mikhail Tereshchenko, Kamil Gainutdinov, Artem Salakhutdinov, Danis Abdulo
 | Results table and plot (`scripts/results.ipynb` -> `reports/charts/`) | done (dev) |
 | Ground-truth counts, counting line, line counter | done |
 | Counting metrics tables (MAE, WAPE, SCE) | done (`eval_counting` -> `counting_eval_*.md`) |
-| Tracking metrics (TrackEval: IDF1, IDSW) | todo |
+| Tracking metrics (TrackEval: IDF1, IDSW) | done |
 | Confidence-threshold ablation | todo |
 | Failure analysis | todo |
 
