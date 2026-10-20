@@ -1,0 +1,26 @@
+# dataset & weights — not for git
+/data/
+/models/
+*.pt
+
+# python
+__pycache__/
+.venv/
+
+# heavy / regenerable outputs
+outputs/vis/
+outputs/tracks/
+outputs/models/
+outputs/.venv/
+outputs/images/
+
+# stray full-project copy inside outputs (only reports/ from outputs is tracked)
+outputs/README.md
+outputs/configs/
+outputs/scripts/
+outputs/src/
+outputs/requirements.txt
+
+# local sanity renders & tooling
+reports/sanity/
+.zcode/
