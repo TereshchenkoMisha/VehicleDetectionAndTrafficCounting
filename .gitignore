@@ -1,17 +1,10 @@
-# dataset & weights — not for git
 /data/
-/models/
+/models/*
+
+
 *.pt
 
-# python
 __pycache__/
 .venv/
 
-# heavy / regenerable outputs
-outputs/vis/
-outputs/tracks/
-
-# local sanity renders & tooling
 reports/sanity/
-outputs/reports/sanity/
-.zcode/

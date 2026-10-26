@@ -1,0 +1,31 @@
+{
+  "detector": "yolov8n.pt",
+  "tracker": "botsort",
+  "split": "dev",
+  "conf": 0.25,
+  "iou": 0.7,
+  "imgsz": 960,
+  "frames": 100,
+  "det_ms_per_frame": 6.5242460000445135,
+  "trk_ms_per_frame": 5.092968000099063,
+  "total_ms_per_frame": 11.617214000143576,
+  "fps": 86.07915804836178,
+  "per_seq": {
+    "MVI_20033": {
+      "frames": 100,
+      "det_ms": 6.5242460000445135,
+      "trk_ms": 5.092968000099063,
+      "tracks": 12,
+      "rows": 608
+    }
+  },
+  "env": {
+    "device": "NVIDIA GeForce RTX 4060",
+    "torch": "2.14.1+cu126",
+    "ultralytics": "8.4.189",
+    "opencv": "5.0.0",
+    "python": "3.12.5",
+    "date": "2026-10-26 18:12:34"
+  },
+  "note": "image reading excluded; detector = predict (pre+infer+NMS+GPU->CPU); tracker = ignored-region mask + tracker.update"
+}

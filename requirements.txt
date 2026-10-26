@@ -5,6 +5,7 @@ supervision
 opencv-python
 pandas
 numpy
+trackeval
 matplotlib
 seaborn
 tabulate
