@@ -145,7 +145,7 @@ def evaluate_detector(weights, data_root, split="test", imgsz=960, device=None) 
         p = tp / (tp + fp) if tp + fp else None
         r = tp / (tp + fn) if tp + fn else None
 
-        # F1 calculated using the same threshold as P and R.
+        # F1 calculated using the same threshold as P and R
         denom = 2 * tp + fp + fn
         f1 = 2 * tp / denom if denom else None
 
@@ -159,7 +159,7 @@ def evaluate_detector(weights, data_root, split="test", imgsz=960, device=None) 
             "AP50_95": None,
         }
 
-    # Match per-class AP using the class IDs returned by TorchMetrics.
+    # Match per-class AP using the class IDs returned by TorchMetrics
     class_ids = rm.get("classes")
     map_per_class = rm.get("map_per_class")
 
