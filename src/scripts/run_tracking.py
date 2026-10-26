@@ -1,8 +1,3 @@
-"""Run YOLOv8 {n,s} x {ByteTrack, BoT-SORT} on dev/test sequences and save MOT tracks + timings.
-
-Output per configuration: outputs/tracks/<split>/<det>_<trk>_conf<conf>/<seq>.txt  and  timing.json
-MOT row: frame,id,x,y,w,h,conf,cls,-1,-1   (cls: 0=car, 1=bus, 2=truck)
-"""
 import argparse
 import json
 import platform
@@ -29,7 +24,7 @@ def _device_name(device):
 
 
 def _find(name, data_dir):
-    """splits.json / ignored_regions.json: processed-data dir first, then the committed copy in reports/."""
+    # splits.json / ignored_regions.json: processed-data dir first, then the committed copy in reports/
     for d in (data_dir, REPORTS_DIR):
         if (d / name).exists():
             return d / name
@@ -60,7 +55,7 @@ def main():
     ignored = load_ignored(_find("ignored_regions.json", data))
     seqs = args.seqs or splits[args.split]
     if args.split == "test":
-        print("!! TEST split: configs, conf, and counting line must be frozen on dev before this run.")
+        print("TEST split: configs, conf, and counting line must be frozen on dev before this run")
 
     seq_frames = {}
     for s in seqs:
@@ -79,7 +74,7 @@ def main():
         out_dir = Path(args.out) / args.split / cfg_name
         model = YOLO(weights_path(weights))
         warmup(model, first, args.imgsz, device)
-        first_seq = next(iter(seq_frames))                         # also warm up the tracker (GMC, lap, ...)
+        first_seq = next(iter(seq_frames))
         run_sequence(model, build_tracker(trk_name, device), seq_frames[first_seq][:10],
                      ignored.get(first_seq, []), args.conf, args.imgsz, args.iou, device)
 
@@ -92,7 +87,7 @@ def main():
                 h, w = first.shape[:2]
                 writer = cv2.VideoWriter(str(Path(args.vis_dir) / f"{cfg_name}_{seq}.mp4"),
                                          cv2.VideoWriter_fourcc(*"mp4v"), 25, (w, h))
-            tracker = build_tracker(trk_name, device)              # fresh tracker + ids per sequence
+            tracker = build_tracker(trk_name, device)
             n = {"i": 0}
 
             def tick(d, t, n=n):

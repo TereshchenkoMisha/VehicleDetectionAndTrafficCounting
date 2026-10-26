@@ -1,17 +1,3 @@
-"""Compare line-crossing counts of the detector x tracker configurations against ground truth.
-
-Builds per-sequence count vectors aligned in the splits.json order and evaluates them with
-src/eval/counting_metrics.py (MAE, WAPE, SCE aggregates) - overall and per class. Ground
-truth comes from reports/gt_counts.json; by default the exclude_ignored variant is used
-because the tracking pipeline drops detections with centres in ignored regions before the
-tracker, so GT with those targets would not be comparable.
-
-Output: reports/counting_eval_<split>.md and .json
-
-Usage:
-    python -m src.scripts.eval_counting                    # dev + test
-    python -m src.scripts.eval_counting --splits dev --gt-variant all
-"""
 import argparse
 import json
 from pathlib import Path
@@ -68,7 +54,6 @@ def main():
                                                                   for c in CLASSES + ["all"]} for s in seqs},
                        "totals": gt_totals}
 
-        # markdown: one table per class + a compact summary table
         def fmt(v):
             return f"{v:.2f}" if v == v else "n/a"
 

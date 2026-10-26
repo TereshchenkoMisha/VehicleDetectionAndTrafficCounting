@@ -1,18 +1,3 @@
-"""Line-crossing counts from the saved MOT tracks (outputs/tracks/<split>/<cfg>/<seq>.txt).
-
-Same crossing rule as the ground-truth counter (src/eval/line_crossing.py): the segment
-between the box centres of a track id at consecutive tracked frames is tested against the
-counting line; each track id is counted once, at its first crossing. Ignored regions are
-NOT re-applied here - detections with centres there were already dropped before the
-tracker (keep_mask in the tracking pipeline), so the comparison with the GT
-exclude_ignored variant is on equal terms.
-
-Output: reports/track_counts.json
-
-Usage:
-    python -m src.scripts.count_tracks_crossings                  # dev + test, all configs
-    python -m src.scripts.count_tracks_crossings --split dev
-"""
 import argparse
 import json
 from collections import Counter
@@ -27,7 +12,7 @@ TRACKS_DIR = Path("outputs/tracks")
 
 
 def track_trajectories(path):
-    """{track_id: (majority_cls, [(frame, cx, cy), ...])} parsed from a MOT txt file."""
+    # {track_id: (majority_cls, [(frame, cx, cy), ...])} parsed from a MOT txt file
     trajs = {}
     classes = {}
     with open(path) as f:

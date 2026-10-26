@@ -1,21 +1,3 @@
-"""Ground-truth line-crossing counts per class from the raw UA-DETRAC XML annotations.
-
-For every annotated target the box-centre trajectory is tested against the counting line
-(reports/counting_lines.json); each target is counted once, at its first crossing
-(src/eval/line_crossing.py). Counts are produced in two variants:
-  all             - every annotated target (car/van->car, bus, others->truck)
-  exclude_ignored - targets whose centre at the crossing moment lies in an ignored region
-                    are dropped; the same rule the tracking pipeline applies to detections
-                    (keep_mask before tracker.update), so this is the comparable variant.
-
-Output: reports/gt_counts.json (counts + per-target events) and reports/gt_counts.md.
-With --vis-dir an mp4 per sequence is written: line + GT boxes + crossing markers.
-
-Usage:
-    python -m src.scripts.count_gt_crossings                     # dev + test
-    python -m src.scripts.count_gt_crossings --splits dev
-    python -m src.scripts.count_gt_crossings --vis-dir outputs/vis
-"""
 import argparse
 import json
 from collections import Counter
@@ -33,8 +15,7 @@ LINE_COLOR = (0, 255, 255)
 
 
 def _list_frames(seq_name, raw_root=RAW_ROOT):
-    """[(frame_id, path)] sorted by frame id - same rule as pipeline.list_frames
-    (duplicated here so this script does not pull in torch/ultralytics)."""
+    # [(frame_id, path)] sorted by frame id - same rule as pipeline.list_frames (duplicated here so this script does not pull in torch/ultralytics)
     import re
     seq_dir = find_sequence_dir(raw_root, seq_name)
     if seq_dir is None:
@@ -44,7 +25,7 @@ def _list_frames(seq_name, raw_root=RAW_ROOT):
 
 
 def _resolve_naming(seq_dir, frame_ids):
-    """Offset between XML frame ids and IMG%05d.jpg names - same rule as convert_yolo."""
+    # Offset between XML frame ids and IMG%05d.jpg names - same rule as convert_yolo
     best, best_hits = 0, -1
     for off in (0, 1):
         hits = sum((seq_dir / f"IMG{fid + off:05d}.jpg").exists() for fid in frame_ids[:50])
@@ -54,7 +35,7 @@ def _resolve_naming(seq_dir, frame_ids):
 
 
 def _trajectories(ann):
-    """{target_id: (cls_id, [(fid, cx, cy), ...])} from a parsed SequenceAnn."""
+    #{target_id: (cls_id, [(fid, cx, cy), ...])} from a parsed SequenceAnn
     trajs = {}
     for fid in sorted(ann.frames):
         for t in ann.frames[fid].targets:
@@ -67,7 +48,7 @@ def _trajectories(ann):
 
 
 def count_sequence(ann, line):
-    """Events + both count variants for one sequence. Returns (result_dict, events_full)."""
+    #Events + both count variants for one sequence. Returns (result_dict, events_full)
     regions = [r.as_xyxy() for r in ann.ignored_regions]
     trajs = _trajectories(ann)
     events = count_events(((tid, cid, pts) for tid, (cid, pts) in trajs.items()),
@@ -82,13 +63,13 @@ def count_sequence(ann, line):
 
 
 def write_video(ann, line, seq, events, out_path, fps=25, raw_root=RAW_ROOT):
-    """GT boxes + line + crossing flashes + running (exclude_ignored) counter."""
+    # GT boxes + line + crossing flashes + running (exclude_ignored) counter
     frame_ids = sorted(ann.frames)
     seq_dir = find_sequence_dir(raw_root, seq)
     offset = _resolve_naming(seq_dir, frame_ids)
     jpg = {f: seq_dir / f"IMG{f + offset:05d}.jpg" for f in frame_ids}
 
-    crosses = {}                                   # frame -> [(x, y, cls_id)]
+    crosses = {}
     for e in events:
         if not e.get("ignored"):
             crosses.setdefault(e["frame"], []).append((e["point"][0], e["point"][1], e["cls_id"]))
@@ -102,7 +83,7 @@ def write_video(ann, line, seq, events, out_path, fps=25, raw_root=RAW_ROOT):
     for fid in tqdm(frame_ids, desc=f"video {seq}", unit="frame", leave=False):
         img = cv2.imread(str(jpg[fid]))
         if img is None:
-            img = last.copy()                       # rare missing file: repeat the previous frame
+            img = last.copy()
         else:
             last = img
         for t in ann.frames[fid].targets:
@@ -114,10 +95,10 @@ def write_video(ann, line, seq, events, out_path, fps=25, raw_root=RAW_ROOT):
         cv2.line(img, p1, p2, LINE_COLOR, 2, cv2.LINE_AA)
         for (x, y, _) in crosses.get(fid, []):
             cv2.circle(img, (int(x), int(y)), 18, LINE_COLOR, 3, cv2.LINE_AA)
-        for back in range(1, 13):                   # keep the flash visible for 0.5 s
+        for back in range(1, 13):
             for (x, y, _) in crosses.get(fid - back, []):
                 cv2.circle(img, (int(x), int(y)), 18, (120, 120, 120), 2, cv2.LINE_AA)
-        run_total += events_at.get(fid, 0)          # crossings up to and including this frame
+        run_total += events_at.get(fid, 0)
         cv2.rectangle(img, (0, 0), (330, 30), (0, 0, 0), -1)
         cv2.putText(img, f"{seq} f{fid}  crossed: {run_total}", (8, 21),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1, cv2.LINE_AA)
@@ -185,10 +166,10 @@ def main():
         return head + rows
 
     md = ("# Ground-truth line-crossing counts\n\n"
-          "Counting line: `reports/counting_lines.json`; rule: box centre crosses the line once per target.\n\n"
+          "Counting line: `reports/counting_lines.json`; rule: box centre crosses the line once per target\n\n"
           "## Tracking-comparable protocol (targets in ignored regions excluded)\n\n" + table("exclude_ignored") +
           "\n## All annotated targets\n\n" + table("all") +
-          "\nPer-target events (frame, target, class, direction, ignored) are in `gt_counts.json`.\n")
+          "\nPer-target events (frame, target, class, direction, ignored) are in `gt_counts.json`\n")
     Path(args.md).write_text(md)
     print(f"[done] {args.out} + {args.md}")
 
