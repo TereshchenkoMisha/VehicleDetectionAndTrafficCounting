@@ -13,7 +13,16 @@ TRACKS_DIR = Path("outputs/tracks")
 
 
 def _aggregate(per_seq, splits_seqs):
-    # Micro- and macro-averaging across split sequences
+    # Macro-average across sequences; additive counters are summed.
+    expected = set(splits_seqs)
+    actual = set(per_seq)
+
+    if not expected or actual != expected:
+        raise ValueError(
+            "Cannot aggregate incomplete tracking results: "
+            f"missing={sorted(expected - actual)}, "
+            f"unexpected={sorted(actual - expected)}"
+        )
     sums = {"IDSW": 0, "MT": 0, "ML": 0, "Frag": 0,
             "CLR_TP": 0, "CLR_FN": 0, "CLR_FP": 0,
             "GT_dets": 0, "TRK_dets": 0}
@@ -25,9 +34,9 @@ def _aggregate(per_seq, splits_seqs):
             sums[k] += m["all"][k]
         for k in means:
             means[k].append(m["all"][k])
-    n = len(splits_seqs)
+    n = len(per_seq)
     return {
-        "mean": {k: (float(np.mean(v)) if v else 0.0) for k, v in means.items()},
+        "mean": {k: float(np.mean(v)) for k, v in means.items()},
         "sum":  sums,
         "n_seq": n,
     }
@@ -53,11 +62,53 @@ def main():
         )
 
     for split in args.splits:
-        seqs = splits[split]
-        cfg_dirs = sorted(d.name for d in (Path(args.tracks_dir) / split).iterdir() if d.is_dir())
+        seqs = list(splits[split])
+
+        if not seqs or len(seqs) != len(set(seqs)):
+            ap.error(f"Split '{split}' must contain unique sequences and be non-empty.")
+
+        split_dir = Path(args.tracks_dir) / split
+
+        if not split_dir.is_dir():
+            ap.error(f"Tracking directory does not exist: {split_dir}")
+
+        cfg_dirs = sorted(
+            directory.name
+            for directory in split_dir.iterdir()
+            if directory.is_dir()
+        )
+
         if not cfg_dirs:
-            print(f"[warn] no configs in {Path(args.tracks_dir) / split}, skipped")
-            continue
+            ap.error(f"No tracking configurations found in {split_dir}")
+
+        missing_gt = [
+            str(gt_mot_dir / f"{seq}.txt")
+            for seq in seqs
+            if not (gt_mot_dir / f"{seq}.txt").is_file()
+        ]
+
+        if missing_gt:
+            ap.error("Missing GT MOT files:\n" + "\n".join(missing_gt))
+
+        expected = set(seqs)
+
+        for cfg in cfg_dirs:
+            cfg_dir = split_dir / cfg
+
+            actual = {
+                file.stem
+                for file in cfg_dir.glob("MVI_*.txt")
+                if file.is_file()
+            }
+
+            missing = sorted(expected - actual)
+            unexpected = sorted(actual - expected)
+
+            if missing or unexpected:
+                ap.error(
+                    f"Sequence mismatch in {split}/{cfg}: "
+                    f"missing={missing}, unexpected={unexpected}"
+                )
 
         results = {}
         for cfg in cfg_dirs:
@@ -65,17 +116,13 @@ def main():
             for seq in tqdm(seqs, desc=f"{split}/{cfg}", unit="seq"):
                 gt_path = gt_mot_dir / f"{seq}.txt"
                 trk_path = Path(args.tracks_dir) / split / cfg / f"{seq}.txt"
-                if not gt_path.exists():
-                    print(f"[warn] GT MOT missing: {gt_path}, skipped")
-                    continue
-                if not trk_path.exists():
-                    print(f"[warn] track missing: {trk_path}, skipped")
-                    continue
+                
                 cls_list = CLASSES if args.classes_aware else None
                 results[cfg]["per_seq"][seq] = evaluate_sequence(gt_path, trk_path, classes=cls_list)
             results[cfg]["aggregate"] = _aggregate(results[cfg]["per_seq"], seqs)
 
         out_json = Path(f"{args.out_prefix}_{split}.json")
+        out_json.parent.mkdir(parents=True, exist_ok=True)
         out_json.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
 
         out_md = Path(f"{args.out_prefix}_{split}.md")

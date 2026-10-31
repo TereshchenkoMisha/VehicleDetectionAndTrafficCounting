@@ -120,13 +120,27 @@ def main():
     lines = json.loads(Path(args.lines).read_text())
     anns, _ = load_all(args.raw)
 
-    result, missing = {}, []
+    out_path = Path(args.out)
+
+    result = (
+        json.loads(out_path.read_text(encoding="utf-8"))
+        if out_path.is_file()
+        else {}
+    )
+
+    missing_inputs = [
+        seq
+        for split in args.splits
+        for seq in splits[split]
+        if seq not in lines or seq not in anns
+    ]
+
+    if missing_inputs:
+        ap.error("Missing counting line or XML annotations for: " + ", ".join(sorted(set(missing_inputs))))
+
     for split in args.splits:
         result[split] = {}
         for seq in splits[split]:
-            if seq not in lines:
-                missing.append(seq)
-                continue
             ann = anns[seq]
             res, ev_full = count_sequence(ann, lines[seq])
             res["line"] = lines[seq]
@@ -140,18 +154,24 @@ def main():
                 write_video(ann, lines[seq], seq, ev_full,
                             Path(args.vis_dir) / f"gt_line_{seq}.mp4", raw_root=args.raw)
 
-    if missing:
-        print(f"[warn] no line in {args.lines} for: {', '.join(missing)} - skipped")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(
+        json.dumps(result, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
-    Path(args.out).parent.mkdir(parents=True, exist_ok=True)
-    Path(args.out).write_text(json.dumps(result, indent=2) + "\n")
+    summary_splits = [
+        split
+        for split in ("dev", "test")
+        if split in result
+    ]
 
     def table(variant):
         head = "| sequence | " + " | ".join(CLASSES) + " | all |\n"
         head += "|" + "---|" * (len(CLASSES) + 2) + "\n"
         rows = ""
         sums = Counter()
-        for split in args.splits:
+        for split in summary_splits:
             rows += f"| **{split}** | | | | |\n"
             for seq in splits[split]:
                 if seq not in result[split]:
@@ -170,7 +190,9 @@ def main():
           "## Tracking-comparable protocol (targets in ignored regions excluded)\n\n" + table("exclude_ignored") +
           "\n## All annotated targets\n\n" + table("all") +
           "\nPer-target events (frame, target, class, direction, ignored) are in `gt_counts.json`\n")
-    Path(args.md).write_text(md)
+    md_path = Path(args.md)
+    md_path.parent.mkdir(parents=True, exist_ok=True)
+    md_path.write_text(md, encoding="utf-8")
     print(f"[done] {args.out} + {args.md}")
 
 

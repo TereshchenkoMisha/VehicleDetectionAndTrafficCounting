@@ -94,6 +94,12 @@ def evaluate_sequence(gt_path, trk_path, classes=None):
     trk = load_mot(trk_path)
 
     hota_m, clear_m, id_m = HOTA(), CLEAR(), Identity()
+
+    # Находим элемент массива HOTA, соответствующий IoU 0.5.
+    hota_50_index = int(
+        np.flatnonzero(np.isclose(hota_m.array_labels, 0.5))[0]
+    )
+
     out = {}
 
     targets = [("all", None)]
@@ -113,7 +119,7 @@ def evaluate_sequence(gt_path, trk_path, classes=None):
             "DetA": float(np.mean(h_res["DetA"])) * 100,
             "AssA": float(np.mean(h_res["AssA"])) * 100,
             "LocA": float(np.mean(h_res["LocA"])) * 100,
-            "HOTA_50": float(h_res["HOTA(0)"]) * 100,    # HOTA@IoU=0.5
+            "HOTA_50": float(h_res["HOTA"][hota_50_index]) * 100,    # HOTA@IoU=0.5
             # CLEAR (MOTA, MOTP, IDSW, MT/ML/PT, Frag)
             "MOTA": float(c_res["MOTA"]) * 100,
             "MOTP": float(c_res["MOTP"]) * 100,

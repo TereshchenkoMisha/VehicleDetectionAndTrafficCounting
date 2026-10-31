@@ -15,16 +15,34 @@ COCO_ID_TO_LOCAL = {2: 0, 5: 1, 7: 2}
 
 
 def _load_gt(label_path: Path, W, H):
+    if not label_path.is_file():
+        raise FileNotFoundError(
+            f"GT label file is missing: {label_path}. "
+            "An image without objects must have an existing empty label file."
+        )
+
     boxes, labels = [], []
-    if label_path.exists():
-        for line in label_path.read_text().splitlines():
-            if not line.strip():
-                continue
-            c, cx, cy, w, h = (float(v) for v in line.split())
-            boxes.append([(cx - w / 2) * W, (cy - h / 2) * H, (cx + w / 2) * W, (cy + h / 2) * H])
-            labels.append(int(c))
-    return {"boxes": torch.tensor(boxes, dtype=torch.float32).reshape(-1, 4),
-            "labels": torch.tensor(labels, dtype=torch.int64)}
+
+    for line in label_path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+
+        c, cx, cy, w, h = (float(v) for v in line.split())
+
+        boxes.append([
+            (cx - w / 2) * W,
+            (cy - h / 2) * H,
+            (cx + w / 2) * W,
+            (cy + h / 2) * H,
+        ])
+        labels.append(int(c))
+
+    return {
+        "boxes": torch.tensor(
+            boxes, dtype=torch.float32
+        ).reshape(-1, 4),
+        "labels": torch.tensor(labels, dtype=torch.int64),
+    }
 
 
 def _in_ignored_region(cx, cy, regions):

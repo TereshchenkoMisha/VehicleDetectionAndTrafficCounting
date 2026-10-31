@@ -108,12 +108,15 @@ def interactive(seq, frames, start_pts, lines_path, preview_dir, lines):
 
     cv2.setMouseCallback(win, on_mouse)
     while True:
-        fid, fpath = frames[idx]
+        _, fpath = frames[idx]
         img = cv2.imread(str(fpath))
         p1, p2 = (pts + [None, None])[:2]
-        _hud(draw_line(img, p1, p2), seq, idx, len(frames), pts, msg)
-        cv2.imshow(win, img)
-        k = cv2.waitKey(30) & 0xFFFFFFFF
+
+        preview = draw_line(img, p1, p2)
+        preview = _hud(preview, seq, idx, len(frames), pts, msg)
+        cv2.imshow(win, preview)
+
+        k = cv2.waitKeyEx(30)
         key = chr(k & 0xFF).lower() if 32 <= (k & 0xFF) < 127 else ""
         if k in ARROWS or key in KEYS:
             idx = max(0, min(len(frames) - 1, idx + ARROWS.get(k, KEYS.get(key, 0))))

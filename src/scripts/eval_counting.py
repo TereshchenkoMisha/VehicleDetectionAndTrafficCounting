@@ -23,21 +23,46 @@ def main():
     splits = json.loads((REPORTS_DIR / "splits.json").read_text())
 
     for split in args.splits:
-        if split not in gt_all or split not in pred_all:
-            print(f"[warn] no GT or track counts for split '{split}', skipped")
-            continue
-        seqs = [s for s in splits[split] if s in gt_all[split]]
+        if split not in gt_all:
+            ap.error(f"GT counts are missing split '{split}'.")
+
+        if split not in pred_all:
+            ap.error(f"Predicted counts are missing split '{split}'.")
+
+        seqs = list(splits[split])
+
+        if not seqs or len(seqs) != len(set(seqs)):
+            ap.error(f"Split '{split}' must contain unique sequences and be non-empty.")
+
         cfgs = sorted(pred_all[split])
+
         if not cfgs:
-            print(f"[warn] no track configs for split '{split}', skipped")
-            continue
+            ap.error(f"No predicted configurations found for split '{split}'.")
+
+        expected = set(seqs)
+
+        sources = [("GT", gt_all[split])]
+        sources.extend(
+            (cfg, pred_all[split][cfg])
+            for cfg in cfgs
+        )
+
+        for source_name, sequence_results in sources:
+            actual = set(sequence_results)
+            missing = sorted(expected - actual)
+            unexpected = sorted(actual - expected)
+
+            if missing or unexpected:
+                ap.error(f"Sequence mismatch in {split}/{source_name}: missing={missing}, unexpected={unexpected}")
 
         def gt_vec(cls):
             return [gt_all[split][s][args.gt_variant][cls]["total"] for s in seqs]
 
         def pred_vec(cfg, cls):
-            return [pred_all[split][cfg].get(s, {}).get("counts", {}).get(cls, {"total": 0})["total"]
-                    for s in seqs]
+            return [
+                pred_all[split][cfg][s]["counts"][cls]["total"]
+                for s in seqs
+            ]
 
         rows, dump = {}, {}
         for cfg in cfgs:
@@ -87,8 +112,12 @@ def main():
 
         out_md = Path(f"{args.out_prefix}_{split}.md")
         out_json = Path(f"{args.out_prefix}_{split}.json")
-        out_md.write_text("\n".join(md) + "\n")
-        out_json.write_text(json.dumps(dump, indent=2) + "\n")
+
+        out_md.parent.mkdir(parents=True, exist_ok=True)
+
+        out_md.write_text("\n".join(md) + "\n", encoding="utf-8")
+        out_json.write_text(json.dumps(dump, indent=2) + "\n", encoding="utf-8")
+        
         print(f"[done] {split}: GT totals {gt_totals}")
         for c in cfgs:
             r = rows[c]["all"]
