@@ -1,8 +1,3 @@
-"""Run YOLOv8 {n,s} x {ByteTrack, BoT-SORT} on dev/test sequences and save MOT tracks + timings.
-
-Output per configuration: outputs/tracks/<split>/<det>_<trk>_conf<conf>/<seq>.txt  and  timing.json
-MOT row: frame,id,x,y,w,h,conf,cls,-1,-1   (cls: 0=car, 1=bus, 2=truck)
-"""
 import argparse
 import json
 import platform
@@ -29,7 +24,7 @@ def _device_name(device):
 
 
 def _find(name, data_dir):
-    """splits.json / ignored_regions.json: processed-data dir first, then the committed copy in reports/."""
+    # splits.json / ignored_regions.json: processed-data dir first, then the committed copy in reports/
     for d in (data_dir, REPORTS_DIR):
         if (d / name).exists():
             return d / name
@@ -60,26 +55,77 @@ def main():
     ignored = load_ignored(_find("ignored_regions.json", data))
     seqs = args.seqs or splits[args.split]
     if args.split == "test":
-        print("!! TEST split: configs, conf, and counting line must be frozen on dev before this run.")
+        print("TEST split: configs, conf, and counting line must be frozen on dev before this run")
 
     seq_frames = {}
     for s in seqs:
         fr = list_frames(s)
         seq_frames[s] = fr[:args.max_frames] if args.max_frames else fr
+
     configs = [(m, t) for m in args.models for t in args.trackers]
+
+    # Определяем все выходные директории до запуска моделей.
+    out_dirs = [
+        Path(args.out)
+        / args.split
+        / f"{Path(weights).stem}_{tracker}_conf{args.conf:g}"
+        for weights, tracker in configs
+    ]
+
+    # Разные входные конфигурации не должны записываться в одну папку.
+    if len(set(out_dirs)) != len(out_dirs):
+        ap.error(
+            "Some configurations have the same output directory. "
+            "Check model filenames and duplicated model/tracker arguments."
+        )
+
+    # Запрещаем использование уже существующих результатов.
+    existing_dirs = [directory for directory in out_dirs if directory.exists()]
+
+    if existing_dirs:
+        paths = "\n".join(f"  {directory}" for directory in existing_dirs)
+        ap.error(
+            "Output directories already exist:\n"
+            f"{paths}\n"
+            "Choose a new --out directory for this run."
+        )
+
+    # Видео тоже не должны перезаписывать результаты предыдущего запуска.
+    if args.vis_dir:
+        existing_videos = [
+            Path(args.vis_dir) / f"{directory.name}_{seq}.mp4"
+            for directory in out_dirs
+            for seq in seq_frames
+            if (
+                Path(args.vis_dir) / f"{directory.name}_{seq}.mp4"
+            ).exists()
+        ]
+
+        if existing_videos:
+            paths = "\n".join(f"  {video}" for video in existing_videos)
+            ap.error(
+                "Visualization files already exist:\n"
+                f"{paths}\n"
+                "Choose a new --vis-dir directory for this run."
+            )
+
+    # Резервируем папки до начала вычислений.
+    # exist_ok=False дополнительно защищает от одновременных запусков.
+    for directory in out_dirs:
+        directory.mkdir(parents=True, exist_ok=False)
+    
     total = sum(len(f) for f in seq_frames.values()) * len(configs)
     print(f"[run] {len(configs)} configs x {len(seqs)} seqs, {total} frames, device={device}, "
           f"conf={args.conf}, imgsz={args.imgsz}")
 
     first = cv2.imread(str(next(iter(seq_frames.values()))[0][1]))
     bar = tqdm(total=total, unit="frame", dynamic_ncols=True)
-    for weights, trk_name in configs:
+    for (weights, trk_name), out_dir in zip(configs, out_dirs):
         det_name = Path(weights).stem
-        cfg_name = f"{det_name}_{trk_name}_conf{args.conf:g}"
-        out_dir = Path(args.out) / args.split / cfg_name
+        cfg_name = out_dir.name
         model = YOLO(weights_path(weights))
         warmup(model, first, args.imgsz, device)
-        first_seq = next(iter(seq_frames))                         # also warm up the tracker (GMC, lap, ...)
+        first_seq = next(iter(seq_frames))
         run_sequence(model, build_tracker(trk_name, device), seq_frames[first_seq][:10],
                      ignored.get(first_seq, []), args.conf, args.imgsz, args.iou, device)
 
@@ -92,7 +138,7 @@ def main():
                 h, w = first.shape[:2]
                 writer = cv2.VideoWriter(str(Path(args.vis_dir) / f"{cfg_name}_{seq}.mp4"),
                                          cv2.VideoWriter_fourcc(*"mp4v"), 25, (w, h))
-            tracker = build_tracker(trk_name, device)              # fresh tracker + ids per sequence
+            tracker = build_tracker(trk_name, device)
             n = {"i": 0}
 
             def tick(d, t, n=n):
@@ -126,7 +172,6 @@ def main():
             "note": "image reading excluded; detector = predict (pre+infer+NMS+GPU->CPU); "
                     "tracker = ignored-region mask + tracker.update",
         }
-        out_dir.mkdir(parents=True, exist_ok=True)
         (out_dir / "timing.json").write_text(json.dumps(timing, indent=2))
         tqdm.write(f"[done] {cfg_name}: det {timing['det_ms_per_frame']:.1f} ms, "
                    f"trk {timing['trk_ms_per_frame']:.1f} ms, {timing['fps']:.1f} FPS -> {out_dir}")

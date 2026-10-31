@@ -5,54 +5,27 @@
   "conf": 0.25,
   "iou": 0.7,
   "imgsz": 960,
-  "frames": 5924,
-  "det_ms_per_frame": 8.271280553672323,
-  "trk_ms_per_frame": 0.8260944632036885,
-  "total_ms_per_frame": 9.097375016876011,
-  "fps": 109.92181790296192,
+  "frames": 100,
+  "det_ms_per_frame": 6.19451200007461,
+  "trk_ms_per_frame": 0.6315500000710017,
+  "total_ms_per_frame": 6.826062000145612,
+  "fps": 146.49735088527885,
   "per_seq": {
     "MVI_20033": {
-      "frames": 784,
-      "det_ms": 8.731412117355125,
-      "trk_ms": 0.8172090560970455,
-      "tracks": 55,
-      "rows": 4658
-    },
-    "MVI_40141": {
-      "frames": 1600,
-      "det_ms": 8.465117687482007,
-      "trk_ms": 0.8389430625038585,
-      "tracks": 88,
-      "rows": 8806
-    },
-    "MVI_40171": {
-      "frames": 1150,
-      "det_ms": 8.236842434759993,
-      "trk_ms": 0.77319878263275,
-      "tracks": 108,
-      "rows": 5451
-    },
-    "MVI_40773": {
-      "frames": 985,
-      "det_ms": 8.081143857880352,
-      "trk_ms": 0.8482794923674455,
-      "tracks": 119,
-      "rows": 6797
-    },
-    "MVI_63553": {
-      "frames": 1405,
-      "det_ms": 7.955270533801472,
-      "trk_ms": 0.8441629181656919,
-      "tracks": 247,
-      "rows": 8109
+      "frames": 100,
+      "det_ms": 6.19451200007461,
+      "trk_ms": 0.6315500000710017,
+      "tracks": 12,
+      "rows": 605
     }
   },
   "env": {
-    "device": "NVIDIA GeForce GTX 1070 Ti",
+    "device": "NVIDIA GeForce RTX 4060",
     "torch": "2.14.1+cu126",
-    "ultralytics": "8.4.175",
-    "python": "3.13.14",
-    "date": "2026-10-11 22:57:39"
+    "ultralytics": "8.4.189",
+    "opencv": "5.0.0",
+    "python": "3.12.5",
+    "date": "2026-10-26 18:12:32"
   },
   "note": "image reading excluded; detector = predict (pre+infer+NMS+GPU->CPU); tracker = ignored-region mask + tracker.update"
 }

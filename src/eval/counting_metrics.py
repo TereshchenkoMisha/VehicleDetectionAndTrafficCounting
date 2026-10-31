@@ -10,7 +10,6 @@ def wape(pred, gt):
 def sce(pred, gt):
     return (np.asarray(pred, float) - np.asarray(gt, float)).tolist()
 
-# Additional metrics for aggregation and for report
 def mean_sce(pred, gt):
     return float(np.mean(np.asarray(pred, float) - np.asarray(gt, float)))
 
