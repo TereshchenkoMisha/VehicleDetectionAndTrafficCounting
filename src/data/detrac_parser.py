@@ -2,7 +2,6 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from tqdm import tqdm
 
 from .config import RAW_ROOT
 
@@ -110,6 +109,8 @@ def _parse_meta_root(root) -> SequenceMeta:
 
 
 def load_all(root=RAW_ROOT):
+    from tqdm import tqdm
+
     anns, metas = {}, {}
     for p in tqdm(sorted(Path(root).rglob("MVI_*.xml")), desc="parse XML", unit="file"):
         r = ET.parse(p).getroot()
@@ -124,6 +125,9 @@ def load_all(root=RAW_ROOT):
 
 def find_sequence_dir(frames_root, name):
     for cand in Path(frames_root).rglob(name):
-        if cand.is_dir() and any(cand.glob("*.jpg")):
+        if cand.is_dir() and any(
+            p.is_file() and p.suffix.lower() in {".jpg", ".jpeg"}
+            for p in cand.iterdir()
+        ):
             return cand
     return None

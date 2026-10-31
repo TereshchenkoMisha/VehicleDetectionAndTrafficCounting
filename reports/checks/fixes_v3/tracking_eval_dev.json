@@ -1,0 +1,910 @@
+{
+  "yolov8n_botsort_conf0.25": {
+    "per_seq": {
+      "MVI_20033": {
+        "all": {
+          "HOTA": 77.09583257115305,
+          "DetA": 74.38741193005191,
+          "AssA": 80.06170371201657,
+          "LocA": 84.70999465834555,
+          "HOTA_50": 93.47968618547611,
+          "MOTA": 90.68736141906874,
+          "MOTP": 82.75732097515466,
+          "IDSW": 0,
+          "MT": 24,
+          "ML": 0,
+          "Frag": 31,
+          "CLR_TP": 4378,
+          "CLR_FN": 132,
+          "CLR_FP": 288,
+          "IDF1": 95.42284219703573,
+          "IDP": 93.82768966995285,
+          "IDR": 97.07317073170731,
+          "GT_IDs": 25,
+          "TRK_IDs": 58,
+          "GT_dets": 4510,
+          "TRK_dets": 4666,
+          "frames": 784
+        }
+      },
+      "MVI_40141": {
+        "all": {
+          "HOTA": 60.03013772985586,
+          "DetA": 52.46854498976396,
+          "AssA": 68.91701222067897,
+          "LocA": 83.71933921973714,
+          "HOTA_50": 73.78482274016986,
+          "MOTA": 50.1607200257152,
+          "MOTP": 80.8798710731041,
+          "IDSW": 15,
+          "MT": 30,
+          "ML": 0,
+          "Frag": 40,
+          "CLR_TP": 5968,
+          "CLR_FN": 254,
+          "CLR_FP": 2832,
+          "IDF1": 76.36799360937292,
+          "IDP": 65.18181818181819,
+          "IDR": 92.18900675024108,
+          "GT_IDs": 33,
+          "TRK_IDs": 87,
+          "GT_dets": 6222,
+          "TRK_dets": 8800,
+          "frames": 1600
+        }
+      },
+      "MVI_40171": {
+        "all": {
+          "HOTA": 55.17046210446664,
+          "DetA": 46.02975165096928,
+          "AssA": 66.28648884118901,
+          "LocA": 87.88604424174918,
+          "HOTA_50": 62.315560635177015,
+          "MOTA": 49.36276741010469,
+          "MOTP": 86.73427888885435,
+          "IDSW": 27,
+          "MT": 30,
+          "ML": 3,
+          "Frag": 88,
+          "CLR_TP": 4913,
+          "CLR_FN": 3875,
+          "CLR_FP": 548,
+          "IDF1": 60.439329075724615,
+          "IDP": 78.8500274674968,
+          "IDR": 48.99863450159308,
+          "GT_IDs": 44,
+          "TRK_IDs": 94,
+          "GT_dets": 8788,
+          "TRK_dets": 5461,
+          "frames": 1150
+        }
+      },
+      "MVI_40773": {
+        "all": {
+          "HOTA": 71.74162853160895,
+          "DetA": 69.66146860721537,
+          "AssA": 74.19065764919473,
+          "LocA": 88.58041976048521,
+          "HOTA_50": 80.7554840749736,
+          "MOTA": 78.43630109802884,
+          "MOTP": 87.5217492096165,
+          "IDSW": 14,
+          "MT": 22,
+          "ML": 1,
+          "Frag": 156,
+          "CLR_TP": 6386,
+          "CLR_FN": 1173,
+          "CLR_FP": 443,
+          "IDF1": 83.01362246316376,
+          "IDP": 87.45057841558062,
+          "IDR": 79.00515941262071,
+          "GT_IDs": 29,
+          "TRK_IDs": 118,
+          "GT_dets": 7559,
+          "TRK_dets": 6829,
+          "frames": 985
+        }
+      },
+      "MVI_63553": {
+        "all": {
+          "HOTA": 62.21602112140513,
+          "DetA": 55.694447228214486,
+          "AssA": 70.00469114110133,
+          "LocA": 83.32753277849264,
+          "HOTA_50": 75.05636273231518,
+          "MOTA": 66.78246174068163,
+          "MOTP": 81.04101255007367,
+          "IDSW": 44,
+          "MT": 109,
+          "ML": 33,
+          "Frag": 172,
+          "CLR_TP": 7671,
+          "CLR_FN": 2980,
+          "CLR_FP": 514,
+          "IDF1": 78.30749628371204,
+          "IDP": 90.10384850335981,
+          "IDR": 69.24232466435076,
+          "GT_IDs": 190,
+          "TRK_IDs": 234,
+          "GT_dets": 10651,
+          "TRK_dets": 8185,
+          "frames": 1405
+        }
+      }
+    },
+    "sources": {
+      "timing": {
+        "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8n_botsort_conf0.25\\timing.json",
+        "sha256": "817eed5b823e93fd39e13925d6d8634818c1154ad7586c7a87914af8b1655cd7"
+      },
+      "tracks": {
+        "MVI_20033": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8n_botsort_conf0.25\\MVI_20033.txt",
+          "sha256": "d015010239c29dd64072d652ac9639eb8a723426e7cdecb0d23840cc91686c2f"
+        },
+        "MVI_40141": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8n_botsort_conf0.25\\MVI_40141.txt",
+          "sha256": "53892c5265be0d3099eef7fe86ce14c8bb07b57bc75a9c74fdd2491ab3bf94bc"
+        },
+        "MVI_40171": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8n_botsort_conf0.25\\MVI_40171.txt",
+          "sha256": "c5371e9d52fb05885c9f5d7142c9948c73f9c6483254025dbd709b242cb4c551"
+        },
+        "MVI_40773": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8n_botsort_conf0.25\\MVI_40773.txt",
+          "sha256": "622e406049403a3ce8516958abe55610b518faacc2416ccbd3b9dfd7d21fbeba"
+        },
+        "MVI_63553": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8n_botsort_conf0.25\\MVI_63553.txt",
+          "sha256": "41bbcd5eab0d2a94593ece6fd44e1dced99ece83e866b5ef2936e88ab44fe642"
+        }
+      },
+      "gt": {
+        "MVI_20033": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_20033.txt",
+          "sha256": "3439404f7844270bf4f35dadbf0c26d0c8a299db100df13d9f08e70e832aec9b"
+        },
+        "MVI_40141": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_40141.txt",
+          "sha256": "dc64bca09b0f762638781cbfa4ecbc8b981328f0b0f8b380cd30e7205ef748a5"
+        },
+        "MVI_40171": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_40171.txt",
+          "sha256": "71d333bd24ade50982060a47b8a8c0767b9d32bfa31e29840e665f08a1818ec9"
+        },
+        "MVI_40773": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_40773.txt",
+          "sha256": "399ac69cb062140796e539b1f1e6da46691507360e8ea93a4e8c2d078c0d1c13"
+        },
+        "MVI_63553": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_63553.txt",
+          "sha256": "594402e75adeabdf4501e498bc07e9e4873e9ac03621e387b02476c3194f203e"
+        }
+      },
+      "evaluation_code": {
+        "sha256": "4a65e415fdc701c8da546b73fbf7159ee45303a87d20d5c2adb29bd8d1e1d542",
+        "files": 32
+      }
+    },
+    "aggregate": {
+      "aggregation": "macro average with equal sequence weights",
+      "mean": {
+        "HOTA": 65.25081641169793,
+        "DetA": 59.648324881243,
+        "AssA": 71.89211071283611,
+        "LocA": 85.64466613176194,
+        "MOTA": 67.08592233871983,
+        "MOTP": 83.78684653936065,
+        "IDF1": 78.71025672580183,
+        "IDP": 83.08279244764165,
+        "IDR": 77.30165921210258,
+        "HOTA_50": 77.07838327362235
+      },
+      "sum": {
+        "IDSW": 100,
+        "MT": 215,
+        "ML": 37,
+        "Frag": 487,
+        "CLR_TP": 29316,
+        "CLR_FN": 8414,
+        "CLR_FP": 4625,
+        "GT_dets": 37730,
+        "TRK_dets": 33941
+      },
+      "n_seq": 5,
+      "combined": {
+        "HOTA": 64.23709825561977,
+        "DetA": 57.51247580252933,
+        "AssA": 72.14686901808814,
+        "LocA": 85.55282450690022,
+        "HOTA_50": 75.67404271179974,
+        "MOTA": 65.17625231910947,
+        "MOTP": 83.63035992968616,
+        "IDF1": 77.484617209192,
+        "IDP": 81.80961079520344,
+        "IDR": 73.59395706334482
+      }
+    }
+  },
+  "yolov8n_bytetrack_conf0.25": {
+    "per_seq": {
+      "MVI_20033": {
+        "all": {
+          "HOTA": 75.76295496940494,
+          "DetA": 73.32408493247954,
+          "AssA": 78.4509279710945,
+          "LocA": 84.04185411857542,
+          "HOTA_50": 93.12443962565307,
+          "MOTA": 90.44345898004434,
+          "MOTP": 81.88211664683604,
+          "IDSW": 4,
+          "MT": 24,
+          "ML": 0,
+          "Frag": 31,
+          "CLR_TP": 4371,
+          "CLR_FN": 139,
+          "CLR_FP": 288,
+          "IDF1": 95.05943941542154,
+          "IDP": 93.5393861343636,
+          "IDR": 96.62971175166297,
+          "GT_IDs": 25,
+          "TRK_IDs": 55,
+          "GT_dets": 4510,
+          "TRK_dets": 4659,
+          "frames": 784
+        }
+      },
+      "MVI_40141": {
+        "all": {
+          "HOTA": 58.69013298996787,
+          "DetA": 51.347673803454576,
+          "AssA": 67.35767217635058,
+          "LocA": 82.57896261289484,
+          "HOTA_50": 73.28167449020168,
+          "MOTA": 49.083895853423336,
+          "MOTP": 79.48215789236185,
+          "IDSW": 20,
+          "MT": 29,
+          "ML": 0,
+          "Frag": 46,
+          "CLR_TP": 5936,
+          "CLR_FN": 286,
+          "CLR_FP": 2862,
+          "IDF1": 73.98135818908122,
+          "IDP": 63.15071607183451,
+          "IDR": 89.2960462873674,
+          "GT_IDs": 33,
+          "TRK_IDs": 88,
+          "GT_dets": 6222,
+          "TRK_dets": 8798,
+          "frames": 1600
+        }
+      },
+      "MVI_40171": {
+        "all": {
+          "HOTA": 51.18051334377082,
+          "DetA": 42.82544054889505,
+          "AssA": 61.249247335995285,
+          "LocA": 85.56940394071961,
+          "HOTA_50": 59.06435413587678,
+          "MOTA": 45.32316795630405,
+          "MOTP": 83.97789524933881,
+          "IDSW": 31,
+          "MT": 24,
+          "ML": 3,
+          "Frag": 113,
+          "CLR_TP": 4733,
+          "CLR_FN": 4055,
+          "CLR_FP": 719,
+          "IDF1": 58.10393258426966,
+          "IDP": 75.88041085840058,
+          "IDR": 47.07555757851616,
+          "GT_IDs": 44,
+          "TRK_IDs": 108,
+          "GT_dets": 8788,
+          "TRK_dets": 5452,
+          "frames": 1150
+        }
+      },
+      "MVI_40773": {
+        "all": {
+          "HOTA": 71.29916081101287,
+          "DetA": 68.19474613874988,
+          "AssA": 74.80128268998136,
+          "LocA": 87.65011953909884,
+          "HOTA_50": 81.92572949288824,
+          "MOTA": 78.06588173038762,
+          "MOTP": 86.2845524748218,
+          "IDSW": 17,
+          "MT": 22,
+          "ML": 1,
+          "Frag": 166,
+          "CLR_TP": 6358,
+          "CLR_FN": 1201,
+          "CLR_FP": 440,
+          "IDF1": 85.82572960924985,
+          "IDP": 90.62959694027654,
+          "IDR": 81.50549014419897,
+          "GT_IDs": 29,
+          "TRK_IDs": 119,
+          "GT_dets": 7559,
+          "TRK_dets": 6798,
+          "frames": 985
+        }
+      },
+      "MVI_63553": {
+        "all": {
+          "HOTA": 54.88705009091671,
+          "DetA": 49.28370107974347,
+          "AssA": 61.488863190976716,
+          "LocA": 79.3914699261554,
+          "HOTA_50": 67.29345318968488,
+          "MOTA": 56.86789972772509,
+          "MOTP": 76.40974851541334,
+          "IDSW": 43,
+          "MT": 87,
+          "ML": 34,
+          "Frag": 221,
+          "CLR_TP": 7105,
+          "CLR_FN": 3546,
+          "CLR_FP": 1005,
+          "IDF1": 72.97052395927722,
+          "IDP": 84.4019728729963,
+          "IDR": 64.26626607830251,
+          "GT_IDs": 190,
+          "TRK_IDs": 247,
+          "GT_dets": 10651,
+          "TRK_dets": 8110,
+          "frames": 1405
+        }
+      }
+    },
+    "sources": {
+      "timing": {
+        "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8n_bytetrack_conf0.25\\timing.json",
+        "sha256": "8823a0ba428e24cf68496bf86c7c9669b7e65e76ef2c0092ca3cf5612ebd3345"
+      },
+      "tracks": {
+        "MVI_20033": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8n_bytetrack_conf0.25\\MVI_20033.txt",
+          "sha256": "6e98507462da5640f37b72965f8cbfc0d62e390f11fafda33dbffabc95df99c8"
+        },
+        "MVI_40141": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8n_bytetrack_conf0.25\\MVI_40141.txt",
+          "sha256": "3937fa3393b3e7544945899e152296ec4798097988db0502b6a93884174134b5"
+        },
+        "MVI_40171": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8n_bytetrack_conf0.25\\MVI_40171.txt",
+          "sha256": "6f16c639f4d09c420813b43bf71c06ea5a902500123c760d728773709f556733"
+        },
+        "MVI_40773": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8n_bytetrack_conf0.25\\MVI_40773.txt",
+          "sha256": "46398a20fed18d5faaf846351fc385b9ddebe933206d4186f93b588599c90d0c"
+        },
+        "MVI_63553": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8n_bytetrack_conf0.25\\MVI_63553.txt",
+          "sha256": "4a87b868db5ad764f063590b1a45e2b9a4c6b7213b1db68fa5b171bbd3e99979"
+        }
+      },
+      "gt": {
+        "MVI_20033": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_20033.txt",
+          "sha256": "3439404f7844270bf4f35dadbf0c26d0c8a299db100df13d9f08e70e832aec9b"
+        },
+        "MVI_40141": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_40141.txt",
+          "sha256": "dc64bca09b0f762638781cbfa4ecbc8b981328f0b0f8b380cd30e7205ef748a5"
+        },
+        "MVI_40171": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_40171.txt",
+          "sha256": "71d333bd24ade50982060a47b8a8c0767b9d32bfa31e29840e665f08a1818ec9"
+        },
+        "MVI_40773": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_40773.txt",
+          "sha256": "399ac69cb062140796e539b1f1e6da46691507360e8ea93a4e8c2d078c0d1c13"
+        },
+        "MVI_63553": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_63553.txt",
+          "sha256": "594402e75adeabdf4501e498bc07e9e4873e9ac03621e387b02476c3194f203e"
+        }
+      },
+      "evaluation_code": {
+        "sha256": "4a65e415fdc701c8da546b73fbf7159ee45303a87d20d5c2adb29bd8d1e1d542",
+        "files": 32
+      }
+    },
+    "aggregate": {
+      "aggregation": "macro average with equal sequence weights",
+      "mean": {
+        "HOTA": 62.36396244101464,
+        "DetA": 56.995129300664495,
+        "AssA": 68.66959867287969,
+        "LocA": 83.84636202748882,
+        "MOTA": 63.95686084957689,
+        "MOTP": 81.60729415575437,
+        "IDF1": 77.1881967514599,
+        "IDP": 81.5204165755743,
+        "IDR": 75.75461436800961,
+        "HOTA_50": 74.93793018686094
+      },
+      "sum": {
+        "IDSW": 115,
+        "MT": 186,
+        "ML": 38,
+        "Frag": 577,
+        "CLR_TP": 28503,
+        "CLR_FN": 9227,
+        "CLR_FP": 5314,
+        "GT_dets": 37730,
+        "TRK_dets": 33817
+      },
+      "n_seq": 5,
+      "combined": {
+        "HOTA": 61.1156932811032,
+        "DetA": 54.35590076044499,
+        "AssA": 69.1424858750086,
+        "LocA": 83.65192301053843,
+        "HOTA_50": 73.10097503561782,
+        "MOTA": 61.155579114762794,
+        "MOTP": 81.34823166559414,
+        "IDF1": 75.63419849888884,
+        "IDP": 80.01005411479434,
+        "IDR": 71.71216538563478
+      }
+    }
+  },
+  "yolov8s_botsort_conf0.25": {
+    "per_seq": {
+      "MVI_20033": {
+        "all": {
+          "HOTA": 78.67729766942324,
+          "DetA": 76.39522726206711,
+          "AssA": 81.24081234632303,
+          "LocA": 84.85189338288292,
+          "HOTA_50": 95.23021821129937,
+          "MOTA": 93.25942350332595,
+          "MOTP": 82.91685905332801,
+          "IDSW": 0,
+          "MT": 25,
+          "ML": 0,
+          "Frag": 20,
+          "CLR_TP": 4440,
+          "CLR_FN": 70,
+          "CLR_FP": 234,
+          "IDF1": 96.68989547038328,
+          "IDP": 94.99358151476251,
+          "IDR": 98.4478935698448,
+          "GT_IDs": 25,
+          "TRK_IDs": 54,
+          "GT_dets": 4510,
+          "TRK_dets": 4674,
+          "frames": 784
+        }
+      },
+      "MVI_40141": {
+        "all": {
+          "HOTA": 62.80548979571435,
+          "DetA": 53.91199951574905,
+          "AssA": 73.29462100707056,
+          "LocA": 84.9992743488326,
+          "HOTA_50": 75.2586043069004,
+          "MOTA": 48.97139183542269,
+          "MOTP": 82.86053796543456,
+          "IDSW": 23,
+          "MT": 32,
+          "ML": 0,
+          "Frag": 57,
+          "CLR_TP": 6054,
+          "CLR_FN": 168,
+          "CLR_FP": 2984,
+          "IDF1": 78.4272608125819,
+          "IDP": 66.20933834919231,
+          "IDR": 96.17486338797814,
+          "GT_IDs": 33,
+          "TRK_IDs": 151,
+          "GT_dets": 6222,
+          "TRK_dets": 9038,
+          "frames": 1600
+        }
+      },
+      "MVI_40171": {
+        "all": {
+          "HOTA": 59.684015051247165,
+          "DetA": 50.38793109738815,
+          "AssA": 71.26862623840566,
+          "LocA": 86.5643395920133,
+          "HOTA_50": 66.89658378893003,
+          "MOTA": 51.22894856622667,
+          "MOTP": 85.45903133412577,
+          "IDSW": 15,
+          "MT": 40,
+          "ML": 1,
+          "Frag": 105,
+          "CLR_TP": 5680,
+          "CLR_FN": 3108,
+          "CLR_FP": 1163,
+          "IDF1": 64.56400742115028,
+          "IDP": 73.73958790004384,
+          "IDR": 57.41920801092398,
+          "GT_IDs": 44,
+          "TRK_IDs": 105,
+          "GT_dets": 8788,
+          "TRK_dets": 6843,
+          "frames": 1150
+        }
+      },
+      "MVI_40773": {
+        "all": {
+          "HOTA": 80.64254753057347,
+          "DetA": 77.40439527584792,
+          "AssA": 84.4292770511365,
+          "LocA": 89.17415969749072,
+          "HOTA_50": 90.33896831411381,
+          "MOTA": 87.31313665828814,
+          "MOTP": 88.28499578958659,
+          "IDSW": 2,
+          "MT": 26,
+          "ML": 0,
+          "Frag": 39,
+          "CLR_TP": 6892,
+          "CLR_FN": 667,
+          "CLR_FP": 290,
+          "IDF1": 93.4943355267621,
+          "IDP": 95.94820384294069,
+          "IDR": 91.16285222913085,
+          "GT_IDs": 29,
+          "TRK_IDs": 46,
+          "GT_dets": 7559,
+          "TRK_dets": 7182,
+          "frames": 985
+        }
+      },
+      "MVI_63553": {
+        "all": {
+          "HOTA": 66.86799185034027,
+          "DetA": 61.52343228443097,
+          "AssA": 73.22615660537755,
+          "LocA": 83.51281560982554,
+          "HOTA_50": 81.05739822163916,
+          "MOTA": 74.93193127405877,
+          "MOTP": 81.12754081441572,
+          "IDSW": 25,
+          "MT": 129,
+          "ML": 18,
+          "Frag": 126,
+          "CLR_TP": 8681,
+          "CLR_FN": 1970,
+          "CLR_FP": 675,
+          "IDF1": 84.84030589293748,
+          "IDP": 90.71184266780675,
+          "IDR": 79.68265890526712,
+          "GT_IDs": 190,
+          "TRK_IDs": 243,
+          "GT_dets": 10651,
+          "TRK_dets": 9356,
+          "frames": 1405
+        }
+      }
+    },
+    "sources": {
+      "timing": {
+        "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8s_botsort_conf0.25\\timing.json",
+        "sha256": "238e01566cfb51acaa59965ec8e98f07f95be37894f5a091f146c76cfb771b77"
+      },
+      "tracks": {
+        "MVI_20033": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8s_botsort_conf0.25\\MVI_20033.txt",
+          "sha256": "e08619321e1d91d01f9f83656b3ed606a82e7ee47fb4a9458b9e6d645b57292c"
+        },
+        "MVI_40141": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8s_botsort_conf0.25\\MVI_40141.txt",
+          "sha256": "bb56e7be07c1af9ce0965c38ded4de48ce65386e34c083209753dd4da71dfcef"
+        },
+        "MVI_40171": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8s_botsort_conf0.25\\MVI_40171.txt",
+          "sha256": "98abc1fcdcb0349d0961036b3dd490db162687ea01635f1cbc6f854fa7786bb5"
+        },
+        "MVI_40773": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8s_botsort_conf0.25\\MVI_40773.txt",
+          "sha256": "dafdbb1073a93780c40289510215af8495e395d5aaf7cb6f9066ddcaab74de38"
+        },
+        "MVI_63553": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8s_botsort_conf0.25\\MVI_63553.txt",
+          "sha256": "c5d4f8866228054264195081c2a79954da1b03e709f3ee1c05f7128f286fbe1f"
+        }
+      },
+      "gt": {
+        "MVI_20033": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_20033.txt",
+          "sha256": "3439404f7844270bf4f35dadbf0c26d0c8a299db100df13d9f08e70e832aec9b"
+        },
+        "MVI_40141": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_40141.txt",
+          "sha256": "dc64bca09b0f762638781cbfa4ecbc8b981328f0b0f8b380cd30e7205ef748a5"
+        },
+        "MVI_40171": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_40171.txt",
+          "sha256": "71d333bd24ade50982060a47b8a8c0767b9d32bfa31e29840e665f08a1818ec9"
+        },
+        "MVI_40773": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_40773.txt",
+          "sha256": "399ac69cb062140796e539b1f1e6da46691507360e8ea93a4e8c2d078c0d1c13"
+        },
+        "MVI_63553": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_63553.txt",
+          "sha256": "594402e75adeabdf4501e498bc07e9e4873e9ac03621e387b02476c3194f203e"
+        }
+      },
+      "evaluation_code": {
+        "sha256": "4a65e415fdc701c8da546b73fbf7159ee45303a87d20d5c2adb29bd8d1e1d542",
+        "files": 32
+      }
+    },
+    "aggregate": {
+      "aggregation": "macro average with equal sequence weights",
+      "mean": {
+        "HOTA": 69.7354683794597,
+        "DetA": 63.92459708709663,
+        "AssA": 76.69189864966265,
+        "LocA": 85.82049652620901,
+        "MOTA": 71.14096636746444,
+        "MOTP": 84.12979299137814,
+        "IDF1": 83.60316102476301,
+        "IDP": 84.32051085494922,
+        "IDR": 84.57749522062898,
+        "HOTA_50": 81.75635456857655
+      },
+      "sum": {
+        "IDSW": 65,
+        "MT": 252,
+        "ML": 19,
+        "Frag": 347,
+        "CLR_TP": 31747,
+        "CLR_FN": 5983,
+        "CLR_FP": 5346,
+        "GT_dets": 37730,
+        "TRK_dets": 37093
+      },
+      "n_seq": 5,
+      "combined": {
+        "HOTA": 68.7832281147454,
+        "DetA": 61.74231401285347,
+        "AssA": 77.16394421381216,
+        "LocA": 85.78915018947801,
+        "HOTA_50": 80.35601678733462,
+        "MOTA": 69.8012191889743,
+        "MOTP": 84.03704985696682,
+        "IDF1": 82.45592932654398,
+        "IDP": 83.16393928773623,
+        "IDR": 81.75987278028094
+      }
+    }
+  },
+  "yolov8s_bytetrack_conf0.25": {
+    "per_seq": {
+      "MVI_20033": {
+        "all": {
+          "HOTA": 76.4912377228894,
+          "DetA": 74.2184124971063,
+          "AssA": 79.09924429580929,
+          "LocA": 83.74765429176048,
+          "HOTA_50": 93.57937159078908,
+          "MOTA": 91.33037694013304,
+          "MOTP": 81.59261821626477,
+          "IDSW": 1,
+          "MT": 24,
+          "ML": 0,
+          "Frag": 25,
+          "CLR_TP": 4401,
+          "CLR_FN": 109,
+          "CLR_FP": 281,
+          "IDF1": 95.69190600522192,
+          "IDP": 93.93421614694574,
+          "IDR": 97.51662971175166,
+          "GT_IDs": 25,
+          "TRK_IDs": 54,
+          "GT_dets": 4510,
+          "TRK_dets": 4682,
+          "frames": 784
+        }
+      },
+      "MVI_40141": {
+        "all": {
+          "HOTA": 60.022801214284186,
+          "DetA": 52.63452073293875,
+          "AssA": 68.63183767098545,
+          "LocA": 83.67794173982163,
+          "HOTA_50": 72.8520832595568,
+          "MOTA": 47.669559627129544,
+          "MOTP": 81.26599701632557,
+          "IDSW": 30,
+          "MT": 31,
+          "ML": 0,
+          "Frag": 58,
+          "CLR_TP": 6024,
+          "CLR_FN": 198,
+          "CLR_FP": 3028,
+          "IDF1": 75.5663218541312,
+          "IDP": 63.75386654882899,
+          "IDR": 92.7515268402443,
+          "GT_IDs": 33,
+          "TRK_IDs": 142,
+          "GT_dets": 6222,
+          "TRK_dets": 9052,
+          "frames": 1600
+        }
+      },
+      "MVI_40171": {
+        "all": {
+          "HOTA": 55.42485782169852,
+          "DetA": 47.11111901468416,
+          "AssA": 65.66112828839515,
+          "LocA": 84.32359204095809,
+          "HOTA_50": 62.04467436868809,
+          "MOTA": 45.67592171142467,
+          "MOTP": 82.97996724337293,
+          "IDSW": 17,
+          "MT": 31,
+          "ML": 1,
+          "Frag": 131,
+          "CLR_TP": 5405,
+          "CLR_FN": 3383,
+          "CLR_FP": 1374,
+          "IDF1": 62.58110104708678,
+          "IDP": 71.85425578993951,
+          "IDR": 55.42785616750113,
+          "GT_IDs": 44,
+          "TRK_IDs": 107,
+          "GT_dets": 8788,
+          "TRK_dets": 6779,
+          "frames": 1150
+        }
+      },
+      "MVI_40773": {
+        "all": {
+          "HOTA": 78.06767182695825,
+          "DetA": 75.40891634724696,
+          "AssA": 81.18188141933229,
+          "LocA": 88.10601297008081,
+          "HOTA_50": 89.2742593322738,
+          "MOTA": 87.04855139568726,
+          "MOTP": 86.84011950312089,
+          "IDSW": 11,
+          "MT": 26,
+          "ML": 0,
+          "Frag": 43,
+          "CLR_TP": 6872,
+          "CLR_FN": 687,
+          "CLR_FP": 281,
+          "IDF1": 92.25122349102773,
+          "IDP": 94.86928561442751,
+          "IDR": 89.77377960047626,
+          "GT_IDs": 29,
+          "TRK_IDs": 50,
+          "GT_dets": 7559,
+          "TRK_dets": 7153,
+          "frames": 985
+        }
+      },
+      "MVI_63553": {
+        "all": {
+          "HOTA": 58.99799563738116,
+          "DetA": 54.28181694091213,
+          "AssA": 64.53564745997467,
+          "LocA": 79.3629628169989,
+          "HOTA_50": 71.19679881339323,
+          "MOTA": 61.78762557506337,
+          "MOTP": 76.66051730159181,
+          "IDSW": 27,
+          "MT": 110,
+          "ML": 19,
+          "Frag": 170,
+          "CLR_TP": 7968,
+          "CLR_FN": 2683,
+          "CLR_FP": 1360,
+          "IDF1": 78.3022173281946,
+          "IDP": 83.85506003430532,
+          "IDR": 73.4391136982443,
+          "GT_IDs": 190,
+          "TRK_IDs": 251,
+          "GT_dets": 10651,
+          "TRK_dets": 9328,
+          "frames": 1405
+        }
+      }
+    },
+    "sources": {
+      "timing": {
+        "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8s_bytetrack_conf0.25\\timing.json",
+        "sha256": "4a5b7e18824d5238587747761a1bb44c3deb982ca16616075f9e84ea8ce6f95e"
+      },
+      "tracks": {
+        "MVI_20033": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8s_bytetrack_conf0.25\\MVI_20033.txt",
+          "sha256": "139ad92ad407bdc93a2d4451b59f34b16ce0e9ef8e3cddf18af42f1934e9e4b3"
+        },
+        "MVI_40141": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8s_bytetrack_conf0.25\\MVI_40141.txt",
+          "sha256": "a11593d2783bafeff292e2caa98a41b31dfd045d424247d885f04fe37c1e7f96"
+        },
+        "MVI_40171": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8s_bytetrack_conf0.25\\MVI_40171.txt",
+          "sha256": "cf97b518d3cedc15dc01f5e4f28c17345226355af98a2a42b2c0577ce80249b2"
+        },
+        "MVI_40773": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8s_bytetrack_conf0.25\\MVI_40773.txt",
+          "sha256": "4578a6f0ce6965f9e2a830e077a00eff9f314c8d768589645ebc50e1b1cf5beb"
+        },
+        "MVI_63553": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\outputs\\runs\\dev_full_v2\\dev\\yolov8s_bytetrack_conf0.25\\MVI_63553.txt",
+          "sha256": "20d01ea0dde0be00bf3ca6f6f6a9104bfb8c1e35bc2ab579748ba2a53157bb4c"
+        }
+      },
+      "gt": {
+        "MVI_20033": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_20033.txt",
+          "sha256": "3439404f7844270bf4f35dadbf0c26d0c8a299db100df13d9f08e70e832aec9b"
+        },
+        "MVI_40141": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_40141.txt",
+          "sha256": "dc64bca09b0f762638781cbfa4ecbc8b981328f0b0f8b380cd30e7205ef748a5"
+        },
+        "MVI_40171": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_40171.txt",
+          "sha256": "71d333bd24ade50982060a47b8a8c0767b9d32bfa31e29840e665f08a1818ec9"
+        },
+        "MVI_40773": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_40773.txt",
+          "sha256": "399ac69cb062140796e539b1f1e6da46691507360e8ea93a4e8c2d078c0d1c13"
+        },
+        "MVI_63553": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\VehicleDetectionAndTrafficCounting\\reports\\gt_mot\\MVI_63553.txt",
+          "sha256": "594402e75adeabdf4501e498bc07e9e4873e9ac03621e387b02476c3194f203e"
+        }
+      },
+      "evaluation_code": {
+        "sha256": "4a65e415fdc701c8da546b73fbf7159ee45303a87d20d5c2adb29bd8d1e1d542",
+        "files": 32
+      }
+    },
+    "aggregate": {
+      "aggregation": "macro average with equal sequence weights",
+      "mean": {
+        "HOTA": 65.8009128446423,
+        "DetA": 60.73095710657766,
+        "AssA": 71.82194782689936,
+        "LocA": 83.84363277192399,
+        "MOTA": 66.70240704988757,
+        "MOTP": 81.8678438561352,
+        "IDF1": 80.87855394513244,
+        "IDP": 81.65333682688942,
+        "IDR": 81.78178120364353,
+        "HOTA_50": 77.7894374729402
+      },
+      "sum": {
+        "IDSW": 86,
+        "MT": 222,
+        "ML": 20,
+        "Frag": 427,
+        "CLR_TP": 30670,
+        "CLR_FN": 7060,
+        "CLR_FP": 6324,
+        "GT_dets": 37730,
+        "TRK_dets": 36994
+      },
+      "n_seq": 5,
+      "combined": {
+        "HOTA": 64.59821355550683,
+        "DetA": 58.07491071887503,
+        "AssA": 72.47307925523879,
+        "LocA": 83.68049870563968,
+        "HOTA_50": 75.86102330317529,
+        "MOTA": 64.29896633978267,
+        "MOTP": 81.66737870332858,
+        "IDF1": 79.3533536748568,
+        "IDP": 80.14272584743472,
+        "IDR": 78.5793798038696
+      }
+    }
+  }
+}

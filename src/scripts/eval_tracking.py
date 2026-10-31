@@ -5,15 +5,18 @@ from pathlib import Path
 import numpy as np
 from tqdm import tqdm
 
-from ..data.config import CLASSES, REPORTS_DIR
-from ..eval.tracking_metrics import evaluate_sequence
+from ..data.config import CLASSES, RAW_ROOT, REPORTS_DIR
+from ..data.frames import list_frames
+from ..data.provenance import file_info, write_json
+from ..eval.tracking_metrics import combine_sequence_metrics, evaluate_sequence
+from ..eval.run_validation import validate_tracking_run
 
 GT_MOT_DIR = REPORTS_DIR / "gt_mot"
 TRACKS_DIR = Path("outputs/tracks")
 
 
 def _aggregate(per_seq, splits_seqs):
-    # Macro-average across sequences; additive counters are summed.
+    # Average metrics across sequences and sum additive counters
     expected = set(splits_seqs)
     actual = set(per_seq)
 
@@ -36,6 +39,7 @@ def _aggregate(per_seq, splits_seqs):
             means[k].append(m["all"][k])
     n = len(per_seq)
     return {
+        "aggregation": "macro average with equal sequence weights",
         "mean": {k: float(np.mean(v)) for k, v in means.items()},
         "sum":  sums,
         "n_seq": n,
@@ -50,6 +54,7 @@ def main():
     ap.add_argument("--out-prefix", default=str(REPORTS_DIR / "tracking_eval"))
     ap.add_argument("--classes-aware", action="store_true",
                     help="calculate per-class car/bus/truck additionally (slower)")
+    ap.add_argument("--raw", default=str(RAW_ROOT))
     args = ap.parse_args()
 
     splits = json.loads((REPORTS_DIR / "splits.json").read_text())
@@ -90,40 +95,41 @@ def main():
         if missing_gt:
             ap.error("Missing GT MOT files:\n" + "\n".join(missing_gt))
 
-        expected = set(seqs)
-
         for cfg in cfg_dirs:
-            cfg_dir = split_dir / cfg
-
-            actual = {
-                file.stem
-                for file in cfg_dir.glob("MVI_*.txt")
-                if file.is_file()
-            }
-
-            missing = sorted(expected - actual)
-            unexpected = sorted(actual - expected)
-
-            if missing or unexpected:
-                ap.error(
-                    f"Sequence mismatch in {split}/{cfg}: "
-                    f"missing={missing}, unexpected={unexpected}"
+            try:
+                validate_tracking_run(
+                    split_dir / cfg,
+                    seqs,
+                    raw_root=Path(args.raw),
+                    split=split,
                 )
+            except (ValueError, OSError) as exc:
+                ap.error(str(exc))
 
+        frame_ids = {seq: [fid for fid, _ in list_frames(seq, args.raw)] for seq in seqs}
         results = {}
         for cfg in cfg_dirs:
-            results[cfg] = {"per_seq": {}}
+            raw_results = {}
+            results[cfg] = {"per_seq": {},
+                            "sources": {"timing": file_info(split_dir / cfg / "timing.json"),
+                                        "tracks": {}, "gt": {}}}
             for seq in tqdm(seqs, desc=f"{split}/{cfg}", unit="seq"):
                 gt_path = gt_mot_dir / f"{seq}.txt"
                 trk_path = Path(args.tracks_dir) / split / cfg / f"{seq}.txt"
                 
                 cls_list = CLASSES if args.classes_aware else None
-                results[cfg]["per_seq"][seq] = evaluate_sequence(gt_path, trk_path, classes=cls_list)
+                raw_results[seq] = {}
+                results[cfg]["per_seq"][seq] = evaluate_sequence(
+                    gt_path, trk_path, classes=cls_list, frame_ids=frame_ids[seq],
+                    raw_results=raw_results[seq])
+                results[cfg]["sources"]["tracks"][seq] = file_info(trk_path)
+                results[cfg]["sources"]["gt"][seq] = file_info(gt_path)
             results[cfg]["aggregate"] = _aggregate(results[cfg]["per_seq"], seqs)
+            results[cfg]["aggregate"]["combined"] = combine_sequence_metrics(raw_results)
 
         out_json = Path(f"{args.out_prefix}_{split}.json")
         out_json.parent.mkdir(parents=True, exist_ok=True)
-        out_json.write_text(json.dumps(results, indent=2) + "\n", encoding="utf-8")
+        write_json(out_json, results)
 
         out_md = Path(f"{args.out_prefix}_{split}.md")
         _write_markdown(out_md, split, results, seqs)
@@ -142,7 +148,7 @@ def _write_markdown(out_md, split, results, seqs):
         "",
         f"Number of configs: {len(cfgs)}, Number of sequences: {len(seqs)}.",
         "",
-        "## Aggregate (overall, class-agnostic)",
+        "## Macro average across sequences",
         "",
         "| Config | HOTA (%) | DetA (%) | AssA (%) | MOTA (%) | MOTP (%) | IDF1 (%) | IDSW |",
         "|---|---|---|---|---|---|---|---|",
@@ -154,6 +160,14 @@ def _write_markdown(out_md, split, results, seqs):
             f"| {cfg} | {a['HOTA']:.2f} | {a['DetA']:.2f} | {a['AssA']:.2f} | "
             f"{a['MOTA']:.2f} | {a['MOTP']:.2f} | {a['IDF1']:.2f} | {s['IDSW']} |"
         )
+
+    lines += ["", "## Combined dataset metrics", "",
+              "Combine sequence statistics with TrackEval before calculating dataset metrics", "",
+              "| Config | HOTA (%) | MOTA (%) | IDF1 (%) |",
+              "|---|---|---|---|"]
+    for cfg in cfgs:
+        combined = results[cfg]["aggregate"]["combined"]
+        lines.append(f"| {cfg} | {combined['HOTA']:.2f} | {combined['MOTA']:.2f} | {combined['IDF1']:.2f} |")
 
     lines += ["", "## Per-sequence (HOTA / MOTA / IDF1 / IDSW)", "",
               "| Config | Sequence | HOTA (%) | MOTA (%) | IDF1 (%) | IDSW |",
@@ -171,7 +185,7 @@ def _write_markdown(out_md, split, results, seqs):
 
 
 def _print_summary(results, split):
-    print(f"\n=== {split} - aggregate (overall) ===")
+    print(f"\n=== {split} - macro average across sequences ===")
     print(f"{'Config':<35} {'HOTA%':>7} {'MOTA%':>7} {'IDF1%':>7} {'IDSW':>6}")
     for cfg, r in results.items():
         a = r["aggregate"]["mean"]

@@ -19,11 +19,13 @@ import cv2
 import numpy as np
 
 from ..data.config import RAW_ROOT, REPORTS_DIR
-from ..data.detrac_parser import find_sequence_dir
+from ..data.frames import list_frames as _list_frames, read_frame
+from ..data.provenance import write_json
+from ..eval.line_crossing import validate_line
 
 LINE_COLOR, TEXT_COLOR = (0, 255, 255), (255, 255, 255)
-KEYS = {"a": -25, "d": 25, "w": -250, "x": 250}          # frame scrub steps
-ARROWS = {2424832: -25, 2555904: 25, 2490368: -250, 2621440: 250}  # Left, Right, Up, Down
+KEYS = {"a": -25, "d": 25, "w": -250, "x": 250}          # Define frame navigation steps
+ARROWS = {2424832: -25, 2555904: 25, 2490368: -250, 2621440: 250}  # Map arrow keys to frame navigation steps
 
 
 def load_splits(path=None):
@@ -38,25 +40,17 @@ def load_lines(path):
 
 
 def save_line(lines, path, seq, p1, p2):
-    lines[seq] = {"p1": [int(p1[0]), int(p1[1])], "p2": [int(p2[0]), int(p2[1])]}
-    Path(path).parent.mkdir(parents=True, exist_ok=True)
-    Path(path).write_text(json.dumps(lines, indent=2) + "\n")
+    validate_line(p1, p2)
+    value = {"p1": list(map(int, p1)), "p2": list(map(int, p2))}
+    validate_line(value["p1"], value["p2"])
+    updated = {**lines, seq: value}
+    write_json(path, updated)
+    lines.update(updated)
 
 
 def _parse_xy(s):
     x, y = s.replace("(", "").replace(")", "").split(",")
     return float(x), float(y)
-
-
-def _list_frames(seq_name, raw_root=RAW_ROOT):
-    """[(frame_id, path)] sorted by frame id - same rule as pipeline.list_frames
-    (duplicated here so this tool does not pull in torch/ultralytics)."""
-    import re
-    seq_dir = find_sequence_dir(raw_root, seq_name)
-    if seq_dir is None:
-        raise FileNotFoundError(f"frames of {seq_name} not found under {raw_root}")
-    frames = [(int(re.sub(r"\D", "", p.stem)), p) for p in seq_dir.glob("*.jpg")]
-    return sorted(frames)
 
 
 def draw_line(img, p1, p2=None, cursor=None):
@@ -86,11 +80,14 @@ def _hud(img, seq, idx, n, pts, msg=""):
 def write_preview(frames, seq, line, path, frame_idx=None):
     idx = len(frames) // 2 if frame_idx is None else max(0, min(len(frames) - 1, frame_idx))
     fid, fpath = frames[idx]
-    img = draw_line(cv2.imread(str(fpath)), tuple(line["p1"]), tuple(line["p2"]))
+    image = read_frame(fpath)
+    validate_line(line["p1"], line["p2"], (image.shape[1], image.shape[0]))
+    img = draw_line(image, tuple(line["p1"]), tuple(line["p2"]))
     cv2.putText(img, f"counting line - {seq} (frame {fid})", (8, img.shape[0] - 12),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, TEXT_COLOR, 2, cv2.LINE_AA)
     Path(path).parent.mkdir(parents=True, exist_ok=True)
-    cv2.imwrite(str(path), img)
+    if not cv2.imwrite(str(path), img):
+        raise RuntimeError(f"Cannot write preview image: {path}")
 
 
 def interactive(seq, frames, start_pts, lines_path, preview_dir, lines):
@@ -109,7 +106,7 @@ def interactive(seq, frames, start_pts, lines_path, preview_dir, lines):
     cv2.setMouseCallback(win, on_mouse)
     while True:
         _, fpath = frames[idx]
-        img = cv2.imread(str(fpath))
+        img = read_frame(fpath)
         p1, p2 = (pts + [None, None])[:2]
 
         preview = draw_line(img, p1, p2)
@@ -117,6 +114,8 @@ def interactive(seq, frames, start_pts, lines_path, preview_dir, lines):
         cv2.imshow(win, preview)
 
         k = cv2.waitKeyEx(30)
+        if cv2.getWindowProperty(win, cv2.WND_PROP_VISIBLE) < 1:
+            return False
         key = chr(k & 0xFF).lower() if 32 <= (k & 0xFF) < 127 else ""
         if k in ARROWS or key in KEYS:
             idx = max(0, min(len(frames) - 1, idx + ARROWS.get(k, KEYS.get(key, 0))))
@@ -126,7 +125,12 @@ def interactive(seq, frames, start_pts, lines_path, preview_dir, lines):
             if len(pts) < 2:
                 msg = "need 2 points before saving"
                 continue
-            save_line(lines, lines_path, seq, pts[0], pts[1])
+            try:
+                validate_line(pts[0], pts[1], (img.shape[1], img.shape[0]))
+                save_line(lines, lines_path, seq, pts[0], pts[1])
+            except ValueError as exc:
+                msg = str(exc)
+                continue
             write_preview(frames, seq, lines[seq], Path(preview_dir) / f"{seq}.png", idx)
             cv2.destroyWindow(win)
             return True
@@ -161,7 +165,10 @@ def main():
             ap.error("--p1 and --p2 require --sequence (headless mode places one line per call)")
         for seq in args.sequence:
             frames = _list_frames(seq, args.raw)
-            save_line(lines, args.lines, seq, _parse_xy(args.p1), _parse_xy(args.p2))
+            image = read_frame(frames[0][1])
+            p1, p2 = _parse_xy(args.p1), _parse_xy(args.p2)
+            validate_line(p1, p2, (image.shape[1], image.shape[0]))
+            save_line(lines, args.lines, seq, p1, p2)
             write_preview(frames, seq, lines[seq], preview_dir / f"{seq}.png", args.frame)
             print(f"[saved] {seq}: p1={lines[seq]['p1']} p2={lines[seq]['p2']} -> {args.lines}")
         return

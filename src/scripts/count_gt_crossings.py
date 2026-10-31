@@ -3,39 +3,19 @@ import json
 from collections import Counter
 from pathlib import Path
 
-import cv2
-from tqdm import tqdm
 
 from ..data.config import CLASSES, DETRAC_TO_ID, RAW_ROOT, REPORTS_DIR
-from ..data.detrac_parser import find_sequence_dir, load_all
-from ..eval.line_crossing import count_events, in_regions, tally
+from ..data.detrac_parser import load_all
+from ..data.frames import list_frames as _list_frames, resolve_naming, read_frame
+from ..data.provenance import write_json
+from ..eval.line_crossing import DEFAULT_MAX_FRAME_GAP, count_events, counting_protocol, in_regions, tally, validate_line
 
-CLASS_COLORS = {0: (80, 200, 80), 1: (40, 140, 255), 2: (80, 80, 255)}   # BGR: car, bus, truck
+CLASS_COLORS = {0: (80, 200, 80), 1: (40, 140, 255), 2: (80, 80, 255)}   # Define BGR colours for car bus and truck
 LINE_COLOR = (0, 255, 255)
 
 
-def _list_frames(seq_name, raw_root=RAW_ROOT):
-    # [(frame_id, path)] sorted by frame id - same rule as pipeline.list_frames (duplicated here so this script does not pull in torch/ultralytics)
-    import re
-    seq_dir = find_sequence_dir(raw_root, seq_name)
-    if seq_dir is None:
-        raise FileNotFoundError(f"frames of {seq_name} not found under {raw_root}")
-    frames = [(int(re.sub(r"\D", "", p.stem)), p) for p in seq_dir.glob("*.jpg")]
-    return sorted(frames)
-
-
-def _resolve_naming(seq_dir, frame_ids):
-    # Offset between XML frame ids and IMG%05d.jpg names - same rule as convert_yolo
-    best, best_hits = 0, -1
-    for off in (0, 1):
-        hits = sum((seq_dir / f"IMG{fid + off:05d}.jpg").exists() for fid in frame_ids[:50])
-        if hits > best_hits:
-            best, best_hits = off, hits
-    return best
-
-
-def _trajectories(ann):
-    #{target_id: (cls_id, [(fid, cx, cy), ...])} from a parsed SequenceAnn
+def _trajectories(ann, regions=(), offset=0):
+    # Build target trajectories from sequence annotations
     trajs = {}
     for fid in sorted(ann.frames):
         for t in ann.frames[fid].targets:
@@ -43,67 +23,77 @@ def _trajectories(ann):
             if cid is None:
                 continue
             c = (t.box.x + t.box.w / 2, t.box.y + t.box.h / 2)
-            trajs.setdefault(t.track_id, (cid, []))[1].append((fid, c[0], c[1]))
+            if not in_regions(c, regions):
+                trajs.setdefault(t.track_id, (cid, []))[1].append((fid + offset, c[0], c[1]))
     return trajs
 
 
-def count_sequence(ann, line):
-    #Events + both count variants for one sequence. Returns (result_dict, events_full)
-    regions = [r.as_xyxy() for r in ann.ignored_regions]
-    trajs = _trajectories(ann)
-    events = count_events(((tid, cid, pts) for tid, (cid, pts) in trajs.items()),
-                          line["p1"], line["p2"])
-    for e in events:
-        e["ignored"] = in_regions(e["point"], regions)
-    kept = [e for e in events if not e["ignored"]]
-    res = {"all": tally(events), "exclude_ignored": tally(kept),
-           "events": [[e["frame"], e["target"], e["cls_id"], e["direction"], int(e["ignored"])]
-                      for e in events]}
-    return res, events
+def count_sequence(ann, line, max_frame_gap=DEFAULT_MAX_FRAME_GAP, offset=0):
+    regions = [region.as_xyxy() for region in ann.ignored_regions]
+
+    def events_for(excluded):
+        trajectories = _trajectories(ann, excluded, offset)
+        return count_events(((tid, cid, points) for tid, (cid, points) in trajectories.items()),
+                            line["p1"], line["p2"], max_frame_gap=max_frame_gap)
+
+    events = events_for(())
+    kept = events_for(regions)
+    for event in events:
+        event["ignored"] = in_regions(event["point"], regions)
+    result = {"all": tally(events), "exclude_ignored": tally(kept),
+              "event_fields": ["frame", "target", "cls_id", "direction", "event_point_ignored"],
+              "events": [[e["frame"], e["target"], e["cls_id"], e["direction"], int(e["ignored"])]
+                         for e in events],
+              "exclude_ignored_events": kept,
+              "protocol": counting_protocol(line, regions, max_frame_gap)}
+    return result, kept
 
 
 def write_video(ann, line, seq, events, out_path, fps=25, raw_root=RAW_ROOT):
-    # GT boxes + line + crossing flashes + running (exclude_ignored) counter
-    frame_ids = sorted(ann.frames)
-    seq_dir = find_sequence_dir(raw_root, seq)
-    offset = _resolve_naming(seq_dir, frame_ids)
-    jpg = {f: seq_dir / f"IMG{f + offset:05d}.jpg" for f in frame_ids}
+    import cv2
+    from tqdm import tqdm
 
+    frames = _list_frames(seq, raw_root)
+    offset = resolve_naming(frames[0][1].parent, sorted(ann.frames))
+    first = read_frame(frames[0][1])
+    height, width = first.shape[:2]
+    validate_line(line["p1"], line["p2"], (width, height))
+    out_path = Path(out_path)
+    if out_path.exists():
+        raise FileExistsError(f"Video already exists: {out_path}")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    writer = cv2.VideoWriter(str(out_path), cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height))
     crosses = {}
-    for e in events:
-        if not e.get("ignored"):
-            crosses.setdefault(e["frame"], []).append((e["point"][0], e["point"][1], e["cls_id"]))
-    events_at = Counter(e["frame"] for e in events if not e.get("ignored"))
-
-    first = cv2.imread(str(jpg[frame_ids[0]]))
-    W, H = first.shape[1], first.shape[0]
-    writer = cv2.VideoWriter(str(out_path), cv2.VideoWriter_fourcc(*"mp4v"), fps, (W, H))
-    p1, p2 = tuple(int(v) for v in line["p1"]), tuple(int(v) for v in line["p2"])
-    last, run_total = first, 0
-    for fid in tqdm(frame_ids, desc=f"video {seq}", unit="frame", leave=False):
-        img = cv2.imread(str(jpg[fid]))
-        if img is None:
-            img = last.copy()
-        else:
-            last = img
-        for t in ann.frames[fid].targets:
-            cid = DETRAC_TO_ID.get(t.cls)
-            if cid is None:
-                continue
-            x1, y1, x2, y2 = (int(v) for v in t.box.as_xyxy())
-            cv2.rectangle(img, (x1, y1), (x2, y2), CLASS_COLORS[cid], 2)
-        cv2.line(img, p1, p2, LINE_COLOR, 2, cv2.LINE_AA)
-        for (x, y, _) in crosses.get(fid, []):
-            cv2.circle(img, (int(x), int(y)), 18, LINE_COLOR, 3, cv2.LINE_AA)
-        for back in range(1, 13):
-            for (x, y, _) in crosses.get(fid - back, []):
-                cv2.circle(img, (int(x), int(y)), 18, (120, 120, 120), 2, cv2.LINE_AA)
-        run_total += events_at.get(fid, 0)
-        cv2.rectangle(img, (0, 0), (330, 30), (0, 0, 0), -1)
-        cv2.putText(img, f"{seq} f{fid}  crossed: {run_total}", (8, 21),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1, cv2.LINE_AA)
-        writer.write(img)
-    writer.release()
+    for event in events:
+        crosses.setdefault(event["frame"], []).append(event["point"])
+    p1, p2 = (tuple(map(int, line[key])) for key in ("p1", "p2"))
+    run_total = 0
+    try:
+        if not writer.isOpened():
+            raise RuntimeError(f"Cannot open video writer: {out_path}")
+        for fid, path in tqdm(frames, desc=f"video {seq}", unit="frame", leave=False):
+            image = read_frame(path)
+            if image.shape[:2] != (height, width):
+                raise ValueError(f"Frame size changed at {path}")
+            frame_ann = ann.frames.get(fid - offset)
+            for target in frame_ann.targets if frame_ann is not None else []:
+                cid = DETRAC_TO_ID.get(target.cls)
+                if cid is None:
+                    continue
+                x1, y1, x2, y2 = map(int, target.box.as_xyxy())
+                cv2.rectangle(image, (x1, y1), (x2, y2), CLASS_COLORS[cid], 2)
+            cv2.line(image, p1, p2, LINE_COLOR, 2, cv2.LINE_AA)
+            for back in range(13):
+                for x, y in crosses.get(fid - back, []):
+                    colour = LINE_COLOR if back == 0 else (120, 120, 120)
+                    cv2.circle(image, (int(x), int(y)), 18, colour, 2, cv2.LINE_AA)
+            run_total += len(crosses.get(fid, []))
+            cv2.rectangle(image, (0, 0), (400, 30), (0, 0, 0), -1)
+            cv2.putText(image, f"{seq} f{fid} crossed: {run_total}", (8, 21),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1, cv2.LINE_AA)
+            writer.write(image)
+    finally:
+        writer.release()
 
 
 def main():
@@ -114,7 +104,12 @@ def main():
     ap.add_argument("--md", default=str(REPORTS_DIR / "gt_counts.md"))
     ap.add_argument("--vis-dir", default=None, help="if set, write a check mp4 per sequence there")
     ap.add_argument("--raw", default=str(RAW_ROOT))
+    ap.add_argument("--max-frame-gap", type=int, default=DEFAULT_MAX_FRAME_GAP)
     args = ap.parse_args()
+    if args.max_frame_gap < 1:
+        ap.error("--max-frame-gap must be positive")
+
+    from PIL import Image
 
     splits = json.loads((REPORTS_DIR / "splits.json").read_text())
     lines = json.loads(Path(args.lines).read_text())
@@ -142,7 +137,13 @@ def main():
         result[split] = {}
         for seq in splits[split]:
             ann = anns[seq]
-            res, ev_full = count_sequence(ann, lines[seq])
+            frames = _list_frames(seq, args.raw)
+            offset = resolve_naming(frames[0][1].parent, sorted(ann.frames))
+            with Image.open(frames[0][1]) as image:
+                validate_line(lines[seq]["p1"], lines[seq]["p2"], image.size)
+            res, ev_full = count_sequence(ann, lines[seq], args.max_frame_gap, offset)
+            res["sources"] = {"lines": str(Path(args.lines).resolve()),
+                              "raw_root": str(Path(args.raw).resolve())}
             res["line"] = lines[seq]
             result[split][seq] = res
             print(f"[gt] {split}/{seq}: " +
@@ -155,10 +156,7 @@ def main():
                             Path(args.vis_dir) / f"gt_line_{seq}.mp4", raw_root=args.raw)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(
-        json.dumps(result, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    write_json(out_path, result)
 
     summary_splits = [
         split
@@ -186,10 +184,11 @@ def main():
         return head + rows
 
     md = ("# Ground-truth line-crossing counts\n\n"
-          "Counting line: `reports/counting_lines.json`; rule: box centre crosses the line once per target\n\n"
-          "## Tracking-comparable protocol (targets in ignored regions excluded)\n\n" + table("exclude_ignored") +
+          f"Counting lines in {args.lines}\n\n"
+          f"Regenerated splits {', '.join(args.splits)} with maximum observation gap {args.max_frame_gap} frames\n\n"
+          "## Tracking-comparable protocol (observations in ignored regions excluded)\n\n" + table("exclude_ignored") +
           "\n## All annotated targets\n\n" + table("all") +
-          "\nPer-target events (frame, target, class, direction, ignored) are in `gt_counts.json`\n")
+          "\nRead raw events from events and comparable events from exclude_ignored_events in the JSON output\n")
     md_path = Path(args.md)
     md_path.parent.mkdir(parents=True, exist_ok=True)
     md_path.write_text(md, encoding="utf-8")

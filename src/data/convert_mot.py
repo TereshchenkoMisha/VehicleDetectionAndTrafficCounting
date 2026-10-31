@@ -1,23 +1,10 @@
-"""Конвертация UA-DETRAC XML в MOT-формат с сохранением track_id.
-
-Frame_id в MOT-файле = IMG filename digit (тот же, что в track-файлах pipeline.list_frames),
-поэтому используется тот же offset, что и в convert_yolo._resolve_naming.
-
-GT-боксы, центр которых попадает в ignored-регион, дропаются — тот же протокол,
-что у детектора (detector_eval._drop_ignored_gt) и трекера (pipeline.keep_mask).
-"""
+"""Convert XML boxes to MOT rows using source image frame IDs"""
 import json
 from pathlib import Path
 
-from .config import CLASSES, DETRAC_TO_ID, RAW_ROOT, REPORTS_DIR
+from .config import DETRAC_TO_ID, RAW_ROOT, REPORTS_DIR
 from .detrac_parser import find_sequence_dir, load_all
-
-
-def _resolve_naming(seq_dir, frame_ids):
-    """Тот же offset 0/1, что в convert_yolo._resolve_naming — НЕ дублировать логику,
-    импортировать из convert_yolo при возможности."""
-    from .convert_yolo import _resolve_naming as _r
-    return _r(seq_dir, frame_ids)
+from .frames import resolve_naming as _resolve_naming
 
 
 def _in_ignored(cx, cy, regions_xyxy):
@@ -28,16 +15,7 @@ def _in_ignored(cx, cy, regions_xyxy):
 
 
 def write_gt_mot(ann, seq_dir, ignored_regions, out_path: Path):
-    """Конвертирует одну SequenceAnn в MOT-файл.
-
-    Формат строки: frame,track_id,x,y,w,h,conf,cls,vis,-1
-      - frame: IMG filename digit = XML frame_num + offset (как в треках)
-      - track_id: из XML target id (int)
-      - x,y,w,h: top-left + size в пикселях (как в треках)
-      - conf: 1.0 для GT
-      - cls: локальный id (0=car, 1=bus, 2=truck; van→0, others→2)
-      - vis: 1.0 (полная видимость — упрощение, можно использовать occlusion из XML)
-    """
+    """Write GT boxes with original target IDs and local class IDs"""
     frame_ids = sorted(ann.frames)
     offset = _resolve_naming(seq_dir, frame_ids)
     rows = []
@@ -60,22 +38,23 @@ def write_gt_mot(ann, seq_dir, ignored_regions, out_path: Path):
 
 
 def convert_all(sequences, out_dir, raw_root=RAW_ROOT, ignored_path=None):
-    """Конвертирует список последовательностей в GT MOT-файлы.
-
-    ignored_path: путь к reports/ignored_regions.json (если None — берётся из REPORTS_DIR).
-    """
+    """Convert selected sequences with the configured ignored regions"""
     ignored = json.loads(Path(ignored_path or REPORTS_DIR / "ignored_regions.json").read_text())
     anns, _ = load_all(raw_root)
     out_dir = Path(out_dir)
+    plans = []
     for seq in sequences:
         if seq not in anns:
-            print(f"[warn] no XML for {seq}, skipped")
-            continue
+            raise FileNotFoundError(f"No XML annotations for {seq}")
         seq_dir = find_sequence_dir(raw_root, seq)
         if seq_dir is None:
-            print(f"[warn] no frames for {seq}, skipped")
-            continue
-        regions = ignored.get(seq, [])
+            raise FileNotFoundError(f"No source frames for {seq}")
+        if seq not in ignored:
+            raise ValueError(f"Missing ignored region entry for {seq}")
+        _resolve_naming(seq_dir, sorted(anns[seq].frames))
+        plans.append((seq, seq_dir, ignored[seq]))
+
+    for seq, seq_dir, regions in plans:
         write_gt_mot(anns[seq], seq_dir, regions, out_dir / f"{seq}.txt")
         print(f"[gt-mot] {seq}: written")
     return out_dir

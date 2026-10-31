@@ -5,7 +5,6 @@ The detector (`model.predict`) and the tracker (`tracker.update`) are called sep
 lies in an ignored region are dropped BEFORE they reach the tracker - the same rule the detector eval uses.
 """
 import json
-import re
 import time
 from pathlib import Path
 
@@ -16,9 +15,9 @@ from ultralytics.trackers import BOTSORT, BYTETracker
 from ultralytics.utils import YAML, IterableSimpleNamespace
 
 from ..data.config import RAW_ROOT
-from ..data.detrac_parser import find_sequence_dir
+from ..data.frames import list_frames, read_frame
 
-COCO_CLASSES = [2, 5, 7]                      # car, bus, truck
+COCO_CLASSES = [2, 5, 7]                      # Select COCO classes for car bus and truck
 COCO_ID_TO_LOCAL = {2: 0, 5: 1, 7: 2}
 TRACKER_CLASSES = {"bytetrack": BYTETracker, "botsort": BOTSORT}
 CONFIG_DIR = Path("configs")
@@ -34,15 +33,6 @@ def load_ignored(path) -> dict:
     return json.loads(Path(path).read_text())
 
 
-def list_frames(seq_name: str, raw_root=RAW_ROOT):
-    """Full-rate frames of a sequence as [(frame_id, path)], sorted by frame id (1-based, as in DETRAC)."""
-    seq_dir = find_sequence_dir(raw_root, seq_name)
-    if seq_dir is None:
-        raise FileNotFoundError(f"frames of {seq_name} not found under {raw_root}")
-    frames = [(int(re.sub(r"\D", "", p.stem)), p) for p in seq_dir.glob("*.jpg")]
-    return sorted(frames)
-
-
 def keep_mask(xywh: np.ndarray, regions) -> np.ndarray:
     """True for detections whose centre is NOT inside any ignored region."""
     keep = np.ones(len(xywh), dtype=bool)
@@ -53,7 +43,8 @@ def keep_mask(xywh: np.ndarray, regions) -> np.ndarray:
 
 def _sync(device):
     if torch.cuda.is_available() and str(device) != "cpu":
-        torch.cuda.synchronize()
+        selected = int(device) if str(device).isdigit() else device
+        torch.cuda.synchronize(device=selected)
 
 
 def warmup(model, frame, imgsz, device, n=10):
@@ -68,8 +59,19 @@ def run_sequence(model, tracker, frames, regions, conf, imgsz, iou, device, on_f
     Returns (mot_rows, det_s, trk_s). MOT row: (frame, id, x, y, w, h, score, cls) with cls = local class id.
     """
     rows, det_s, trk_s = [], 0.0, 0.0
+    expected_shape = None
+
     for fid, path in frames:
-        img = cv2.imread(str(path))                                  # image I/O is not timed
+        img = read_frame(path)
+        current_shape = img.shape[:2]
+
+        if expected_shape is None:
+            expected_shape = current_shape
+        elif current_shape != expected_shape:
+            raise ValueError(
+                f"Frame size changed at {path}: "
+                f"expected {expected_shape}, got {current_shape}"
+            )
 
         t0 = time.perf_counter()
         res = model.predict(img, imgsz=imgsz, conf=conf, iou=iou, classes=COCO_CLASSES,
@@ -80,7 +82,8 @@ def run_sequence(model, tracker, frames, regions, conf, imgsz, iou, device, on_f
 
         if len(det):
             det = det[keep_mask(det.xywh, regions)]
-        tracks = tracker.update(det, img)                            # [x1,y1,x2,y2,id,score,cls,idx]
+        tracks = tracker.update(det, img)                            # Return box coordinates identity score class and detection index
+        _sync(device)
         t2 = time.perf_counter()
 
         det_s += t1 - t0

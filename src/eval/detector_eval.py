@@ -3,18 +3,18 @@ import time
 from pathlib import Path
 
 import numpy as np
-import torch
-from tqdm import tqdm
-from torchmetrics.detection import MeanAveragePrecision
 
-from ultralytics import YOLO
 
-from ..data.config import CLASSES, weights_path
+from ..data.config import CLASSES, SEED, weights_path
+from ..reproducibility import set_seed
+from ..data.provenance import file_info
 
 COCO_ID_TO_LOCAL = {2: 0, 5: 1, 7: 2}
 
 
 def _load_gt(label_path: Path, W, H):
+    import torch
+
     if not label_path.is_file():
         raise FileNotFoundError(
             f"GT label file is missing: {label_path}. "
@@ -28,6 +28,12 @@ def _load_gt(label_path: Path, W, H):
             continue
 
         c, cx, cy, w, h = (float(v) for v in line.split())
+        if not np.isfinite([c, cx, cy, w, h]).all():
+            raise ValueError(f"Nonfinite label values: {label_path}")
+        if not c.is_integer() or not 0 <= c < len(CLASSES):
+            raise ValueError(f"Invalid label class: {label_path}")
+        if not (0 <= cx <= 1 and 0 <= cy <= 1 and 0 < w <= 1 and 0 < h <= 1):
+            raise ValueError(f"Invalid normalized box: {label_path}")
 
         boxes.append([
             (cx - w / 2) * W,
@@ -49,7 +55,9 @@ def _in_ignored_region(cx, cy, regions):
     return any(x1 <= cx <= x2 and y1 <= cy <= y2 for x1, y1, x2, y2 in regions)
 
 def _drop_ignored_gt(gt, regions):
-    """Exclude GT boxes whose centres lie in ignored regions."""
+    """Exclude GT boxes with centres inside ignored regions"""
+    import torch
+
     boxes = gt["boxes"]
 
     if boxes.numel() == 0 or not regions:
@@ -108,22 +116,51 @@ def _f(v):
     return round(v, 4) if np.isfinite(v) else None
 
 
-def evaluate_detector(weights, data_root, split="test", imgsz=960, device=None) -> dict:
+def _ap(value):
+    return None if float(value) < 0 else _f(value)
+
+
+def evaluate_detector(weights, data_root, split="test", imgsz=960, device=None, seed=SEED) -> dict:
+    import torch
+    from tqdm import tqdm
+    from torchmetrics.detection import MeanAveragePrecision
+    import cv2
+    import platform
+    import ultralytics
+    import torchmetrics
+    from ultralytics import YOLO
+
+    set_seed(seed)
     data_root = Path(data_root)
+    src = data_root / "images" / split
+    images = sorted(path for path in src.iterdir()
+                    if path.is_file() and path.suffix.lower() in {".jpg", ".jpeg"})
+    if len({image.stem for image in images}) != len(images):
+        raise ValueError(f"Duplicate image stems in {src}")
+    if not images:
+        raise ValueError(f"No prepared images in {src}")
+    ignored = json.loads((data_root / "ignored_regions.json").read_text(encoding="utf-8"))
+    sequences = {image.stem.split("_f")[0] for image in images}
+    if sequences - set(ignored):
+        raise ValueError(f"Missing ignored region entries: {sorted(sequences - set(ignored))}")
+    resolved_weights = weights_path(weights)
     metric = MeanAveragePrecision(iou_type="bbox", class_metrics=True)
     metric.warn_on_many_detections = False
-    model = YOLO(weights_path(weights))
-    ignored = json.loads((data_root / "ignored_regions.json").read_text())
+    model = YOLO(resolved_weights)
     agg = {c: {"tp": 0, "fp": 0, "fn": 0} for c in CLASSES}
     n_frames, t0 = 0, time.perf_counter()
 
-    src = data_root / "images" / split
-    n_total = sum(1 for _ in src.glob("*.jpg"))
-    stream = model.predict(source=str(src), stream=True, imgsz=imgsz, conf=0.001, device=device,
+    n_total = len(images)
+    seen = set()
+    expected_stems = {image.stem for image in images}
+    stream = model.predict(source=str(src), stream=True, imgsz=imgsz, conf=0.001, iou=0.7, device=device,
                            classes=sorted(COCO_ID_TO_LOCAL), verbose=False)
     for res in tqdm(stream, total=n_total, unit="frame", desc=f"eval {Path(str(weights)).stem} [{split}]"):
         n_frames += 1
         stem = Path(res.path).stem
+        if stem in seen or stem not in expected_stems:
+            raise ValueError(f"Unexpected or duplicate prediction frame: {res.path}")
+        seen.add(stem)
         H, W = res.orig_shape
 
         regions = ignored.get(stem.split("_f")[0], [])
@@ -150,6 +187,9 @@ def evaluate_detector(weights, data_root, split="test", imgsz=960, device=None) 
             for k in ("tp", "fp", "fn"):
                 agg[CLASSES[c]][k] += d[k]
 
+    if n_frames != n_total:
+        raise ValueError(f"Incomplete detector evaluation: {n_frames}/{n_total} frames")
+
     dt = (time.perf_counter() - t0) / max(n_frames, 1) * 1000
     rm = metric.compute()
 
@@ -163,7 +203,7 @@ def evaluate_detector(weights, data_root, split="test", imgsz=960, device=None) 
         p = tp / (tp + fp) if tp + fp else None
         r = tp / (tp + fn) if tp + fn else None
 
-        # F1 calculated using the same threshold as P and R
+        # Calculate F1 with the precision and recall thresholds
         denom = 2 * tp + fp + fn
         f1 = 2 * tp / denom if denom else None
 
@@ -177,7 +217,7 @@ def evaluate_detector(weights, data_root, split="test", imgsz=960, device=None) 
             "AP50_95": None,
         }
 
-    # Match per-class AP using the class IDs returned by TorchMetrics
+    # Match AP values using the class IDs returned by TorchMetrics
     class_ids = rm.get("classes")
     map_per_class = rm.get("map_per_class")
 
@@ -193,7 +233,19 @@ def evaluate_detector(weights, data_root, split="test", imgsz=960, device=None) 
                     None if v < 0 else _f(v)
                 )
 
-    return {"model": weights, "split": split, "imgsz": imgsz,
+    return {"sources": {"weights": file_info(resolved_weights), "data_root": str(data_root.resolve()),
+                        "ignored": file_info(data_root / "ignored_regions.json")},
+            "protocol": {"predict_conf": 0.001, "nms_iou": 0.7, "pr_conf": 0.25, "pr_iou": 0.5,
+                         "ignored_rule": "observation_centres"},
+            "model": weights, "split": split, "imgsz": imgsz,
+            "seed": seed, "deterministic": True,
+            "env": {"torch": torch.__version__, "numpy": np.__version__,
+                    "ultralytics": ultralytics.__version__,
+                    "torchmetrics": torchmetrics.__version__,
+                    "cuda": torch.version.cuda, "cudnn": torch.backends.cudnn.version(),
+                    "opencv": cv2.__version__, "python": platform.python_version(),
+                    "device": str(model.device)},
             "frames": n_frames, "ms_per_frame": round(dt, 1),
-            "mAP@0.5": _f(rm["map_50"]), "mAP@0.5:0.95": _f(rm["map"]),
-            "mAP@0.75": _f(rm["map_75"]), "per_class": per_class}
+            "timing_scope": "prediction, image loading and metric updates",
+            "mAP@0.5": _ap(rm["map_50"]), "mAP@0.5:0.95": _ap(rm["map"]),
+            "mAP@0.75": _ap(rm["map_75"]), "per_class": per_class}

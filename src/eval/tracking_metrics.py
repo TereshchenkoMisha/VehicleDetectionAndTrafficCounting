@@ -1,37 +1,15 @@
 import numpy as np
-from pathlib import Path
-from trackeval.metrics import HOTA, CLEAR, Identity
-
-
-CLASSES = ["car", "bus", "truck"]
-
-
-def load_mot(path):
-    # Parses an MOT file -> {frame_id: [(track_id, xyxy, cls, conf), ...]}
-    frames = {}
-    with open(path) as f:
-        for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            parts = line.split(",")
-            fid = int(parts[0])
-            tid = int(parts[1])
-            x, y, w, h = float(parts[2]), float(parts[3]), float(parts[4]), float(parts[5])
-            conf = float(parts[6]) if len(parts) > 6 else 1.0
-            cls = int(parts[7]) if len(parts) > 7 else 0
-            xyxy = [x, y, x + w, y + h]
-            frames.setdefault(fid, []).append((tid, xyxy, cls, conf))
-    return frames
+from ..data.config import CLASSES
+from ..data.mot import load_mot
 
 
 def _iou_matrix(gt_boxes, trk_boxes):
-    # IoU matrix [num_gt × num_trk] from two xyxy arrays
+    # Calculate the IoU matrix from two box arrays
     if len(gt_boxes) == 0 or len(trk_boxes) == 0:
         return np.zeros((len(gt_boxes), len(trk_boxes)), dtype=float)
     g = np.asarray(gt_boxes, dtype=float)
     t = np.asarray(trk_boxes, dtype=float)
-    # pairwise: [G, 1, 4] vs [1, T, 4]
+    # Broadcast box coordinates across pairs
     g1, t1 = g[:, None, :], t[None, :, :]
     ix1 = np.maximum(g1[..., 0], t1[..., 0])
     iy1 = np.maximum(g1[..., 1], t1[..., 1])
@@ -41,14 +19,19 @@ def _iou_matrix(gt_boxes, trk_boxes):
     area_g = (g1[..., 2] - g1[..., 0]) * (g1[..., 3] - g1[..., 1])
     area_t = (t1[..., 2] - t1[..., 0]) * (t1[..., 3] - t1[..., 1])
     union = area_g + area_t - inter
-    return np.where(union > 0, inter / union, 0.0)
+    return np.divide(inter, union, out=np.zeros_like(inter), where=union > 0)
 
 
-def _build_trackeval_data(gt_frames, trk_frames, cls_filter=None):
-    # Assembles the data structure expected by HOTA/CLEAR/Identity
-    all_frames = sorted(set(gt_frames) | set(trk_frames))
+def _build_trackeval_data(gt_frames, trk_frames, cls_filter=None, frame_ids=None):
+    # Assemble data for HOTA CLEAR and Identity
+    observed = set(gt_frames) | set(trk_frames)
+    all_frames = sorted(observed) if frame_ids is None else list(frame_ids)
+    if len(all_frames) != len(set(all_frames)) or all_frames != sorted(all_frames):
+        raise ValueError("Frame IDs must be unique and sorted")
+    if observed - set(all_frames):
+        raise ValueError("MOT rows contain frames outside the source sequence")
 
-    # First pass: collect unique IDs and build remap tables
+    # Collect unique IDs for remapping
     gt_id_set, trk_id_set = set(), set()
     for f in all_frames:
         for t in gt_frames.get(f, []):
@@ -58,11 +41,11 @@ def _build_trackeval_data(gt_frames, trk_frames, cls_filter=None):
             if cls_filter is None or t[2] == cls_filter:
                 trk_id_set.add(t[0])
 
-    # Remap: {original_id -> 0, 1, 2, ...}
+    # Map original IDs to contiguous indices
     gt_id_map = {orig: new for new, orig in enumerate(sorted(gt_id_set))}
     trk_id_map = {orig: new for new, orig in enumerate(sorted(trk_id_set))}
 
-    # Second pass: collect data with remapped IDs
+    # Collect detections with remapped IDs
     gt_ids, gt_dets, trk_ids, trk_dets, sims = [], [], [], [], []
     for f in all_frames:
         g = [t for t in gt_frames.get(f, []) if cls_filter is None or t[2] == cls_filter]
@@ -88,14 +71,16 @@ def _build_trackeval_data(gt_frames, trk_frames, cls_filter=None):
     }
 
 
-def evaluate_sequence(gt_path, trk_path, classes=None):
-    # Calculates HOTA, MOTA, IDSW, IDF1 etc. for one seqeunce
+def evaluate_sequence(gt_path, trk_path, classes=None, frame_ids=None, raw_results=None):
+    from trackeval.metrics import HOTA, CLEAR, Identity
+
+    # Calculate tracking metrics for one sequence
     gt = load_mot(gt_path)
     trk = load_mot(trk_path)
 
     hota_m, clear_m, id_m = HOTA(), CLEAR(), Identity()
 
-    # Находим элемент массива HOTA, соответствующий IoU 0.5.
+    # Find the HOTA entry for IoU 0.5
     hota_50_index = int(
         np.flatnonzero(np.isclose(hota_m.array_labels, 0.5))[0]
     )
@@ -108,19 +93,22 @@ def evaluate_sequence(gt_path, trk_path, classes=None):
             targets.append((cls_name, cls_id))
 
     for name, cls_filter in targets:
-        data = _build_trackeval_data(gt, trk, cls_filter=cls_filter)
+        data = _build_trackeval_data(gt, trk, cls_filter=cls_filter, frame_ids=frame_ids)
         h_res = hota_m.eval_sequence(data)
         c_res = clear_m.eval_sequence(data)
         i_res = id_m.eval_sequence(data)
 
+        if raw_results is not None:
+            raw_results[name] = {"hota": h_res, "clear": c_res, "identity": i_res}
+
         out[name] = {
-            # HOTA (averaged over IoU 0.05..0.95)
+            # Average HOTA over the configured IoU thresholds
             "HOTA": float(np.mean(h_res["HOTA"])) * 100,
             "DetA": float(np.mean(h_res["DetA"])) * 100,
             "AssA": float(np.mean(h_res["AssA"])) * 100,
             "LocA": float(np.mean(h_res["LocA"])) * 100,
-            "HOTA_50": float(h_res["HOTA"][hota_50_index]) * 100,    # HOTA@IoU=0.5
-            # CLEAR (MOTA, MOTP, IDSW, MT/ML/PT, Frag)
+            "HOTA_50": float(h_res["HOTA"][hota_50_index]) * 100,    # Select HOTA at IoU 0.5
+            # Collect CLEAR metrics
             "MOTA": float(c_res["MOTA"]) * 100,
             "MOTP": float(c_res["MOTP"]) * 100,
             "IDSW": int(c_res["IDSW"]),
@@ -130,7 +118,7 @@ def evaluate_sequence(gt_path, trk_path, classes=None):
             "CLR_TP": int(c_res["CLR_TP"]),
             "CLR_FN": int(c_res["CLR_FN"]),
             "CLR_FP": int(c_res["CLR_FP"]),
-            # Identity (IDF1, IDP, IDR)
+            # Collect identity metrics
             "IDF1": float(i_res["IDF1"]) * 100,
             "IDP": float(i_res["IDP"]) * 100,
             "IDR": float(i_res["IDR"]) * 100,
@@ -140,4 +128,19 @@ def evaluate_sequence(gt_path, trk_path, classes=None):
             "TRK_dets": data["num_tracker_dets"],
             "frames": data["num_frames"],
         }
+    return out
+
+def combine_sequence_metrics(raw_per_seq):
+    from trackeval.metrics import HOTA, CLEAR, Identity
+
+    combined = {}
+    for key, metric in (("hota", HOTA()), ("clear", CLEAR()), ("identity", Identity())):
+        combined[key] = metric.combine_sequences({seq: body["all"][key]
+                                                  for seq, body in raw_per_seq.items()})
+    hota, clear, identity = combined["hota"], combined["clear"], combined["identity"]
+    index = int(np.flatnonzero(np.isclose(HOTA().array_labels, 0.5))[0])
+    out = {key: float(np.mean(hota[key])) * 100 for key in ("HOTA", "DetA", "AssA", "LocA")}
+    out["HOTA_50"] = float(hota["HOTA"][index]) * 100
+    out.update({key: float(clear[key]) * 100 for key in ("MOTA", "MOTP")})
+    out.update({key: float(identity[key]) * 100 for key in ("IDF1", "IDP", "IDR")})
     return out

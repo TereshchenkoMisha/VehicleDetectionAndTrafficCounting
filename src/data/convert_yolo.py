@@ -1,69 +1,12 @@
-import re, json, shutil
+import json
+import shutil
 from pathlib import Path
 from PIL import Image
 from tqdm import tqdm
 
 from .config import CLASSES, DETRAC_TO_ID, RAW_ROOT, OUT_DIR
 from .detrac_parser import find_sequence_dir
-
-
-def _frame_paths(seq_dir: Path) -> dict[int, Path]:
-    """Index frame_id -> real image path"""
-    frames = {}
-
-    for image_path in Path(seq_dir).iterdir():
-        if not image_path.is_file():
-            continue
-
-        if image_path.suffix.lower() not in {".jpg", ".jpeg"}:
-            continue
-
-        match = re.fullmatch(
-            r"img(\d+)",
-            image_path.stem,
-            flags=re.IGNORECASE,
-        )
-
-        if match is None:
-            raise ValueError(f"Unexpected frame filename: {image_path}")
-
-        frame_id = int(match.group(1))
-
-        if frame_id in frames:
-            raise ValueError(
-                f"Duplicate frame ID {frame_id}: "
-                f"{frames[frame_id]} and {image_path}"
-            )
-
-        frames[frame_id] = image_path
-
-    if not frames:
-        raise FileNotFoundError(f"No JPG frames found in {seq_dir}")
-
-    return dict(sorted(frames.items()))
-
-
-def _resolve_naming(seq_dir: Path, frame_ids: list) -> int:
-    """Defines offset XML frame_id -> JPG frame_id"""
-    image_ids = set(_frame_paths(seq_dir))
-    frame_ids = list(frame_ids)
-
-    if not frame_ids:
-        raise ValueError(f"No XML frames for {seq_dir}")
-
-    offsets = [
-        offset
-        for offset in (0, 1)
-        if all(fid + offset in image_ids for fid in frame_ids)
-    ]
-
-    if len(offsets) != 1:
-        raise ValueError(
-            f"Cannot determine XML/JPG offset unambiguously "
-            f"for {seq_dir}: candidates={offsets}"
-        )
-
-    return offsets[0]
+from .frames import frame_paths as _frame_paths, resolve_naming as _resolve_naming
 
 
 def _yolo_line(cls_id, b, W, H):
@@ -83,7 +26,7 @@ def convert(anns, split, frame_step=1, copy=False, out_dir=OUT_DIR, frames_root=
     if frame_step < 1:
         raise ValueError("frame_step must be a positive integer")
 
-    # Do not mix the new preparation with the previous one
+    # Preserve existing prepared images and labels
     if (out_dir / "images").exists() or (out_dir / "labels").exists():
         raise FileExistsError(
             f"Prepared images or labels already exist in {out_dir}. "

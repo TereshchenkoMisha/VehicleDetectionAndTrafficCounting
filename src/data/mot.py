@@ -1,0 +1,31 @@
+"""Read and validate the project MOT format"""
+import math
+
+from .config import CLASSES
+
+
+def load_mot(path):
+    frames = {}
+    seen = set()
+    with open(path, encoding="utf-8") as stream:
+        for number, line in enumerate(stream, 1):
+            if not line.strip():
+                continue
+            try:
+                fields = line.strip().split(",")
+                fid, tid = int(fields[0]), int(fields[1])
+                x, y, w, h, conf = map(float, fields[2:7])
+                cls = int(fields[7])
+                if fid < 0 or tid < 0 or not 0 <= cls < len(CLASSES):
+                    raise ValueError("Invalid frame, track or class ID")
+                if not all(math.isfinite(v) for v in (x, y, w, h, conf)):
+                    raise ValueError("Nonfinite MOT value")
+                if w <= 0 or h <= 0 or not 0 <= conf <= 1:
+                    raise ValueError("Invalid box size or confidence")
+                if (fid, tid) in seen:
+                    raise ValueError("Duplicate track ID within a frame")
+                seen.add((fid, tid))
+                frames.setdefault(fid, []).append((tid, [x, y, x + w, y + h], cls, conf))
+            except (ValueError, IndexError) as exc:
+                raise ValueError(f"{path}:{number}: {exc}") from exc
+    return frames

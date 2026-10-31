@@ -1,0 +1,59 @@
+{
+  "detector": "yolov8n.pt",
+  "tracker": "botsort",
+  "split": "dev",
+  "conf": 0.25,
+  "iou": 0.7,
+  "imgsz": 960,
+  "frames": 5924,
+  "det_ms_per_frame": 8.088418855469055,
+  "trk_ms_per_frame": 5.162301789310292,
+  "total_ms_per_frame": 13.250720644779346,
+  "fps": 75.4675935602031,
+  "per_seq": {
+    "MVI_20033": {
+      "frames": 784,
+      "det_ms": 7.733294132711827,
+      "trk_ms": 4.9216051020916245,
+      "tracks": 58,
+      "rows": 4666
+    },
+    "MVI_40141": {
+      "frames": 1600,
+      "det_ms": 7.846278062520469,
+      "trk_ms": 4.595028874928175,
+      "tracks": 87,
+      "rows": 8800
+    },
+    "MVI_40171": {
+      "frames": 1150,
+      "det_ms": 8.172427478193244,
+      "trk_ms": 5.322586521740406,
+      "tracks": 94,
+      "rows": 5461
+    },
+    "MVI_40773": {
+      "frames": 985,
+      "det_ms": 7.978143350195806,
+      "trk_ms": 5.000944873077268,
+      "tracks": 118,
+      "rows": 6829
+    },
+    "MVI_63553": {
+      "frames": 1405,
+      "det_ms": 8.570877579967798,
+      "trk_ms": 5.924545195705822,
+      "tracks": 234,
+      "rows": 8185
+    }
+  },
+  "env": {
+    "device": "NVIDIA GeForce RTX 4060",
+    "torch": "2.14.1+cu126",
+    "ultralytics": "8.4.175",
+    "opencv": "5.0.0",
+    "python": "3.12.5",
+    "date": "2026-10-31 23:56:23"
+  },
+  "note": "image reading excluded; detector = predict (pre+infer+NMS+GPU->CPU); tracker = ignored-region mask + tracker.update"
+}
