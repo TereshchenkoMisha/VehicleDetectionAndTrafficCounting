@@ -1,0 +1,870 @@
+{
+  "version": 1,
+  "plan": {
+    "split": "dev",
+    "sequences": [
+      "MVI_20033",
+      "MVI_40141",
+      "MVI_40171",
+      "MVI_40773",
+      "MVI_63553"
+    ],
+    "frames": {
+      "MVI_20033": 784,
+      "MVI_40141": 1600,
+      "MVI_40171": 1150,
+      "MVI_40773": 985,
+      "MVI_63553": 1405
+    },
+    "raw": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC",
+    "confidences": [
+      0.1,
+      0.25,
+      0.4,
+      0.6
+    ],
+    "jobs": [
+      {
+        "confidence": 0.1,
+        "model": "yolov8n.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8n_bytetrack_conf0.1",
+        "tracks": "conf0.1/tracks",
+        "reports": "conf0.1/reports"
+      },
+      {
+        "confidence": 0.1,
+        "model": "yolov8n.pt",
+        "tracker": "botsort",
+        "config": "yolov8n_botsort_conf0.1",
+        "tracks": "conf0.1/tracks",
+        "reports": "conf0.1/reports"
+      },
+      {
+        "confidence": 0.1,
+        "model": "yolov8s.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8s_bytetrack_conf0.1",
+        "tracks": "conf0.1/tracks",
+        "reports": "conf0.1/reports"
+      },
+      {
+        "confidence": 0.1,
+        "model": "yolov8s.pt",
+        "tracker": "botsort",
+        "config": "yolov8s_botsort_conf0.1",
+        "tracks": "conf0.1/tracks",
+        "reports": "conf0.1/reports"
+      },
+      {
+        "confidence": 0.25,
+        "model": "yolov8n.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8n_bytetrack_conf0.25",
+        "tracks": "conf0.25/tracks",
+        "reports": "conf0.25/reports"
+      },
+      {
+        "confidence": 0.25,
+        "model": "yolov8n.pt",
+        "tracker": "botsort",
+        "config": "yolov8n_botsort_conf0.25",
+        "tracks": "conf0.25/tracks",
+        "reports": "conf0.25/reports"
+      },
+      {
+        "confidence": 0.25,
+        "model": "yolov8s.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8s_bytetrack_conf0.25",
+        "tracks": "conf0.25/tracks",
+        "reports": "conf0.25/reports"
+      },
+      {
+        "confidence": 0.25,
+        "model": "yolov8s.pt",
+        "tracker": "botsort",
+        "config": "yolov8s_botsort_conf0.25",
+        "tracks": "conf0.25/tracks",
+        "reports": "conf0.25/reports"
+      },
+      {
+        "confidence": 0.4,
+        "model": "yolov8n.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8n_bytetrack_conf0.4",
+        "tracks": "conf0.4/tracks",
+        "reports": "conf0.4/reports"
+      },
+      {
+        "confidence": 0.4,
+        "model": "yolov8n.pt",
+        "tracker": "botsort",
+        "config": "yolov8n_botsort_conf0.4",
+        "tracks": "conf0.4/tracks",
+        "reports": "conf0.4/reports"
+      },
+      {
+        "confidence": 0.4,
+        "model": "yolov8s.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8s_bytetrack_conf0.4",
+        "tracks": "conf0.4/tracks",
+        "reports": "conf0.4/reports"
+      },
+      {
+        "confidence": 0.4,
+        "model": "yolov8s.pt",
+        "tracker": "botsort",
+        "config": "yolov8s_botsort_conf0.4",
+        "tracks": "conf0.4/tracks",
+        "reports": "conf0.4/reports"
+      },
+      {
+        "confidence": 0.6,
+        "model": "yolov8n.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8n_bytetrack_conf0.6",
+        "tracks": "conf0.6/tracks",
+        "reports": "conf0.6/reports"
+      },
+      {
+        "confidence": 0.6,
+        "model": "yolov8n.pt",
+        "tracker": "botsort",
+        "config": "yolov8n_botsort_conf0.6",
+        "tracks": "conf0.6/tracks",
+        "reports": "conf0.6/reports"
+      },
+      {
+        "confidence": 0.6,
+        "model": "yolov8s.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8s_bytetrack_conf0.6",
+        "tracks": "conf0.6/tracks",
+        "reports": "conf0.6/reports"
+      },
+      {
+        "confidence": 0.6,
+        "model": "yolov8s.pt",
+        "tracker": "botsort",
+        "config": "yolov8s_botsort_conf0.6",
+        "tracks": "conf0.6/tracks",
+        "reports": "conf0.6/reports"
+      }
+    ],
+    "imgsz": 960,
+    "iou": 0.7,
+    "seed": 42,
+    "device": null,
+    "max_frame_gap": 1,
+    "counting_protocol": 2,
+    "input_fingerprints": {
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\reports\\splits.json": "1fc24fa51d675a6e55724fc3be34705ca0af252e36f2ef41f40eaebe6225fbfb",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\reports\\ignored_regions.json": "9f2accc86b42bfe1978c21c1419cc11e936d01dff88d6a0be7faf92dbd6e9b10",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\reports\\counting_lines.json": "4dc9bc940d80e19f7c8e441ddf91577376ba07dfe3efa765c7743e00be9a95d0",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC\\DETRAC-Test-Annotations-XML\\DETRAC-Test-Annotations-XML\\MVI_40773.xml": "10454921ec353499ef85ff0b83f8e67b9a692809d0d5be8eaeec4db45dc5f175",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC\\DETRAC-Train-Annotations-XML\\DETRAC-Train-Annotations-XML\\MVI_20033.xml": "e980d51e4652d3a6430a14c0a7912a06cd46696b5226b081987fedb273155be4",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC\\DETRAC-Train-Annotations-XML\\DETRAC-Train-Annotations-XML\\MVI_40141.xml": "0c09dd6f39dba97bdf7bebf8d845ad3f106ee4017521e7dab9212b68d2be41f6",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC\\DETRAC-Train-Annotations-XML\\DETRAC-Train-Annotations-XML\\MVI_40171.xml": "5b3325f74f1e125d13998bc2889466810f1a26c50647dd5f6b3d3544eb18265d",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC\\DETRAC-Train-Annotations-XML\\DETRAC-Train-Annotations-XML\\MVI_63553.xml": "cb8d5509db63fcd8ad6112e6def647dd49595a0f4e6486019e5a13732036691f",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\configs\\bytetrack.yaml": "cedc7f542d820da80d9542a347cb0cba9c5ea9db01581f8dcb49c85486291205",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\configs\\botsort.yaml": "2839bf874b2850e659611f2db80eea50ed89cc8e4de82357f6fa07b123590c88",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\data\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\data\\config.py": "32553d736f8ba42155f71b8a09b8ebfb9213995398fa1178826d12c711137c1d",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\data\\convert_mot.py": "9747662b0ae980de23f41a5f9e6aa1960013a84512633d90acfd82a98151ebd5",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\data\\convert_yolo.py": "7dcc0a45ba2516d0bb5212a880c96a64d0f75a8b8a3b63b14ce4c6ab76d37c2f",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\data\\detrac_parser.py": "3ac6014dafd46679df0e6f72aff11f64712c03302b0967c0d6b3252ad010490a",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\data\\frames.py": "64567a6661d80001e4256965059c35a8466610d05f48f187647c90bdf2e3dcba",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\data\\metadata_proxy.py": "3927c2eb8b7bf75ed28a9cc83351e6b17bef8dfa49908c23dabd5504e31c645f",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\data\\mot.py": "48543077def71efbc72a6ee6c4753b4cd5aa8c209ea91cd1029ecc1e131586cb",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\data\\provenance.py": "5b69f87513ab38df56b0894afb96e1c51797b017fa6bcf22ea559e04c66004cb",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\data\\split.py": "7a091103c7c85d63745536ab820a105f32d46d1156b2f98bd23d5caa2d3203c5",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\eval\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\eval\\counting_metrics.py": "a6269c6d094cf0fb08604aa4709a4cc44d09b7b3b10ff64983d05fa915ef2731",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\eval\\detector_eval.py": "147935d757740a2456665906b6ef74b3df2ec1490e73450c40d9fe60f156dc1b",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\eval\\line_crossing.py": "d286d378706211d5f62c7f6f9ab95f38e0895dd2b9de663aabd2124fbdc98573",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\eval\\run_validation.py": "d80c6242a31d0b90abf354c3a68d75c06c336f3e44c4d0631049f25025f387a6",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\eval\\tracking_metrics.py": "4e6c8eed3e3fa3ee9cc1119371b6a16981f10773c4d598117245e612efd94410",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\reproducibility.py": "356b34d6f0aa2c63e4c768d7c701c3baa503ce300d3e9484cd4dd619d3cf0e25",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\scripts\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\scripts\\annotate_line.py": "f9a26d846e9e2c838f98f0031a4917f0625306a67298cc5adc0d95c7b65fcb0b",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\scripts\\count_gt_crossings.py": "f3d0212fc20480ac2a411c5a4e75443074685895f84eb20d9f8a8bdd5ea54099",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\scripts\\count_tracks_crossings.py": "3a4fab6906352af412099aca0cc3645f7d587551dc27d460ba3ff13851bab43b",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\scripts\\eval_counting.py": "2dff0f3e3bedefcce18bf17c6c663dcbc9a90194a3fe806c755270eaa51181fa",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\scripts\\eval_tracking.py": "5b5ca3df674cf1dcac7ed4990809ffd01a1e9aaa5e89eebe3c52d8ef92659d48",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\scripts\\evaluate_detectors.py": "c6b2b4e1b7b5c9ea1213e5cc41860ee0f37890f7aed07834341b28e5e1790d84",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\scripts\\prepare_dataset.py": "e61f34ab151ecd003253145d0d7ad0e2fa27a336db82ba10b25b6f4b8a026a52",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\scripts\\prepare_gt_mot.py": "6a9d4c3df26c0c959f2518c32cb3eb461ee29c839e13a00de1ab3a88a9c5a384",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\scripts\\run_ablation.py": "4c484bfc7ec91cae81d9b14837de2ce3cabef8751f1abdfc65dbda12fde94eac",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\scripts\\run_tracking.py": "975fd9e209ec420e5d5dc671a4d72c1779bdc6753aa0523027931c88e4922193",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\tracking\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\src\\tracking\\pipeline.py": "3ddb5e127db14adfe4e875d255a5e5e261c81c6538e1c493c2b1474be1c6d050"
+    },
+    "frame_inventory": "7cc2f5e26d1106123d81b83e81df3cda8b4b5fb52ec578ae07fa89a0513c964b",
+    "software": {
+      "ultralytics": "8.4.175",
+      "torch": "2.14.1+cu126",
+      "numpy": "2.4.4",
+      "opencv-python": "5.0.0.93",
+      "trackeval": "1.3.0"
+    },
+    "python": "3.12.5"
+  },
+  "status": "complete",
+  "stages": {
+    "gt_counts": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "shared/gt_counts.json",
+          "sha256": "be3413b19942f32e72297bca1991c0687a997d1e00c13306eaa54bf09887eca5"
+        },
+        {
+          "path": "shared/gt_counts.md",
+          "sha256": "9e81f6553f6f1cc33c5235facbc9a8e5be8ba4f7c1af82a09ba85ec0ee5a3249"
+        }
+      ]
+    },
+    "gt_mot": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "shared/gt_mot/MVI_20033.txt",
+          "sha256": "3439404f7844270bf4f35dadbf0c26d0c8a299db100df13d9f08e70e832aec9b"
+        },
+        {
+          "path": "shared/gt_mot/MVI_40141.txt",
+          "sha256": "dc64bca09b0f762638781cbfa4ecbc8b981328f0b0f8b380cd30e7205ef748a5"
+        },
+        {
+          "path": "shared/gt_mot/MVI_40171.txt",
+          "sha256": "71d333bd24ade50982060a47b8a8c0767b9d32bfa31e29840e665f08a1818ec9"
+        },
+        {
+          "path": "shared/gt_mot/MVI_40773.txt",
+          "sha256": "399ac69cb062140796e539b1f1e6da46691507360e8ea93a4e8c2d078c0d1c13"
+        },
+        {
+          "path": "shared/gt_mot/MVI_63553.txt",
+          "sha256": "594402e75adeabdf4501e498bc07e9e4873e9ac03621e387b02476c3194f203e"
+        }
+      ]
+    },
+    "tracks/yolov8n_bytetrack_conf0.1": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.1/tracks/dev/yolov8n_bytetrack_conf0.1/timing.json",
+          "sha256": "87fc49fe4932553c23e5c0e9da7fb37623c7b90f3bba99ec99366027fe9b6566"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8n_bytetrack_conf0.1/MVI_20033.txt",
+          "sha256": "db3c9daeadbc8f9cef3751e10d0297ff8bae79f21585e13b520dd96c524625f0"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8n_bytetrack_conf0.1/MVI_40141.txt",
+          "sha256": "e16f0ca0aa9df42886b3b615fb8ddb3b50501518778679181de1f3843c53535f"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8n_bytetrack_conf0.1/MVI_40171.txt",
+          "sha256": "52283753675a323269f021d30e8913771b23e2c95bac49f14b7998eaf90cba30"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8n_bytetrack_conf0.1/MVI_40773.txt",
+          "sha256": "16c90786f69337cf2a73c068b99579d57ed00e8b0bbcd100f759ae8362b7167b"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8n_bytetrack_conf0.1/MVI_63553.txt",
+          "sha256": "270b25c37939b4c2e459f5da1b860a973c5bfe9d99318018f225914e6cc2e878"
+        }
+      ]
+    },
+    "tracks/yolov8n_botsort_conf0.1": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.1/tracks/dev/yolov8n_botsort_conf0.1/timing.json",
+          "sha256": "5cca45af0c5d4d7168e086d96ebceef52bc086d8dd4dbdc0ae89aa67dcb19447"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8n_botsort_conf0.1/MVI_20033.txt",
+          "sha256": "7b15b11a12d47c5819d66d574fcda4f126276bde4bbe65fb3fd83164ae2121eb"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8n_botsort_conf0.1/MVI_40141.txt",
+          "sha256": "7c1584878f3a93ee6629dea341f4f2eca65ab0115dfef8361bee3224fde0f85c"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8n_botsort_conf0.1/MVI_40171.txt",
+          "sha256": "7b70419556533f2c9a48141a17626c9db1adce0df3d967850429668c9e0e13f8"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8n_botsort_conf0.1/MVI_40773.txt",
+          "sha256": "74c66f844b8241bcb3b340cfea5e6e19c67f161d3f5ffe36c652a55bb08a9c9f"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8n_botsort_conf0.1/MVI_63553.txt",
+          "sha256": "55f6348779fd5e7f2a4f8edb20d842f794ef1236924e2705afaf70414101009a"
+        }
+      ]
+    },
+    "tracks/yolov8s_bytetrack_conf0.1": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.1/tracks/dev/yolov8s_bytetrack_conf0.1/timing.json",
+          "sha256": "9617376483bb8767b2ccff4761bfae9d3c3b99b3228da541e2e667a2206be2c4"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8s_bytetrack_conf0.1/MVI_20033.txt",
+          "sha256": "b7191c7f81fec2a8f6cf58d1506eab5a748365ea5bd37edcce33444a54eab0e6"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8s_bytetrack_conf0.1/MVI_40141.txt",
+          "sha256": "e7cae6dbc10ea0531d19b18561f1e8b10f0c7bc8795dfb0a80d8d4c6ac6475b5"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8s_bytetrack_conf0.1/MVI_40171.txt",
+          "sha256": "c5bd419e1e9b5a5dc5980cc9bcb27b4a6e9bcee8c376f78cc5eb08884cd96110"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8s_bytetrack_conf0.1/MVI_40773.txt",
+          "sha256": "e16a6be9f1c2c767c7e29214207fdd295059d0205208c186cd0fddc6b63e94b2"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8s_bytetrack_conf0.1/MVI_63553.txt",
+          "sha256": "3c085f8c1c664f6c893660df95dd8eabb9311f98288b1bec319277dff1c3b0b3"
+        }
+      ]
+    },
+    "tracks/yolov8s_botsort_conf0.1": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.1/tracks/dev/yolov8s_botsort_conf0.1/timing.json",
+          "sha256": "2272718ab8914a3602b6340edecd6ef5847a247842b90e29ad13a960eb857dab"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8s_botsort_conf0.1/MVI_20033.txt",
+          "sha256": "14bfc6250f0919505a4202c598a578cf7e3bcc46e19f5cde34005541d714b030"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8s_botsort_conf0.1/MVI_40141.txt",
+          "sha256": "9ed4f2b4bffa127eba26fb0e2de217593f1d99766264aaf7e41c62b34eac4ffa"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8s_botsort_conf0.1/MVI_40171.txt",
+          "sha256": "fd4c913bded4dd5d8443aaa3dc3fb2e1e72dd67da1513e1cfd0b20694836b574"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8s_botsort_conf0.1/MVI_40773.txt",
+          "sha256": "da6d5ab51d6c9eafdbea0a120acd3910d09ca1262362f6e87dfb9bcee425210f"
+        },
+        {
+          "path": "conf0.1/tracks/dev/yolov8s_botsort_conf0.1/MVI_63553.txt",
+          "sha256": "160e01eb263743af3a3ebaa0782df4409b959146ebb89e8c8ea63e7f596f9a73"
+        }
+      ]
+    },
+    "tracks/yolov8n_bytetrack_conf0.25": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.25/tracks/dev/yolov8n_bytetrack_conf0.25/timing.json",
+          "sha256": "c76b7b59676a6b0ada2b62595406f35ac77cce6ecee5ae9ff1ec075efe7227f6"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8n_bytetrack_conf0.25/MVI_20033.txt",
+          "sha256": "c2a0b8fe72b965f0c942b5a264c83dd8f2da1acc9bd99290905cd21cc49e98e3"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8n_bytetrack_conf0.25/MVI_40141.txt",
+          "sha256": "edb4c4c678309a2ecf78eb6e79d3901bce3c78f44b19f7489910c4ded2349c23"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8n_bytetrack_conf0.25/MVI_40171.txt",
+          "sha256": "8b9d3ec9bd04c85a0f91408337a6b5ddfbe7804109b36b17ae45530b2a4b7b09"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8n_bytetrack_conf0.25/MVI_40773.txt",
+          "sha256": "87c129e1f323468fec1a493f51f3ac3d868602e54744b184a23f33382577ff1b"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8n_bytetrack_conf0.25/MVI_63553.txt",
+          "sha256": "7a815f84d73a7c4e32a02b72c5d258d2a656f853fec144d0218c06f16b4c2394"
+        }
+      ]
+    },
+    "tracks/yolov8n_botsort_conf0.25": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.25/tracks/dev/yolov8n_botsort_conf0.25/timing.json",
+          "sha256": "9e19540586207dee01bb768cc91dcc423bbcdbc1788baf29490693a25c3caf05"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8n_botsort_conf0.25/MVI_20033.txt",
+          "sha256": "153f0fb3fed7ba33046f9df7407e07d1f0d6e79a192df348527ec40ac38a1c58"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8n_botsort_conf0.25/MVI_40141.txt",
+          "sha256": "8cb4bfb30a5f90efefd8cf1048da3599742a9f8d5a16222b81dba78f389ff814"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8n_botsort_conf0.25/MVI_40171.txt",
+          "sha256": "0723e5ec5b80ae816220353024697be96c75778c2190736852633c01f38b0bce"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8n_botsort_conf0.25/MVI_40773.txt",
+          "sha256": "bfbf31a86468345c84baa3977c20061abf174f4772145b0a64d848129526b78e"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8n_botsort_conf0.25/MVI_63553.txt",
+          "sha256": "c5887fb1e50d78e24b19a305fc8d89f429b06c0269d0cd2ba4a178dbd4fc1e32"
+        }
+      ]
+    },
+    "tracks/yolov8s_bytetrack_conf0.25": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.25/tracks/dev/yolov8s_bytetrack_conf0.25/timing.json",
+          "sha256": "723096bd8dbdb228e73c35b10c49aaf99bfb8f20f5c82e0c49512494973ab449"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8s_bytetrack_conf0.25/MVI_20033.txt",
+          "sha256": "1b019c75d6be38743061773b09e9d758dc2b9ee6e5644b10cec0b7090f472b50"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8s_bytetrack_conf0.25/MVI_40141.txt",
+          "sha256": "0bb4047b7ad6f284d10868e8c1792ad1845eb2269aa7daed371814addb7d3da7"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8s_bytetrack_conf0.25/MVI_40171.txt",
+          "sha256": "a19a5d1ebc773acd63dce98cb95a221ed07484777dbad86eec548f1ab48dd2eb"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8s_bytetrack_conf0.25/MVI_40773.txt",
+          "sha256": "8f2831911ee833c0d67502a909000825b26c14e660b6ecfccab7b6eced483cfc"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8s_bytetrack_conf0.25/MVI_63553.txt",
+          "sha256": "12072b02892f27a69b2a4f02e74072d7a172aecaba14baeaa695d148245a9514"
+        }
+      ]
+    },
+    "tracks/yolov8s_botsort_conf0.25": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.25/tracks/dev/yolov8s_botsort_conf0.25/timing.json",
+          "sha256": "1f60a26b5a22703de9ebee85b1bb3e3d78eca092f28d8b2df81ee4f615d9b38e"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8s_botsort_conf0.25/MVI_20033.txt",
+          "sha256": "fb4ab33c030370608156f8848ef16a89945d455a44f87a5ad351c5ff956f6895"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8s_botsort_conf0.25/MVI_40141.txt",
+          "sha256": "75a64876e1ba1bc1956e292b381b62f755fa67bbd31bd727fceb6ae8e3254f63"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8s_botsort_conf0.25/MVI_40171.txt",
+          "sha256": "d83baf95f6a3f253748496afe35d73c88dbc4e65dd079cf98161b0febd0d6694"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8s_botsort_conf0.25/MVI_40773.txt",
+          "sha256": "8fe926cf8cd8ef4b069b4376a745935140891928bf6e33446f7c29872b40f30f"
+        },
+        {
+          "path": "conf0.25/tracks/dev/yolov8s_botsort_conf0.25/MVI_63553.txt",
+          "sha256": "9389d55971e6f65fedb8b8a1731bd1558dbe9344bdca3577292642f1bfca85bb"
+        }
+      ]
+    },
+    "tracks/yolov8n_bytetrack_conf0.4": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.4/tracks/dev/yolov8n_bytetrack_conf0.4/timing.json",
+          "sha256": "7dca8f4991eef45ea3c2ab1f7a2e44c8a7d4026e382ccbe3dab61ee7612c6e16"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8n_bytetrack_conf0.4/MVI_20033.txt",
+          "sha256": "44188833b85aaf3562e827dc19a67905097143d42bb1adb0648843bc1d5670b7"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8n_bytetrack_conf0.4/MVI_40141.txt",
+          "sha256": "5e986d20e3d60a6cbd1b571f0176148d703ae7980b7d953eed699022a5a4614e"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8n_bytetrack_conf0.4/MVI_40171.txt",
+          "sha256": "3367e8329620c7a03fee4f24f76a0ebfd71403ab9d623b2c893fee0a0960c8e8"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8n_bytetrack_conf0.4/MVI_40773.txt",
+          "sha256": "dba9812e94c81a681ceaef5490295cace44c3030c71c79f8b30265abd0fb6b65"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8n_bytetrack_conf0.4/MVI_63553.txt",
+          "sha256": "f31192ceb0c2084d9a31572b2802956595247bfcbe6fc7c9ee43f4a9778aa1e4"
+        }
+      ]
+    },
+    "tracks/yolov8n_botsort_conf0.4": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.4/tracks/dev/yolov8n_botsort_conf0.4/timing.json",
+          "sha256": "a68c5bdfee89ad15202ad6f8b16adc36b4118c87b527a2d705da9101c19be02c"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8n_botsort_conf0.4/MVI_20033.txt",
+          "sha256": "309bd4c67679d914c0e2009cc03af0814a36bd9e2f84dd8d80064d9b9b9d76d4"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8n_botsort_conf0.4/MVI_40141.txt",
+          "sha256": "ae0811d394e18c1bfe79f4c147a5c5b85a3db8514dc20cf2f35305dc731ba7a3"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8n_botsort_conf0.4/MVI_40171.txt",
+          "sha256": "670c87cb1dd17a6c804446d6d8ea1d7f2eded95151e54ff1f34426b8b81a6086"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8n_botsort_conf0.4/MVI_40773.txt",
+          "sha256": "399b5d5c0d015c8a5aaf37c3ccd29e88422f86e41d57cf0fdbad35df12441e97"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8n_botsort_conf0.4/MVI_63553.txt",
+          "sha256": "a6dbb04ce27d62fef3880f7aa1ca5f9223c1fa62c7253888c289e611741e19b7"
+        }
+      ]
+    },
+    "tracks/yolov8s_bytetrack_conf0.4": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.4/tracks/dev/yolov8s_bytetrack_conf0.4/timing.json",
+          "sha256": "e725de2ee7780c4e97c9035cb2ce85214f2ec3b9b2358d42548c7e7e5fcaf866"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8s_bytetrack_conf0.4/MVI_20033.txt",
+          "sha256": "2386f550162df0cc926c4f2a46b7d41dd31327a3e1d12b4f48401f93fc4093cf"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8s_bytetrack_conf0.4/MVI_40141.txt",
+          "sha256": "7fa25dbc33854e51834e19e81e0b6862a409c182bbba772d8c579b759bdabd90"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8s_bytetrack_conf0.4/MVI_40171.txt",
+          "sha256": "e90ebd08b2ab26f3e43eca8aeee191687fc65b915ebb68f150f27aea39db5501"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8s_bytetrack_conf0.4/MVI_40773.txt",
+          "sha256": "200981b30f662da9d512d82f0c96b5ae6b13c77601e146576cbac2aca4126380"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8s_bytetrack_conf0.4/MVI_63553.txt",
+          "sha256": "b97159c555725eea1a15bdec97d7a0100721e93d9d147095937df6cd6dfdfdcd"
+        }
+      ]
+    },
+    "tracks/yolov8s_botsort_conf0.4": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.4/tracks/dev/yolov8s_botsort_conf0.4/timing.json",
+          "sha256": "d539e7b5d7234eac659f167fc56003de7b2c6cde902be19fc1367cdb181fd5e1"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8s_botsort_conf0.4/MVI_20033.txt",
+          "sha256": "3060d363757527b3fb2e058e7d4bdb65caebb0d0e1e4ec3ab04bf6ec90dd8d5d"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8s_botsort_conf0.4/MVI_40141.txt",
+          "sha256": "69c49bce1399e9691263d7c0415f242f57a99067f0a401b007fd640f1ffdb5c1"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8s_botsort_conf0.4/MVI_40171.txt",
+          "sha256": "980fb526e94b8836229462897455f5c03508f53257a34d2b1a20fd75fd225fb5"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8s_botsort_conf0.4/MVI_40773.txt",
+          "sha256": "b144ce38931fbb3813c3659a3d3904477108111faabbba05875c15f847f0e5d4"
+        },
+        {
+          "path": "conf0.4/tracks/dev/yolov8s_botsort_conf0.4/MVI_63553.txt",
+          "sha256": "2d40908a798dc8bcc5414de07dea8efef67c550e6f3d7be4dd1d7d6263348098"
+        }
+      ]
+    },
+    "tracks/yolov8n_bytetrack_conf0.6": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.6/tracks/dev/yolov8n_bytetrack_conf0.6/timing.json",
+          "sha256": "0cef51c122488befa9d94c31cc79bebfccbb3a6d2b4e8126f69987861f40239e"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8n_bytetrack_conf0.6/MVI_20033.txt",
+          "sha256": "5c3472cd1a64a7d707c7ced09df19c99d80c215084657094b7c93db1db9650b5"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8n_bytetrack_conf0.6/MVI_40141.txt",
+          "sha256": "6567237b258f5f9e50f2f3f08cb059fa345bf422a70093cdca7b7044a4bff20c"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8n_bytetrack_conf0.6/MVI_40171.txt",
+          "sha256": "1c59c557ffdd6525ff8e86df7a168e6848e273b8e50c03bcefc693838110791a"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8n_bytetrack_conf0.6/MVI_40773.txt",
+          "sha256": "c8dda0cd1ad62ad3833c3635d508d71b267cb44a2e2c75f13b233cee076ca7cd"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8n_bytetrack_conf0.6/MVI_63553.txt",
+          "sha256": "c4711a1e41a31b1486fd710cedd327f7f9c0e0be5e68b21f8b0f29a98e445e6d"
+        }
+      ]
+    },
+    "tracks/yolov8n_botsort_conf0.6": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.6/tracks/dev/yolov8n_botsort_conf0.6/timing.json",
+          "sha256": "d99e26aa841b530c3130810577ef0bb4025cc89e80739d3d0afaec543b832afc"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8n_botsort_conf0.6/MVI_20033.txt",
+          "sha256": "291b24327634c29c8cf55aeda98e86938188f4f0bef79b17042c2ded00179790"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8n_botsort_conf0.6/MVI_40141.txt",
+          "sha256": "76b4e9bbf41dbcfda2e4946de63c79b8c7f2d0aa703f4e7c18df734460c0b6f1"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8n_botsort_conf0.6/MVI_40171.txt",
+          "sha256": "f0d5779de19ebc2c461eff28a2487858587f26d64e3dd5ddd766107a6a9513d6"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8n_botsort_conf0.6/MVI_40773.txt",
+          "sha256": "0dcb518177930e2783562e3ff9f6ee55b017754c9ddf04eafab0a2d3ce6fad37"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8n_botsort_conf0.6/MVI_63553.txt",
+          "sha256": "80ae7e6298bd8d9b8eb41c51579dc211b24e43f85cd99276e9ec9f525753303a"
+        }
+      ]
+    },
+    "tracks/yolov8s_bytetrack_conf0.6": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.6/tracks/dev/yolov8s_bytetrack_conf0.6/timing.json",
+          "sha256": "97b7c035f66e212eb350590294f3687a659b9b1553281810d83b948cca98c6de"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8s_bytetrack_conf0.6/MVI_20033.txt",
+          "sha256": "31b5e92e16fdbb9e71a381c77767731bb4db52945dbcca391d458e5eccf2c6ce"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8s_bytetrack_conf0.6/MVI_40141.txt",
+          "sha256": "f5810acc143dc283dae1050bd8c859ce3f2b589d7b293b533c249e55bb1bb7e9"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8s_bytetrack_conf0.6/MVI_40171.txt",
+          "sha256": "45c1ccd52d8bb6ea06bbe42bd66dffb09ed013e623bcf6c5212390b9cfd31fd1"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8s_bytetrack_conf0.6/MVI_40773.txt",
+          "sha256": "60f92a95bbcb797e476d15bed8b5e18ca05f184849dc404076b149eaea850fed"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8s_bytetrack_conf0.6/MVI_63553.txt",
+          "sha256": "c98bb9e90d976e98ce4561ea79433e5e4b541bd5194c42b0b14788aef0116d8f"
+        }
+      ]
+    },
+    "tracks/yolov8s_botsort_conf0.6": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.6/tracks/dev/yolov8s_botsort_conf0.6/timing.json",
+          "sha256": "c8941cf7de043c916a7146a2d5d58f61de68e66bb5e37d6c73df6e21dfee1119"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8s_botsort_conf0.6/MVI_20033.txt",
+          "sha256": "d7c38950260349e3ff8b048d39a2dabdd4bfe2d71133cb8649807df2597784a5"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8s_botsort_conf0.6/MVI_40141.txt",
+          "sha256": "0a8779ce4242a2daf8be61b642972075e1c6b6e1e1e1ebe2a30b806f4ad65970"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8s_botsort_conf0.6/MVI_40171.txt",
+          "sha256": "eb8eac9bea73b082b651f71c3a58c33aabed1a75a50e2fde72db3f93a2c1089e"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8s_botsort_conf0.6/MVI_40773.txt",
+          "sha256": "ca5b4afac4ca1585e56a5b7f31662cb13ee01becdfed47e431ef77068dd51b6e"
+        },
+        {
+          "path": "conf0.6/tracks/dev/yolov8s_botsort_conf0.6/MVI_63553.txt",
+          "sha256": "15601ee793752d567baa3f37aa046ecc6c778032052d84344f203c9bd1d70971"
+        }
+      ]
+    },
+    "counts/0.1": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.1/reports/track_counts.json",
+          "sha256": "df94d84fa499ba6bfe2a2920d1e51039c10d5853ffc554b4512b26d20ec74867"
+        }
+      ]
+    },
+    "counting/0.1": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.1/reports/counting_eval_dev.json",
+          "sha256": "5533c71080bd5ec6e74e7acbec9eeec60252328b90b943f86e99bac177612c38"
+        },
+        {
+          "path": "conf0.1/reports/counting_eval_dev.md",
+          "sha256": "990a649fe9d68ddb5b0c2aabaf1ed32454c5de1c82aa8ec1b5312c8029b622b6"
+        }
+      ]
+    },
+    "tracking/0.1": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.1/reports/tracking_eval_dev.json",
+          "sha256": "47ab056c1f78b7ed4c7236abde10466a6edc007bac672ca1e22efa3b6493cd48"
+        },
+        {
+          "path": "conf0.1/reports/tracking_eval_dev.md",
+          "sha256": "d22ee321af6aa7a72ddf26842efdefd218372a6582f25b3eb4ec32d6a85ba714"
+        }
+      ]
+    },
+    "counts/0.25": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.25/reports/track_counts.json",
+          "sha256": "896c4a2db3a5bcb65e2553b13f1ee8d1ebbf30e3fb371c90c64a55c1770e9894"
+        }
+      ]
+    },
+    "counting/0.25": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.25/reports/counting_eval_dev.json",
+          "sha256": "e6489cf79d4166668e0e5a96fc5664db5849545a9a9c6ba538949b817ffa8395"
+        },
+        {
+          "path": "conf0.25/reports/counting_eval_dev.md",
+          "sha256": "9e7e1af2e7640bfd1e6826aea8cb734a3904ff8ef22ac2bfade0edcde275cd33"
+        }
+      ]
+    },
+    "tracking/0.25": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.25/reports/tracking_eval_dev.json",
+          "sha256": "07451535bfdd7fdba95fa12b36482f01de190bcb4190dd746ef1b80ce8444a82"
+        },
+        {
+          "path": "conf0.25/reports/tracking_eval_dev.md",
+          "sha256": "1ce4b855266a103a6e64e7cd2e0990dd29d62f644e7ee30af540d9370acae0b6"
+        }
+      ]
+    },
+    "counts/0.4": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.4/reports/track_counts.json",
+          "sha256": "4df0ce46085ae630a43297ac598663b46798ab30b99f6b2fbb70644ba35f3d18"
+        }
+      ]
+    },
+    "counting/0.4": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.4/reports/counting_eval_dev.json",
+          "sha256": "6e5f41c89b4bf29f7d4602cf919f2d00cea07f5d059386e0f788fddc35adc337"
+        },
+        {
+          "path": "conf0.4/reports/counting_eval_dev.md",
+          "sha256": "2694fdeee7b7200cba028c49a62f0d94c4d5ece490083684e46b7e635af400b0"
+        }
+      ]
+    },
+    "tracking/0.4": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.4/reports/tracking_eval_dev.json",
+          "sha256": "5bbd066afcf1bfa8a6d6aa35f538cfe72857da9395f7d010d11c1685b0e6590e"
+        },
+        {
+          "path": "conf0.4/reports/tracking_eval_dev.md",
+          "sha256": "37af98e414d699fb5a1a6cfc36828113c5529623140d1614448ab989623ffbcc"
+        }
+      ]
+    },
+    "counts/0.6": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.6/reports/track_counts.json",
+          "sha256": "b717e641c67eba86cbaf93afd91e8df1ab4255598d61d4848612c992bf77a3fd"
+        }
+      ]
+    },
+    "counting/0.6": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.6/reports/counting_eval_dev.json",
+          "sha256": "3ffe366a04ee1c6430362239638fa5f5ef1d8e9d01784d019ac06adb30552c66"
+        },
+        {
+          "path": "conf0.6/reports/counting_eval_dev.md",
+          "sha256": "5f89dd33c7142ce737a158636c84c66d98c13d9cdc42aaa60a886f964035ad74"
+        }
+      ]
+    },
+    "tracking/0.6": {
+      "status": "complete",
+      "outputs": [
+        {
+          "path": "conf0.6/reports/tracking_eval_dev.json",
+          "sha256": "a6f9caadcef55f2e9d0aec6fae961f662021cb614f1cf8d96492811bd585b75e"
+        },
+        {
+          "path": "conf0.6/reports/tracking_eval_dev.md",
+          "sha256": "c82608a03bd1a11d86f6bdb5c09031f5915e0e19ed40ff90641c586afdb46946"
+        }
+      ]
+    }
+  },
+  "tracking_environment": {
+    "device": "NVIDIA GeForce RTX 4060",
+    "torch": "2.14.1+cu126",
+    "ultralytics": "8.4.175",
+    "opencv": "5.0.0",
+    "python": "3.12.5",
+    "cuda": "12.6",
+    "numpy": "2.4.4",
+    "cudnn": 91002
+  }
+}

@@ -1,0 +1,513 @@
+{
+  "yolov8n_botsort_conf0.1": {
+    "car": {
+      "pred": [
+        18,
+        27,
+        32,
+        13,
+        117
+      ],
+      "gt": [
+        19,
+        27,
+        35,
+        15,
+        149
+      ],
+      "sce": [
+        -1.0,
+        0.0,
+        -3.0,
+        -2.0,
+        -32.0
+      ],
+      "mae": 7.6,
+      "wape": 0.15510204081632653,
+      "mean_sce": -7.6,
+      "over": 0.0,
+      "under": 0.8
+    },
+    "bus": {
+      "pred": [
+        0,
+        0,
+        4,
+        0,
+        3
+      ],
+      "gt": [
+        0,
+        0,
+        3,
+        0,
+        2
+      ],
+      "sce": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "mae": 0.4,
+      "wape": 0.4,
+      "mean_sce": 0.4,
+      "over": 0.4,
+      "under": 0.0
+    },
+    "truck": {
+      "pred": [
+        1,
+        0,
+        0,
+        2,
+        0
+      ],
+      "gt": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "sce": [
+        1.0,
+        0.0,
+        0.0,
+        2.0,
+        -1.0
+      ],
+      "mae": 0.8,
+      "wape": 4.0,
+      "mean_sce": 0.4,
+      "over": 0.4,
+      "under": 0.2
+    },
+    "all": {
+      "pred": [
+        19,
+        27,
+        36,
+        15,
+        120
+      ],
+      "gt": [
+        19,
+        27,
+        38,
+        15,
+        152
+      ],
+      "sce": [
+        0.0,
+        0.0,
+        -2.0,
+        0.0,
+        -32.0
+      ],
+      "mae": 6.8,
+      "wape": 0.13545816733067728,
+      "mean_sce": -6.8,
+      "over": 0.0,
+      "under": 0.4
+    }
+  },
+  "yolov8n_bytetrack_conf0.1": {
+    "car": {
+      "pred": [
+        17,
+        27,
+        32,
+        13,
+        118
+      ],
+      "gt": [
+        19,
+        27,
+        35,
+        15,
+        149
+      ],
+      "sce": [
+        -2.0,
+        0.0,
+        -3.0,
+        -2.0,
+        -31.0
+      ],
+      "mae": 7.6,
+      "wape": 0.15510204081632653,
+      "mean_sce": -7.6,
+      "over": 0.0,
+      "under": 0.8
+    },
+    "bus": {
+      "pred": [
+        0,
+        0,
+        4,
+        0,
+        4
+      ],
+      "gt": [
+        0,
+        0,
+        3,
+        0,
+        2
+      ],
+      "sce": [
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        2.0
+      ],
+      "mae": 0.6,
+      "wape": 0.6,
+      "mean_sce": 0.6,
+      "over": 0.4,
+      "under": 0.0
+    },
+    "truck": {
+      "pred": [
+        2,
+        0,
+        0,
+        2,
+        0
+      ],
+      "gt": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "sce": [
+        2.0,
+        0.0,
+        0.0,
+        2.0,
+        -1.0
+      ],
+      "mae": 1.0,
+      "wape": 5.0,
+      "mean_sce": 0.6,
+      "over": 0.4,
+      "under": 0.2
+    },
+    "all": {
+      "pred": [
+        19,
+        27,
+        36,
+        15,
+        122
+      ],
+      "gt": [
+        19,
+        27,
+        38,
+        15,
+        152
+      ],
+      "sce": [
+        0.0,
+        0.0,
+        -2.0,
+        0.0,
+        -30.0
+      ],
+      "mae": 6.4,
+      "wape": 0.12749003984063745,
+      "mean_sce": -6.4,
+      "over": 0.0,
+      "under": 0.4
+    }
+  },
+  "yolov8s_botsort_conf0.1": {
+    "car": {
+      "pred": [
+        18,
+        28,
+        34,
+        16,
+        129
+      ],
+      "gt": [
+        19,
+        27,
+        35,
+        15,
+        149
+      ],
+      "sce": [
+        -1.0,
+        1.0,
+        -1.0,
+        1.0,
+        -20.0
+      ],
+      "mae": 4.8,
+      "wape": 0.09795918367346938,
+      "mean_sce": -4.0,
+      "over": 0.4,
+      "under": 0.6
+    },
+    "bus": {
+      "pred": [
+        0,
+        0,
+        3,
+        0,
+        6
+      ],
+      "gt": [
+        0,
+        0,
+        3,
+        0,
+        2
+      ],
+      "sce": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        4.0
+      ],
+      "mae": 0.8,
+      "wape": 0.8,
+      "mean_sce": 0.8,
+      "over": 0.2,
+      "under": 0.0
+    },
+    "truck": {
+      "pred": [
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "gt": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "sce": [
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "mae": 0.6,
+      "wape": 3.0,
+      "mean_sce": 0.2,
+      "over": 0.4,
+      "under": 0.2
+    },
+    "all": {
+      "pred": [
+        19,
+        29,
+        37,
+        16,
+        135
+      ],
+      "gt": [
+        19,
+        27,
+        38,
+        15,
+        152
+      ],
+      "sce": [
+        0.0,
+        2.0,
+        -1.0,
+        1.0,
+        -17.0
+      ],
+      "mae": 4.2,
+      "wape": 0.08366533864541832,
+      "mean_sce": -3.0,
+      "over": 0.4,
+      "under": 0.4
+    }
+  },
+  "yolov8s_bytetrack_conf0.1": {
+    "car": {
+      "pred": [
+        18,
+        28,
+        34,
+        16,
+        130
+      ],
+      "gt": [
+        19,
+        27,
+        35,
+        15,
+        149
+      ],
+      "sce": [
+        -1.0,
+        1.0,
+        -1.0,
+        1.0,
+        -19.0
+      ],
+      "mae": 4.6,
+      "wape": 0.09387755102040816,
+      "mean_sce": -3.8,
+      "over": 0.4,
+      "under": 0.6
+    },
+    "bus": {
+      "pred": [
+        0,
+        0,
+        3,
+        0,
+        5
+      ],
+      "gt": [
+        0,
+        0,
+        3,
+        0,
+        2
+      ],
+      "sce": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        3.0
+      ],
+      "mae": 0.6,
+      "wape": 0.6,
+      "mean_sce": 0.6,
+      "over": 0.2,
+      "under": 0.0
+    },
+    "truck": {
+      "pred": [
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "gt": [
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "sce": [
+        1.0,
+        1.0,
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "mae": 0.6,
+      "wape": 3.0,
+      "mean_sce": 0.2,
+      "over": 0.4,
+      "under": 0.2
+    },
+    "all": {
+      "pred": [
+        19,
+        29,
+        37,
+        16,
+        135
+      ],
+      "gt": [
+        19,
+        27,
+        38,
+        15,
+        152
+      ],
+      "sce": [
+        0.0,
+        2.0,
+        -1.0,
+        1.0,
+        -17.0
+      ],
+      "mae": 4.2,
+      "wape": 0.08366533864541832,
+      "mean_sce": -3.0,
+      "over": 0.4,
+      "under": 0.4
+    }
+  },
+  "_sources": {
+    "gt": {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\shared\\gt_counts.json",
+      "sha256": "be3413b19942f32e72297bca1991c0687a997d1e00c13306eaa54bf09887eca5"
+    },
+    "tracks": {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.1\\reports\\track_counts.json",
+      "sha256": "df94d84fa499ba6bfe2a2920d1e51039c10d5853ffc554b4512b26d20ec74867"
+    },
+    "splits": {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\reports\\splits.json",
+      "sha256": "1fc24fa51d675a6e55724fc3be34705ca0af252e36f2ef41f40eaebe6225fbfb"
+    }
+  },
+  "_gt": {
+    "variant": "exclude_ignored",
+    "counts": {
+      "MVI_20033": {
+        "car": 19,
+        "bus": 0,
+        "truck": 0,
+        "all": 19
+      },
+      "MVI_40141": {
+        "car": 27,
+        "bus": 0,
+        "truck": 0,
+        "all": 27
+      },
+      "MVI_40171": {
+        "car": 35,
+        "bus": 3,
+        "truck": 0,
+        "all": 38
+      },
+      "MVI_40773": {
+        "car": 15,
+        "bus": 0,
+        "truck": 0,
+        "all": 15
+      },
+      "MVI_63553": {
+        "car": 149,
+        "bus": 2,
+        "truck": 1,
+        "all": 152
+      }
+    },
+    "totals": {
+      "car": 245,
+      "bus": 5,
+      "truck": 1,
+      "all": 251
+    }
+  }
+}

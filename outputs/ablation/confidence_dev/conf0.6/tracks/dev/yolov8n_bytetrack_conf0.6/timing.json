@@ -1,0 +1,231 @@
+{
+  "detector": "yolov8n.pt",
+  "tracker": "bytetrack",
+  "split": "dev",
+  "seed": 42,
+  "deterministic": true,
+  "conf": 0.6,
+  "iou": 0.7,
+  "imgsz": 960,
+  "frames": 5924,
+  "det_ms_per_frame": 7.213429068202394,
+  "trk_ms_per_frame": 0.6001349932444668,
+  "total_ms_per_frame": 7.81356406144686,
+  "fps": 127.9825687913829,
+  "per_seq": {
+    "MVI_20033": {
+      "frames": 784,
+      "det_ms": 7.230496938801684,
+      "trk_ms": 0.6482855867372972,
+      "tracks": 27,
+      "rows": 3679,
+      "mot_sha256": "5c3472cd1a64a7d707c7ced09df19c99d80c215084657094b7c93db1db9650b5"
+    },
+    "MVI_40141": {
+      "frames": 1600,
+      "det_ms": 7.246660187499856,
+      "trk_ms": 0.5442239375202007,
+      "tracks": 45,
+      "rows": 4288,
+      "mot_sha256": "6567237b258f5f9e50f2f3f08cb059fa345bf422a70093cdca7b7044a4bff20c"
+    },
+    "MVI_40171": {
+      "frames": 1150,
+      "det_ms": 7.1844047826206126,
+      "trk_ms": 0.5694964347877312,
+      "tracks": 47,
+      "rows": 4390,
+      "mot_sha256": "1c59c557ffdd6525ff8e86df7a168e6848e273b8e50c03bcefc693838110791a"
+    },
+    "MVI_40773": {
+      "frames": 985,
+      "det_ms": 7.218836142131521,
+      "trk_ms": 0.6188997969378954,
+      "tracks": 39,
+      "rows": 4307,
+      "mot_sha256": "c8dda0cd1ad62ad3833c3635d508d71b267cb44a2e2c75f13b233cee076ca7cd"
+    },
+    "MVI_63553": {
+      "frames": 1405,
+      "det_ms": 7.1860276156565375,
+      "trk_ms": 0.6488599999687839,
+      "tracks": 186,
+      "rows": 6202,
+      "mot_sha256": "c4711a1e41a31b1486fd710cedd327f7f9c0e0be5e68b21f8b0f29a98e445e6d"
+    }
+  },
+  "provenance": {
+    "weights": {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\models\\yolov8n.pt",
+      "sha256": "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36"
+    },
+    "tracker_config": {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\configs\\bytetrack.yaml",
+      "sha256": "cedc7f542d820da80d9542a347cb0cba9c5ea9db01581f8dcb49c85486291205"
+    },
+    "splits": {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\shared\\data\\splits.json",
+      "sha256": "1fc24fa51d675a6e55724fc3be34705ca0af252e36f2ef41f40eaebe6225fbfb"
+    },
+    "ignored": {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\shared\\data\\ignored_regions.json",
+      "sha256": "9f2accc86b42bfe1978c21c1419cc11e936d01dff88d6a0be7faf92dbd6e9b10"
+    },
+    "ignored_regions": {
+      "MVI_20033": [
+        [
+          458.75,
+          0.5,
+          618.25,
+          54.25
+        ],
+        [
+          710.75,
+          29.75,
+          950.25,
+          99.25
+        ],
+        [
+          824.75,
+          101.75,
+          954.25,
+          157.25
+        ],
+        [
+          126.75,
+          39.75,
+          350.25,
+          126.25
+        ],
+        [
+          38.75,
+          126.75,
+          225.25,
+          238.25
+        ]
+      ],
+      "MVI_40141": [
+        [
+          438.75,
+          82.75,
+          579.25,
+          131.25
+        ],
+        [
+          656.75,
+          134.75,
+          805.25,
+          201.25
+        ],
+        [
+          753.75,
+          201.75,
+          960.5,
+          258.25
+        ],
+        [
+          848.75,
+          257.75,
+          960.5,
+          330.25
+        ],
+        [
+          0.5,
+          188.75,
+          143.25,
+          297.25
+        ],
+        [
+          176.75,
+          152.75,
+          273.25,
+          203.25
+        ],
+        [
+          275.75,
+          123.75,
+          340.25,
+          167.25
+        ]
+      ],
+      "MVI_40171": [
+        [
+          593.75,
+          0.5,
+          960.5,
+          43.25
+        ]
+      ],
+      "MVI_40773": [
+        [
+          249.75,
+          0.5,
+          960.5,
+          23.25
+        ],
+        [
+          762.75,
+          25.75,
+          960.5,
+          76.25
+        ],
+        [
+          864.75,
+          80.75,
+          960.5,
+          150.25
+        ],
+        [
+          0.5,
+          41.75,
+          188.25,
+          78.25
+        ],
+        [
+          0.5,
+          85.75,
+          131.25,
+          133.25
+        ]
+      ],
+      "MVI_63553": [
+        [
+          0.5,
+          71.75,
+          91.25,
+          117.25
+        ],
+        [
+          889.75,
+          390.75,
+          960.5,
+          534.25
+        ]
+      ]
+    },
+    "raw_root": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC",
+    "data_root": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\shared\\data",
+    "max_frames": null,
+    "tracker_settings": {
+      "tracker_type": "bytetrack",
+      "track_high_thresh": 0.25,
+      "track_low_thresh": 0.1,
+      "new_track_thresh": 0.25,
+      "track_buffer": 30,
+      "match_thresh": 0.8,
+      "fuse_score": true
+    }
+  },
+  "env": {
+    "device": "NVIDIA GeForce RTX 4060",
+    "torch": "2.14.1+cu126",
+    "ultralytics": "8.4.175",
+    "opencv": "5.0.0",
+    "python": "3.12.5",
+    "cuda": "12.6",
+    "numpy": "2.4.4",
+    "cudnn": 91002,
+    "date": "2026-11-02 00:20:21"
+  },
+  "note": "image reading excluded; detector = predict (pre+infer+NMS+GPU->CPU); tracker = ignored-region mask + tracker.update"
+}

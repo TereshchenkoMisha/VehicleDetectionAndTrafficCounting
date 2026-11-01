@@ -1,0 +1,231 @@
+{
+  "detector": "yolov8n.pt",
+  "tracker": "bytetrack",
+  "split": "dev",
+  "seed": 42,
+  "deterministic": true,
+  "conf": 0.25,
+  "iou": 0.7,
+  "imgsz": 960,
+  "frames": 5924,
+  "det_ms_per_frame": 6.466596201898495,
+  "trk_ms_per_frame": 0.669587744754489,
+  "total_ms_per_frame": 7.136183946652984,
+  "fps": 140.13091695443478,
+  "per_seq": {
+    "MVI_20033": {
+      "frames": 784,
+      "det_ms": 6.5222108418315745,
+      "trk_ms": 0.6506508928359093,
+      "tracks": 55,
+      "rows": 4658,
+      "mot_sha256": "c2a0b8fe72b965f0c942b5a264c83dd8f2da1acc9bd99290905cd21cc49e98e3"
+    },
+    "MVI_40141": {
+      "frames": 1600,
+      "det_ms": 6.323596250016408,
+      "trk_ms": 0.6482828749722103,
+      "tracks": 88,
+      "rows": 8806,
+      "mot_sha256": "edb4c4c678309a2ecf78eb6e79d3901bce3c78f44b19f7489910c4ded2349c23"
+    },
+    "MVI_40171": {
+      "frames": 1150,
+      "det_ms": 6.627983913041016,
+      "trk_ms": 0.6384021739185023,
+      "tracks": 108,
+      "rows": 5451,
+      "mot_sha256": "8b9d3ec9bd04c85a0f91408337a6b5ddfbe7804109b36b17ae45530b2a4b7b09"
+    },
+    "MVI_40773": {
+      "frames": 985,
+      "det_ms": 6.4364298477064645,
+      "trk_ms": 0.6908475126674325,
+      "tracks": 119,
+      "rows": 6797,
+      "mot_sha256": "87c129e1f323468fec1a493f51f3ac3d868602e54744b184a23f33382577ff1b"
+    },
+    "MVI_63553": {
+      "frames": 1405,
+      "det_ms": 6.487461708210992,
+      "trk_ms": 0.7150374377245585,
+      "tracks": 247,
+      "rows": 8109,
+      "mot_sha256": "7a815f84d73a7c4e32a02b72c5d258d2a656f853fec144d0218c06f16b4c2394"
+    }
+  },
+  "provenance": {
+    "weights": {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\models\\yolov8n.pt",
+      "sha256": "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36"
+    },
+    "tracker_config": {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\configs\\bytetrack.yaml",
+      "sha256": "cedc7f542d820da80d9542a347cb0cba9c5ea9db01581f8dcb49c85486291205"
+    },
+    "splits": {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\shared\\data\\splits.json",
+      "sha256": "1fc24fa51d675a6e55724fc3be34705ca0af252e36f2ef41f40eaebe6225fbfb"
+    },
+    "ignored": {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\shared\\data\\ignored_regions.json",
+      "sha256": "9f2accc86b42bfe1978c21c1419cc11e936d01dff88d6a0be7faf92dbd6e9b10"
+    },
+    "ignored_regions": {
+      "MVI_20033": [
+        [
+          458.75,
+          0.5,
+          618.25,
+          54.25
+        ],
+        [
+          710.75,
+          29.75,
+          950.25,
+          99.25
+        ],
+        [
+          824.75,
+          101.75,
+          954.25,
+          157.25
+        ],
+        [
+          126.75,
+          39.75,
+          350.25,
+          126.25
+        ],
+        [
+          38.75,
+          126.75,
+          225.25,
+          238.25
+        ]
+      ],
+      "MVI_40141": [
+        [
+          438.75,
+          82.75,
+          579.25,
+          131.25
+        ],
+        [
+          656.75,
+          134.75,
+          805.25,
+          201.25
+        ],
+        [
+          753.75,
+          201.75,
+          960.5,
+          258.25
+        ],
+        [
+          848.75,
+          257.75,
+          960.5,
+          330.25
+        ],
+        [
+          0.5,
+          188.75,
+          143.25,
+          297.25
+        ],
+        [
+          176.75,
+          152.75,
+          273.25,
+          203.25
+        ],
+        [
+          275.75,
+          123.75,
+          340.25,
+          167.25
+        ]
+      ],
+      "MVI_40171": [
+        [
+          593.75,
+          0.5,
+          960.5,
+          43.25
+        ]
+      ],
+      "MVI_40773": [
+        [
+          249.75,
+          0.5,
+          960.5,
+          23.25
+        ],
+        [
+          762.75,
+          25.75,
+          960.5,
+          76.25
+        ],
+        [
+          864.75,
+          80.75,
+          960.5,
+          150.25
+        ],
+        [
+          0.5,
+          41.75,
+          188.25,
+          78.25
+        ],
+        [
+          0.5,
+          85.75,
+          131.25,
+          133.25
+        ]
+      ],
+      "MVI_63553": [
+        [
+          0.5,
+          71.75,
+          91.25,
+          117.25
+        ],
+        [
+          889.75,
+          390.75,
+          960.5,
+          534.25
+        ]
+      ]
+    },
+    "raw_root": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC",
+    "data_root": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\shared\\data",
+    "max_frames": null,
+    "tracker_settings": {
+      "tracker_type": "bytetrack",
+      "track_high_thresh": 0.25,
+      "track_low_thresh": 0.1,
+      "new_track_thresh": 0.25,
+      "track_buffer": 30,
+      "match_thresh": 0.8,
+      "fuse_score": true
+    }
+  },
+  "env": {
+    "device": "NVIDIA GeForce RTX 4060",
+    "torch": "2.14.1+cu126",
+    "ultralytics": "8.4.175",
+    "opencv": "5.0.0",
+    "python": "3.12.5",
+    "cuda": "12.6",
+    "numpy": "2.4.4",
+    "cudnn": 91002,
+    "date": "2026-11-02 00:07:49"
+  },
+  "note": "image reading excluded; detector = predict (pre+infer+NMS+GPU->CPU); tracker = ignored-region mask + tracker.update"
+}

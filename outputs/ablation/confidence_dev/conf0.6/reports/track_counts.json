@@ -1,0 +1,6068 @@
+{
+  "dev": {
+    "yolov8n_botsort_conf0.6": {
+      "MVI_20033": {
+        "counts": {
+          "car": {
+            "total": 16,
+            "ab": 2,
+            "ba": 14
+          },
+          "bus": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "truck": {
+            "total": 1,
+            "ab": 1,
+            "ba": 0
+          },
+          "all": {
+            "total": 17,
+            "ab": 3,
+            "ba": 14
+          }
+        },
+        "tracks": 27,
+        "events": [
+          [
+            26,
+            6,
+            0,
+            -1
+          ],
+          [
+            40,
+            2,
+            0,
+            1
+          ],
+          [
+            64,
+            9,
+            0,
+            -1
+          ],
+          [
+            72,
+            10,
+            0,
+            -1
+          ],
+          [
+            151,
+            14,
+            0,
+            -1
+          ],
+          [
+            330,
+            21,
+            0,
+            -1
+          ],
+          [
+            396,
+            23,
+            0,
+            -1
+          ],
+          [
+            434,
+            25,
+            0,
+            -1
+          ],
+          [
+            465,
+            26,
+            0,
+            -1
+          ],
+          [
+            483,
+            28,
+            0,
+            -1
+          ],
+          [
+            549,
+            32,
+            0,
+            -1
+          ],
+          [
+            567,
+            22,
+            0,
+            1
+          ],
+          [
+            591,
+            33,
+            0,
+            -1
+          ],
+          [
+            622,
+            30,
+            2,
+            1
+          ],
+          [
+            659,
+            34,
+            0,
+            -1
+          ],
+          [
+            684,
+            36,
+            0,
+            -1
+          ],
+          [
+            754,
+            40,
+            0,
+            -1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              140,
+              300
+            ],
+            "p2": [
+              950,
+              300
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              458.75,
+              0.5,
+              618.25,
+              54.25
+            ],
+            [
+              710.75,
+              29.75,
+              950.25,
+              99.25
+            ],
+            [
+              824.75,
+              101.75,
+              954.25,
+              157.25
+            ],
+            [
+              126.75,
+              39.75,
+              350.25,
+              126.25
+            ],
+            [
+              38.75,
+              126.75,
+              225.25,
+              238.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_botsort_conf0.6\\MVI_20033.txt",
+          "sha256": "291b24327634c29c8cf55aeda98e86938188f4f0bef79b17042c2ded00179790"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_botsort_conf0.6\\timing.json",
+          "sha256": "d99e26aa841b530c3130810577ef0bb4025cc89e80739d3d0afaec543b832afc"
+        }
+      },
+      "MVI_40141": {
+        "counts": {
+          "car": {
+            "total": 24,
+            "ab": 14,
+            "ba": 10
+          },
+          "bus": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 24,
+            "ab": 14,
+            "ba": 10
+          }
+        },
+        "tracks": 45,
+        "events": [
+          [
+            37,
+            4,
+            0,
+            1
+          ],
+          [
+            44,
+            3,
+            0,
+            1
+          ],
+          [
+            92,
+            10,
+            0,
+            1
+          ],
+          [
+            133,
+            8,
+            0,
+            1
+          ],
+          [
+            141,
+            14,
+            0,
+            1
+          ],
+          [
+            164,
+            5,
+            0,
+            1
+          ],
+          [
+            201,
+            17,
+            0,
+            1
+          ],
+          [
+            244,
+            16,
+            0,
+            1
+          ],
+          [
+            347,
+            23,
+            0,
+            1
+          ],
+          [
+            414,
+            28,
+            0,
+            1
+          ],
+          [
+            524,
+            33,
+            0,
+            -1
+          ],
+          [
+            667,
+            30,
+            0,
+            1
+          ],
+          [
+            673,
+            37,
+            0,
+            -1
+          ],
+          [
+            725,
+            35,
+            0,
+            1
+          ],
+          [
+            846,
+            38,
+            0,
+            1
+          ],
+          [
+            877,
+            40,
+            0,
+            -1
+          ],
+          [
+            896,
+            41,
+            0,
+            -1
+          ],
+          [
+            994,
+            42,
+            0,
+            -1
+          ],
+          [
+            1132,
+            44,
+            0,
+            -1
+          ],
+          [
+            1463,
+            61,
+            0,
+            -1
+          ],
+          [
+            1468,
+            62,
+            0,
+            -1
+          ],
+          [
+            1508,
+            63,
+            0,
+            -1
+          ],
+          [
+            1552,
+            66,
+            0,
+            -1
+          ],
+          [
+            1581,
+            60,
+            0,
+            1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              150,
+              300
+            ],
+            "p2": [
+              950,
+              300
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              438.75,
+              82.75,
+              579.25,
+              131.25
+            ],
+            [
+              656.75,
+              134.75,
+              805.25,
+              201.25
+            ],
+            [
+              753.75,
+              201.75,
+              960.5,
+              258.25
+            ],
+            [
+              848.75,
+              257.75,
+              960.5,
+              330.25
+            ],
+            [
+              0.5,
+              188.75,
+              143.25,
+              297.25
+            ],
+            [
+              176.75,
+              152.75,
+              273.25,
+              203.25
+            ],
+            [
+              275.75,
+              123.75,
+              340.25,
+              167.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_botsort_conf0.6\\MVI_40141.txt",
+          "sha256": "76b4e9bbf41dbcfda2e4946de63c79b8c7f2d0aa703f4e7c18df734460c0b6f1"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_botsort_conf0.6\\timing.json",
+          "sha256": "d99e26aa841b530c3130810577ef0bb4025cc89e80739d3d0afaec543b832afc"
+        }
+      },
+      "MVI_40171": {
+        "counts": {
+          "car": {
+            "total": 22,
+            "ab": 3,
+            "ba": 19
+          },
+          "bus": {
+            "total": 3,
+            "ab": 0,
+            "ba": 3
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 25,
+            "ab": 3,
+            "ba": 22
+          }
+        },
+        "tracks": 47,
+        "events": [
+          [
+            9,
+            3,
+            0,
+            -1
+          ],
+          [
+            53,
+            7,
+            0,
+            -1
+          ],
+          [
+            138,
+            12,
+            0,
+            -1
+          ],
+          [
+            144,
+            5,
+            0,
+            1
+          ],
+          [
+            154,
+            13,
+            1,
+            -1
+          ],
+          [
+            178,
+            15,
+            0,
+            -1
+          ],
+          [
+            213,
+            19,
+            0,
+            -1
+          ],
+          [
+            226,
+            18,
+            0,
+            1
+          ],
+          [
+            252,
+            26,
+            0,
+            -1
+          ],
+          [
+            290,
+            30,
+            0,
+            -1
+          ],
+          [
+            371,
+            33,
+            0,
+            -1
+          ],
+          [
+            412,
+            34,
+            0,
+            -1
+          ],
+          [
+            488,
+            37,
+            0,
+            -1
+          ],
+          [
+            510,
+            40,
+            0,
+            -1
+          ],
+          [
+            546,
+            41,
+            0,
+            -1
+          ],
+          [
+            588,
+            44,
+            0,
+            1
+          ],
+          [
+            672,
+            52,
+            0,
+            -1
+          ],
+          [
+            711,
+            56,
+            0,
+            -1
+          ],
+          [
+            787,
+            59,
+            0,
+            -1
+          ],
+          [
+            829,
+            63,
+            0,
+            -1
+          ],
+          [
+            895,
+            66,
+            0,
+            -1
+          ],
+          [
+            965,
+            36,
+            1,
+            -1
+          ],
+          [
+            970,
+            73,
+            0,
+            -1
+          ],
+          [
+            1106,
+            75,
+            1,
+            -1
+          ],
+          [
+            1120,
+            86,
+            0,
+            -1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              872,
+              292
+            ],
+            "p2": [
+              793,
+              4
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              593.75,
+              0.5,
+              960.5,
+              43.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_botsort_conf0.6\\MVI_40171.txt",
+          "sha256": "f0d5779de19ebc2c461eff28a2487858587f26d64e3dd5ddd766107a6a9513d6"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_botsort_conf0.6\\timing.json",
+          "sha256": "d99e26aa841b530c3130810577ef0bb4025cc89e80739d3d0afaec543b832afc"
+        }
+      },
+      "MVI_40773": {
+        "counts": {
+          "car": {
+            "total": 7,
+            "ab": 1,
+            "ba": 6
+          },
+          "bus": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 7,
+            "ab": 1,
+            "ba": 6
+          }
+        },
+        "tracks": 40,
+        "events": [
+          [
+            289,
+            15,
+            0,
+            -1
+          ],
+          [
+            368,
+            18,
+            0,
+            -1
+          ],
+          [
+            421,
+            20,
+            0,
+            1
+          ],
+          [
+            607,
+            36,
+            0,
+            -1
+          ],
+          [
+            729,
+            54,
+            0,
+            -1
+          ],
+          [
+            829,
+            57,
+            0,
+            -1
+          ],
+          [
+            937,
+            60,
+            0,
+            -1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              60,
+              350
+            ],
+            "p2": [
+              950,
+              350
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              249.75,
+              0.5,
+              960.5,
+              23.25
+            ],
+            [
+              762.75,
+              25.75,
+              960.5,
+              76.25
+            ],
+            [
+              864.75,
+              80.75,
+              960.5,
+              150.25
+            ],
+            [
+              0.5,
+              41.75,
+              188.25,
+              78.25
+            ],
+            [
+              0.5,
+              85.75,
+              131.25,
+              133.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_botsort_conf0.6\\MVI_40773.txt",
+          "sha256": "0dcb518177930e2783562e3ff9f6ee55b017754c9ddf04eafab0a2d3ce6fad37"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_botsort_conf0.6\\timing.json",
+          "sha256": "d99e26aa841b530c3130810577ef0bb4025cc89e80739d3d0afaec543b832afc"
+        }
+      },
+      "MVI_63553": {
+        "counts": {
+          "car": {
+            "total": 90,
+            "ab": 43,
+            "ba": 47
+          },
+          "bus": {
+            "total": 2,
+            "ab": 1,
+            "ba": 1
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 92,
+            "ab": 44,
+            "ba": 48
+          }
+        },
+        "tracks": 177,
+        "events": [
+          [
+            12,
+            3,
+            0,
+            -1
+          ],
+          [
+            20,
+            8,
+            0,
+            -1
+          ],
+          [
+            50,
+            13,
+            0,
+            -1
+          ],
+          [
+            56,
+            14,
+            0,
+            -1
+          ],
+          [
+            66,
+            9,
+            0,
+            1
+          ],
+          [
+            79,
+            12,
+            0,
+            1
+          ],
+          [
+            99,
+            22,
+            0,
+            -1
+          ],
+          [
+            110,
+            17,
+            0,
+            1
+          ],
+          [
+            111,
+            21,
+            0,
+            -1
+          ],
+          [
+            133,
+            19,
+            0,
+            1
+          ],
+          [
+            154,
+            28,
+            0,
+            -1
+          ],
+          [
+            157,
+            27,
+            0,
+            1
+          ],
+          [
+            167,
+            24,
+            0,
+            1
+          ],
+          [
+            167,
+            32,
+            0,
+            -1
+          ],
+          [
+            184,
+            25,
+            0,
+            1
+          ],
+          [
+            197,
+            39,
+            0,
+            -1
+          ],
+          [
+            198,
+            41,
+            0,
+            1
+          ],
+          [
+            206,
+            35,
+            0,
+            1
+          ],
+          [
+            221,
+            38,
+            0,
+            1
+          ],
+          [
+            224,
+            45,
+            0,
+            -1
+          ],
+          [
+            240,
+            46,
+            0,
+            -1
+          ],
+          [
+            247,
+            44,
+            0,
+            1
+          ],
+          [
+            266,
+            55,
+            0,
+            -1
+          ],
+          [
+            289,
+            52,
+            0,
+            1
+          ],
+          [
+            325,
+            58,
+            0,
+            1
+          ],
+          [
+            338,
+            61,
+            0,
+            1
+          ],
+          [
+            349,
+            76,
+            0,
+            -1
+          ],
+          [
+            370,
+            69,
+            0,
+            1
+          ],
+          [
+            381,
+            81,
+            0,
+            -1
+          ],
+          [
+            473,
+            94,
+            0,
+            -1
+          ],
+          [
+            484,
+            95,
+            0,
+            -1
+          ],
+          [
+            504,
+            90,
+            1,
+            1
+          ],
+          [
+            524,
+            98,
+            0,
+            -1
+          ],
+          [
+            538,
+            102,
+            0,
+            -1
+          ],
+          [
+            545,
+            103,
+            0,
+            -1
+          ],
+          [
+            600,
+            107,
+            0,
+            1
+          ],
+          [
+            605,
+            117,
+            0,
+            -1
+          ],
+          [
+            614,
+            108,
+            0,
+            1
+          ],
+          [
+            616,
+            121,
+            0,
+            -1
+          ],
+          [
+            629,
+            123,
+            0,
+            1
+          ],
+          [
+            641,
+            127,
+            0,
+            -1
+          ],
+          [
+            673,
+            131,
+            0,
+            -1
+          ],
+          [
+            676,
+            124,
+            0,
+            1
+          ],
+          [
+            687,
+            133,
+            0,
+            -1
+          ],
+          [
+            694,
+            135,
+            0,
+            -1
+          ],
+          [
+            716,
+            139,
+            0,
+            -1
+          ],
+          [
+            727,
+            143,
+            0,
+            -1
+          ],
+          [
+            739,
+            144,
+            0,
+            -1
+          ],
+          [
+            771,
+            149,
+            0,
+            -1
+          ],
+          [
+            789,
+            146,
+            0,
+            1
+          ],
+          [
+            790,
+            151,
+            0,
+            -1
+          ],
+          [
+            800,
+            157,
+            0,
+            1
+          ],
+          [
+            808,
+            160,
+            0,
+            -1
+          ],
+          [
+            817,
+            148,
+            0,
+            1
+          ],
+          [
+            858,
+            162,
+            0,
+            1
+          ],
+          [
+            864,
+            163,
+            0,
+            1
+          ],
+          [
+            872,
+            168,
+            0,
+            -1
+          ],
+          [
+            889,
+            166,
+            0,
+            1
+          ],
+          [
+            897,
+            165,
+            0,
+            1
+          ],
+          [
+            929,
+            173,
+            0,
+            -1
+          ],
+          [
+            946,
+            170,
+            0,
+            1
+          ],
+          [
+            1003,
+            180,
+            0,
+            -1
+          ],
+          [
+            1017,
+            179,
+            0,
+            1
+          ],
+          [
+            1024,
+            188,
+            0,
+            -1
+          ],
+          [
+            1027,
+            189,
+            0,
+            -1
+          ],
+          [
+            1066,
+            200,
+            0,
+            -1
+          ],
+          [
+            1088,
+            195,
+            0,
+            1
+          ],
+          [
+            1092,
+            206,
+            0,
+            -1
+          ],
+          [
+            1122,
+            205,
+            0,
+            1
+          ],
+          [
+            1123,
+            209,
+            0,
+            -1
+          ],
+          [
+            1125,
+            211,
+            0,
+            -1
+          ],
+          [
+            1161,
+            215,
+            0,
+            -1
+          ],
+          [
+            1162,
+            210,
+            0,
+            1
+          ],
+          [
+            1174,
+            217,
+            0,
+            -1
+          ],
+          [
+            1196,
+            222,
+            0,
+            -1
+          ],
+          [
+            1197,
+            216,
+            0,
+            1
+          ],
+          [
+            1213,
+            218,
+            0,
+            1
+          ],
+          [
+            1219,
+            226,
+            0,
+            -1
+          ],
+          [
+            1245,
+            234,
+            0,
+            -1
+          ],
+          [
+            1247,
+            220,
+            0,
+            1
+          ],
+          [
+            1259,
+            241,
+            0,
+            1
+          ],
+          [
+            1284,
+            233,
+            0,
+            1
+          ],
+          [
+            1293,
+            242,
+            0,
+            1
+          ],
+          [
+            1295,
+            246,
+            1,
+            -1
+          ],
+          [
+            1301,
+            244,
+            0,
+            1
+          ],
+          [
+            1314,
+            253,
+            0,
+            1
+          ],
+          [
+            1326,
+            245,
+            0,
+            1
+          ],
+          [
+            1347,
+            256,
+            0,
+            -1
+          ],
+          [
+            1375,
+            254,
+            0,
+            1
+          ],
+          [
+            1375,
+            262,
+            0,
+            -1
+          ],
+          [
+            1384,
+            257,
+            0,
+            1
+          ],
+          [
+            1397,
+            259,
+            0,
+            1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              255,
+              4
+            ],
+            "p2": [
+              142,
+              372
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              0.5,
+              71.75,
+              91.25,
+              117.25
+            ],
+            [
+              889.75,
+              390.75,
+              960.5,
+              534.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_botsort_conf0.6\\MVI_63553.txt",
+          "sha256": "80ae7e6298bd8d9b8eb41c51579dc211b24e43f85cd99276e9ec9f525753303a"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_botsort_conf0.6\\timing.json",
+          "sha256": "d99e26aa841b530c3130810577ef0bb4025cc89e80739d3d0afaec543b832afc"
+        }
+      }
+    },
+    "yolov8n_bytetrack_conf0.6": {
+      "MVI_20033": {
+        "counts": {
+          "car": {
+            "total": 16,
+            "ab": 2,
+            "ba": 14
+          },
+          "bus": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "truck": {
+            "total": 1,
+            "ab": 1,
+            "ba": 0
+          },
+          "all": {
+            "total": 17,
+            "ab": 3,
+            "ba": 14
+          }
+        },
+        "tracks": 27,
+        "events": [
+          [
+            26,
+            6,
+            0,
+            -1
+          ],
+          [
+            40,
+            2,
+            0,
+            1
+          ],
+          [
+            64,
+            9,
+            0,
+            -1
+          ],
+          [
+            72,
+            10,
+            0,
+            -1
+          ],
+          [
+            151,
+            14,
+            0,
+            -1
+          ],
+          [
+            330,
+            21,
+            0,
+            -1
+          ],
+          [
+            396,
+            23,
+            0,
+            -1
+          ],
+          [
+            434,
+            25,
+            0,
+            -1
+          ],
+          [
+            465,
+            26,
+            0,
+            -1
+          ],
+          [
+            483,
+            28,
+            0,
+            -1
+          ],
+          [
+            549,
+            32,
+            0,
+            -1
+          ],
+          [
+            567,
+            22,
+            0,
+            1
+          ],
+          [
+            591,
+            33,
+            0,
+            -1
+          ],
+          [
+            622,
+            30,
+            2,
+            1
+          ],
+          [
+            659,
+            34,
+            0,
+            -1
+          ],
+          [
+            684,
+            36,
+            0,
+            -1
+          ],
+          [
+            754,
+            40,
+            0,
+            -1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              140,
+              300
+            ],
+            "p2": [
+              950,
+              300
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              458.75,
+              0.5,
+              618.25,
+              54.25
+            ],
+            [
+              710.75,
+              29.75,
+              950.25,
+              99.25
+            ],
+            [
+              824.75,
+              101.75,
+              954.25,
+              157.25
+            ],
+            [
+              126.75,
+              39.75,
+              350.25,
+              126.25
+            ],
+            [
+              38.75,
+              126.75,
+              225.25,
+              238.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_bytetrack_conf0.6\\MVI_20033.txt",
+          "sha256": "5c3472cd1a64a7d707c7ced09df19c99d80c215084657094b7c93db1db9650b5"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_bytetrack_conf0.6\\timing.json",
+          "sha256": "0cef51c122488befa9d94c31cc79bebfccbb3a6d2b4e8126f69987861f40239e"
+        }
+      },
+      "MVI_40141": {
+        "counts": {
+          "car": {
+            "total": 24,
+            "ab": 14,
+            "ba": 10
+          },
+          "bus": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 24,
+            "ab": 14,
+            "ba": 10
+          }
+        },
+        "tracks": 45,
+        "events": [
+          [
+            37,
+            4,
+            0,
+            1
+          ],
+          [
+            44,
+            3,
+            0,
+            1
+          ],
+          [
+            92,
+            10,
+            0,
+            1
+          ],
+          [
+            133,
+            8,
+            0,
+            1
+          ],
+          [
+            141,
+            14,
+            0,
+            1
+          ],
+          [
+            164,
+            5,
+            0,
+            1
+          ],
+          [
+            201,
+            17,
+            0,
+            1
+          ],
+          [
+            244,
+            16,
+            0,
+            1
+          ],
+          [
+            347,
+            23,
+            0,
+            1
+          ],
+          [
+            414,
+            28,
+            0,
+            1
+          ],
+          [
+            524,
+            33,
+            0,
+            -1
+          ],
+          [
+            667,
+            30,
+            0,
+            1
+          ],
+          [
+            673,
+            37,
+            0,
+            -1
+          ],
+          [
+            725,
+            35,
+            0,
+            1
+          ],
+          [
+            846,
+            38,
+            0,
+            1
+          ],
+          [
+            877,
+            40,
+            0,
+            -1
+          ],
+          [
+            896,
+            41,
+            0,
+            -1
+          ],
+          [
+            994,
+            42,
+            0,
+            -1
+          ],
+          [
+            1132,
+            44,
+            0,
+            -1
+          ],
+          [
+            1463,
+            61,
+            0,
+            -1
+          ],
+          [
+            1468,
+            62,
+            0,
+            -1
+          ],
+          [
+            1508,
+            63,
+            0,
+            -1
+          ],
+          [
+            1552,
+            66,
+            0,
+            -1
+          ],
+          [
+            1581,
+            60,
+            0,
+            1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              150,
+              300
+            ],
+            "p2": [
+              950,
+              300
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              438.75,
+              82.75,
+              579.25,
+              131.25
+            ],
+            [
+              656.75,
+              134.75,
+              805.25,
+              201.25
+            ],
+            [
+              753.75,
+              201.75,
+              960.5,
+              258.25
+            ],
+            [
+              848.75,
+              257.75,
+              960.5,
+              330.25
+            ],
+            [
+              0.5,
+              188.75,
+              143.25,
+              297.25
+            ],
+            [
+              176.75,
+              152.75,
+              273.25,
+              203.25
+            ],
+            [
+              275.75,
+              123.75,
+              340.25,
+              167.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_bytetrack_conf0.6\\MVI_40141.txt",
+          "sha256": "6567237b258f5f9e50f2f3f08cb059fa345bf422a70093cdca7b7044a4bff20c"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_bytetrack_conf0.6\\timing.json",
+          "sha256": "0cef51c122488befa9d94c31cc79bebfccbb3a6d2b4e8126f69987861f40239e"
+        }
+      },
+      "MVI_40171": {
+        "counts": {
+          "car": {
+            "total": 22,
+            "ab": 3,
+            "ba": 19
+          },
+          "bus": {
+            "total": 3,
+            "ab": 0,
+            "ba": 3
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 25,
+            "ab": 3,
+            "ba": 22
+          }
+        },
+        "tracks": 47,
+        "events": [
+          [
+            9,
+            3,
+            0,
+            -1
+          ],
+          [
+            53,
+            7,
+            0,
+            -1
+          ],
+          [
+            138,
+            13,
+            0,
+            -1
+          ],
+          [
+            144,
+            5,
+            0,
+            1
+          ],
+          [
+            155,
+            14,
+            1,
+            -1
+          ],
+          [
+            178,
+            16,
+            0,
+            -1
+          ],
+          [
+            213,
+            20,
+            0,
+            -1
+          ],
+          [
+            226,
+            19,
+            0,
+            1
+          ],
+          [
+            252,
+            27,
+            0,
+            -1
+          ],
+          [
+            290,
+            31,
+            0,
+            -1
+          ],
+          [
+            371,
+            34,
+            0,
+            -1
+          ],
+          [
+            412,
+            35,
+            0,
+            -1
+          ],
+          [
+            488,
+            38,
+            0,
+            -1
+          ],
+          [
+            510,
+            41,
+            0,
+            -1
+          ],
+          [
+            546,
+            42,
+            0,
+            -1
+          ],
+          [
+            588,
+            45,
+            0,
+            1
+          ],
+          [
+            672,
+            54,
+            0,
+            -1
+          ],
+          [
+            711,
+            59,
+            0,
+            -1
+          ],
+          [
+            787,
+            62,
+            0,
+            -1
+          ],
+          [
+            829,
+            66,
+            0,
+            -1
+          ],
+          [
+            895,
+            70,
+            0,
+            -1
+          ],
+          [
+            965,
+            37,
+            1,
+            -1
+          ],
+          [
+            970,
+            77,
+            0,
+            -1
+          ],
+          [
+            1106,
+            79,
+            1,
+            -1
+          ],
+          [
+            1120,
+            90,
+            0,
+            -1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              872,
+              292
+            ],
+            "p2": [
+              793,
+              4
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              593.75,
+              0.5,
+              960.5,
+              43.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_bytetrack_conf0.6\\MVI_40171.txt",
+          "sha256": "1c59c557ffdd6525ff8e86df7a168e6848e273b8e50c03bcefc693838110791a"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_bytetrack_conf0.6\\timing.json",
+          "sha256": "0cef51c122488befa9d94c31cc79bebfccbb3a6d2b4e8126f69987861f40239e"
+        }
+      },
+      "MVI_40773": {
+        "counts": {
+          "car": {
+            "total": 7,
+            "ab": 1,
+            "ba": 6
+          },
+          "bus": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 7,
+            "ab": 1,
+            "ba": 6
+          }
+        },
+        "tracks": 39,
+        "events": [
+          [
+            289,
+            15,
+            0,
+            -1
+          ],
+          [
+            368,
+            18,
+            0,
+            -1
+          ],
+          [
+            421,
+            20,
+            0,
+            1
+          ],
+          [
+            607,
+            36,
+            0,
+            -1
+          ],
+          [
+            729,
+            53,
+            0,
+            -1
+          ],
+          [
+            829,
+            56,
+            0,
+            -1
+          ],
+          [
+            937,
+            59,
+            0,
+            -1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              60,
+              350
+            ],
+            "p2": [
+              950,
+              350
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              249.75,
+              0.5,
+              960.5,
+              23.25
+            ],
+            [
+              762.75,
+              25.75,
+              960.5,
+              76.25
+            ],
+            [
+              864.75,
+              80.75,
+              960.5,
+              150.25
+            ],
+            [
+              0.5,
+              41.75,
+              188.25,
+              78.25
+            ],
+            [
+              0.5,
+              85.75,
+              131.25,
+              133.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_bytetrack_conf0.6\\MVI_40773.txt",
+          "sha256": "c8dda0cd1ad62ad3833c3635d508d71b267cb44a2e2c75f13b233cee076ca7cd"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_bytetrack_conf0.6\\timing.json",
+          "sha256": "0cef51c122488befa9d94c31cc79bebfccbb3a6d2b4e8126f69987861f40239e"
+        }
+      },
+      "MVI_63553": {
+        "counts": {
+          "car": {
+            "total": 90,
+            "ab": 43,
+            "ba": 47
+          },
+          "bus": {
+            "total": 2,
+            "ab": 1,
+            "ba": 1
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 92,
+            "ab": 44,
+            "ba": 48
+          }
+        },
+        "tracks": 186,
+        "events": [
+          [
+            12,
+            3,
+            0,
+            -1
+          ],
+          [
+            20,
+            8,
+            0,
+            -1
+          ],
+          [
+            50,
+            13,
+            0,
+            -1
+          ],
+          [
+            56,
+            14,
+            0,
+            -1
+          ],
+          [
+            66,
+            9,
+            0,
+            1
+          ],
+          [
+            79,
+            12,
+            0,
+            1
+          ],
+          [
+            99,
+            22,
+            0,
+            -1
+          ],
+          [
+            110,
+            17,
+            0,
+            1
+          ],
+          [
+            111,
+            21,
+            0,
+            -1
+          ],
+          [
+            133,
+            19,
+            0,
+            1
+          ],
+          [
+            154,
+            29,
+            0,
+            -1
+          ],
+          [
+            157,
+            28,
+            0,
+            1
+          ],
+          [
+            167,
+            25,
+            0,
+            1
+          ],
+          [
+            167,
+            33,
+            0,
+            -1
+          ],
+          [
+            184,
+            26,
+            0,
+            1
+          ],
+          [
+            197,
+            40,
+            0,
+            -1
+          ],
+          [
+            198,
+            42,
+            0,
+            1
+          ],
+          [
+            206,
+            36,
+            0,
+            1
+          ],
+          [
+            221,
+            39,
+            0,
+            1
+          ],
+          [
+            224,
+            46,
+            0,
+            -1
+          ],
+          [
+            240,
+            47,
+            0,
+            -1
+          ],
+          [
+            247,
+            45,
+            0,
+            1
+          ],
+          [
+            266,
+            56,
+            0,
+            -1
+          ],
+          [
+            289,
+            60,
+            0,
+            1
+          ],
+          [
+            325,
+            61,
+            0,
+            1
+          ],
+          [
+            338,
+            64,
+            0,
+            1
+          ],
+          [
+            349,
+            84,
+            0,
+            -1
+          ],
+          [
+            370,
+            75,
+            0,
+            1
+          ],
+          [
+            381,
+            89,
+            0,
+            -1
+          ],
+          [
+            473,
+            102,
+            0,
+            -1
+          ],
+          [
+            484,
+            103,
+            0,
+            -1
+          ],
+          [
+            504,
+            98,
+            1,
+            1
+          ],
+          [
+            524,
+            106,
+            0,
+            -1
+          ],
+          [
+            538,
+            110,
+            0,
+            -1
+          ],
+          [
+            545,
+            111,
+            0,
+            -1
+          ],
+          [
+            600,
+            115,
+            0,
+            1
+          ],
+          [
+            605,
+            125,
+            0,
+            -1
+          ],
+          [
+            614,
+            116,
+            0,
+            1
+          ],
+          [
+            616,
+            129,
+            0,
+            -1
+          ],
+          [
+            629,
+            131,
+            0,
+            1
+          ],
+          [
+            641,
+            135,
+            0,
+            -1
+          ],
+          [
+            673,
+            139,
+            0,
+            -1
+          ],
+          [
+            676,
+            132,
+            0,
+            1
+          ],
+          [
+            688,
+            146,
+            0,
+            -1
+          ],
+          [
+            694,
+            143,
+            0,
+            -1
+          ],
+          [
+            716,
+            148,
+            0,
+            -1
+          ],
+          [
+            727,
+            153,
+            0,
+            -1
+          ],
+          [
+            738,
+            154,
+            0,
+            -1
+          ],
+          [
+            771,
+            160,
+            0,
+            -1
+          ],
+          [
+            789,
+            157,
+            0,
+            1
+          ],
+          [
+            790,
+            162,
+            0,
+            -1
+          ],
+          [
+            800,
+            168,
+            0,
+            1
+          ],
+          [
+            808,
+            171,
+            0,
+            -1
+          ],
+          [
+            817,
+            159,
+            0,
+            1
+          ],
+          [
+            858,
+            173,
+            0,
+            1
+          ],
+          [
+            864,
+            174,
+            0,
+            1
+          ],
+          [
+            872,
+            179,
+            0,
+            -1
+          ],
+          [
+            889,
+            177,
+            0,
+            1
+          ],
+          [
+            897,
+            176,
+            0,
+            1
+          ],
+          [
+            929,
+            184,
+            0,
+            -1
+          ],
+          [
+            946,
+            181,
+            0,
+            1
+          ],
+          [
+            1003,
+            191,
+            0,
+            -1
+          ],
+          [
+            1017,
+            190,
+            0,
+            1
+          ],
+          [
+            1024,
+            199,
+            0,
+            -1
+          ],
+          [
+            1027,
+            200,
+            0,
+            -1
+          ],
+          [
+            1066,
+            210,
+            0,
+            -1
+          ],
+          [
+            1088,
+            205,
+            0,
+            1
+          ],
+          [
+            1092,
+            217,
+            0,
+            -1
+          ],
+          [
+            1122,
+            216,
+            0,
+            1
+          ],
+          [
+            1123,
+            220,
+            0,
+            -1
+          ],
+          [
+            1125,
+            222,
+            0,
+            -1
+          ],
+          [
+            1161,
+            226,
+            0,
+            -1
+          ],
+          [
+            1162,
+            221,
+            0,
+            1
+          ],
+          [
+            1174,
+            228,
+            0,
+            -1
+          ],
+          [
+            1196,
+            233,
+            0,
+            -1
+          ],
+          [
+            1197,
+            227,
+            0,
+            1
+          ],
+          [
+            1213,
+            231,
+            0,
+            1
+          ],
+          [
+            1219,
+            237,
+            0,
+            -1
+          ],
+          [
+            1245,
+            245,
+            0,
+            -1
+          ],
+          [
+            1247,
+            232,
+            0,
+            1
+          ],
+          [
+            1259,
+            252,
+            0,
+            1
+          ],
+          [
+            1284,
+            244,
+            0,
+            1
+          ],
+          [
+            1293,
+            253,
+            0,
+            1
+          ],
+          [
+            1294,
+            257,
+            1,
+            -1
+          ],
+          [
+            1301,
+            255,
+            0,
+            1
+          ],
+          [
+            1314,
+            264,
+            0,
+            1
+          ],
+          [
+            1326,
+            256,
+            0,
+            1
+          ],
+          [
+            1347,
+            266,
+            0,
+            -1
+          ],
+          [
+            1375,
+            265,
+            0,
+            1
+          ],
+          [
+            1375,
+            272,
+            0,
+            -1
+          ],
+          [
+            1384,
+            267,
+            0,
+            1
+          ],
+          [
+            1397,
+            269,
+            0,
+            1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              255,
+              4
+            ],
+            "p2": [
+              142,
+              372
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              0.5,
+              71.75,
+              91.25,
+              117.25
+            ],
+            [
+              889.75,
+              390.75,
+              960.5,
+              534.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_bytetrack_conf0.6\\MVI_63553.txt",
+          "sha256": "c4711a1e41a31b1486fd710cedd327f7f9c0e0be5e68b21f8b0f29a98e445e6d"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8n_bytetrack_conf0.6\\timing.json",
+          "sha256": "0cef51c122488befa9d94c31cc79bebfccbb3a6d2b4e8126f69987861f40239e"
+        }
+      }
+    },
+    "yolov8s_botsort_conf0.6": {
+      "MVI_20033": {
+        "counts": {
+          "car": {
+            "total": 18,
+            "ab": 2,
+            "ba": 16
+          },
+          "bus": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "truck": {
+            "total": 1,
+            "ab": 1,
+            "ba": 0
+          },
+          "all": {
+            "total": 19,
+            "ab": 3,
+            "ba": 16
+          }
+        },
+        "tracks": 26,
+        "events": [
+          [
+            26,
+            5,
+            0,
+            -1
+          ],
+          [
+            40,
+            2,
+            0,
+            1
+          ],
+          [
+            64,
+            6,
+            0,
+            -1
+          ],
+          [
+            72,
+            8,
+            0,
+            -1
+          ],
+          [
+            151,
+            11,
+            0,
+            -1
+          ],
+          [
+            279,
+            14,
+            0,
+            -1
+          ],
+          [
+            331,
+            21,
+            0,
+            -1
+          ],
+          [
+            396,
+            24,
+            0,
+            -1
+          ],
+          [
+            434,
+            25,
+            0,
+            -1
+          ],
+          [
+            466,
+            26,
+            0,
+            -1
+          ],
+          [
+            482,
+            31,
+            0,
+            -1
+          ],
+          [
+            549,
+            35,
+            0,
+            -1
+          ],
+          [
+            567,
+            23,
+            0,
+            1
+          ],
+          [
+            591,
+            36,
+            0,
+            -1
+          ],
+          [
+            622,
+            28,
+            2,
+            1
+          ],
+          [
+            659,
+            37,
+            0,
+            -1
+          ],
+          [
+            684,
+            38,
+            0,
+            -1
+          ],
+          [
+            711,
+            40,
+            0,
+            -1
+          ],
+          [
+            754,
+            41,
+            0,
+            -1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              140,
+              300
+            ],
+            "p2": [
+              950,
+              300
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              458.75,
+              0.5,
+              618.25,
+              54.25
+            ],
+            [
+              710.75,
+              29.75,
+              950.25,
+              99.25
+            ],
+            [
+              824.75,
+              101.75,
+              954.25,
+              157.25
+            ],
+            [
+              126.75,
+              39.75,
+              350.25,
+              126.25
+            ],
+            [
+              38.75,
+              126.75,
+              225.25,
+              238.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_botsort_conf0.6\\MVI_20033.txt",
+          "sha256": "d7c38950260349e3ff8b048d39a2dabdd4bfe2d71133cb8649807df2597784a5"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_botsort_conf0.6\\timing.json",
+          "sha256": "c8941cf7de043c916a7146a2d5d58f61de68e66bb5e37d6c73df6e21dfee1119"
+        }
+      },
+      "MVI_40141": {
+        "counts": {
+          "car": {
+            "total": 23,
+            "ab": 12,
+            "ba": 11
+          },
+          "bus": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 23,
+            "ab": 12,
+            "ba": 11
+          }
+        },
+        "tracks": 46,
+        "events": [
+          [
+            9,
+            8,
+            0,
+            -1
+          ],
+          [
+            43,
+            3,
+            0,
+            1
+          ],
+          [
+            92,
+            5,
+            0,
+            1
+          ],
+          [
+            132,
+            7,
+            0,
+            1
+          ],
+          [
+            164,
+            6,
+            0,
+            1
+          ],
+          [
+            201,
+            18,
+            0,
+            1
+          ],
+          [
+            244,
+            19,
+            0,
+            1
+          ],
+          [
+            347,
+            26,
+            0,
+            1
+          ],
+          [
+            414,
+            30,
+            0,
+            1
+          ],
+          [
+            523,
+            47,
+            0,
+            -1
+          ],
+          [
+            641,
+            35,
+            0,
+            1
+          ],
+          [
+            667,
+            41,
+            0,
+            1
+          ],
+          [
+            673,
+            50,
+            0,
+            -1
+          ],
+          [
+            724,
+            48,
+            0,
+            1
+          ],
+          [
+            877,
+            54,
+            0,
+            -1
+          ],
+          [
+            896,
+            55,
+            0,
+            -1
+          ],
+          [
+            994,
+            56,
+            0,
+            -1
+          ],
+          [
+            1132,
+            59,
+            0,
+            -1
+          ],
+          [
+            1367,
+            71,
+            0,
+            -1
+          ],
+          [
+            1463,
+            74,
+            0,
+            -1
+          ],
+          [
+            1468,
+            75,
+            0,
+            -1
+          ],
+          [
+            1552,
+            79,
+            0,
+            -1
+          ],
+          [
+            1581,
+            73,
+            0,
+            1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              150,
+              300
+            ],
+            "p2": [
+              950,
+              300
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              438.75,
+              82.75,
+              579.25,
+              131.25
+            ],
+            [
+              656.75,
+              134.75,
+              805.25,
+              201.25
+            ],
+            [
+              753.75,
+              201.75,
+              960.5,
+              258.25
+            ],
+            [
+              848.75,
+              257.75,
+              960.5,
+              330.25
+            ],
+            [
+              0.5,
+              188.75,
+              143.25,
+              297.25
+            ],
+            [
+              176.75,
+              152.75,
+              273.25,
+              203.25
+            ],
+            [
+              275.75,
+              123.75,
+              340.25,
+              167.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_botsort_conf0.6\\MVI_40141.txt",
+          "sha256": "0a8779ce4242a2daf8be61b642972075e1c6b6e1e1e1ebe2a30b806f4ad65970"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_botsort_conf0.6\\timing.json",
+          "sha256": "c8941cf7de043c916a7146a2d5d58f61de68e66bb5e37d6c73df6e21dfee1119"
+        }
+      },
+      "MVI_40171": {
+        "counts": {
+          "car": {
+            "total": 33,
+            "ab": 3,
+            "ba": 30
+          },
+          "bus": {
+            "total": 3,
+            "ab": 0,
+            "ba": 3
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 36,
+            "ab": 3,
+            "ba": 33
+          }
+        },
+        "tracks": 54,
+        "events": [
+          [
+            9,
+            4,
+            0,
+            -1
+          ],
+          [
+            53,
+            7,
+            0,
+            -1
+          ],
+          [
+            56,
+            8,
+            0,
+            -1
+          ],
+          [
+            138,
+            9,
+            0,
+            -1
+          ],
+          [
+            144,
+            2,
+            0,
+            1
+          ],
+          [
+            164,
+            10,
+            1,
+            -1
+          ],
+          [
+            178,
+            12,
+            0,
+            -1
+          ],
+          [
+            181,
+            13,
+            0,
+            -1
+          ],
+          [
+            213,
+            14,
+            0,
+            -1
+          ],
+          [
+            226,
+            11,
+            0,
+            1
+          ],
+          [
+            248,
+            18,
+            0,
+            -1
+          ],
+          [
+            252,
+            15,
+            0,
+            -1
+          ],
+          [
+            282,
+            20,
+            0,
+            -1
+          ],
+          [
+            290,
+            21,
+            0,
+            -1
+          ],
+          [
+            371,
+            23,
+            0,
+            -1
+          ],
+          [
+            412,
+            24,
+            0,
+            -1
+          ],
+          [
+            488,
+            27,
+            0,
+            -1
+          ],
+          [
+            511,
+            29,
+            0,
+            -1
+          ],
+          [
+            546,
+            31,
+            0,
+            -1
+          ],
+          [
+            588,
+            34,
+            0,
+            1
+          ],
+          [
+            617,
+            35,
+            0,
+            -1
+          ],
+          [
+            638,
+            38,
+            0,
+            -1
+          ],
+          [
+            668,
+            41,
+            0,
+            -1
+          ],
+          [
+            672,
+            40,
+            0,
+            -1
+          ],
+          [
+            711,
+            50,
+            0,
+            -1
+          ],
+          [
+            787,
+            53,
+            0,
+            -1
+          ],
+          [
+            798,
+            54,
+            0,
+            -1
+          ],
+          [
+            829,
+            56,
+            0,
+            -1
+          ],
+          [
+            895,
+            57,
+            0,
+            -1
+          ],
+          [
+            932,
+            60,
+            0,
+            -1
+          ],
+          [
+            935,
+            61,
+            0,
+            -1
+          ],
+          [
+            965,
+            25,
+            1,
+            -1
+          ],
+          [
+            970,
+            65,
+            0,
+            -1
+          ],
+          [
+            1038,
+            70,
+            0,
+            -1
+          ],
+          [
+            1107,
+            68,
+            1,
+            -1
+          ],
+          [
+            1120,
+            74,
+            0,
+            -1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              872,
+              292
+            ],
+            "p2": [
+              793,
+              4
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              593.75,
+              0.5,
+              960.5,
+              43.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_botsort_conf0.6\\MVI_40171.txt",
+          "sha256": "eb8eac9bea73b082b651f71c3a58c33aabed1a75a50e2fde72db3f93a2c1089e"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_botsort_conf0.6\\timing.json",
+          "sha256": "c8941cf7de043c916a7146a2d5d58f61de68e66bb5e37d6c73df6e21dfee1119"
+        }
+      },
+      "MVI_40773": {
+        "counts": {
+          "car": {
+            "total": 13,
+            "ab": 1,
+            "ba": 12
+          },
+          "bus": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 13,
+            "ab": 1,
+            "ba": 12
+          }
+        },
+        "tracks": 32,
+        "events": [
+          [
+            173,
+            10,
+            0,
+            -1
+          ],
+          [
+            263,
+            12,
+            0,
+            -1
+          ],
+          [
+            289,
+            14,
+            0,
+            -1
+          ],
+          [
+            368,
+            15,
+            0,
+            -1
+          ],
+          [
+            421,
+            16,
+            0,
+            1
+          ],
+          [
+            463,
+            18,
+            0,
+            -1
+          ],
+          [
+            606,
+            25,
+            0,
+            -1
+          ],
+          [
+            667,
+            30,
+            0,
+            -1
+          ],
+          [
+            728,
+            39,
+            0,
+            -1
+          ],
+          [
+            788,
+            47,
+            0,
+            -1
+          ],
+          [
+            828,
+            48,
+            0,
+            -1
+          ],
+          [
+            873,
+            51,
+            0,
+            -1
+          ],
+          [
+            938,
+            50,
+            0,
+            -1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              60,
+              350
+            ],
+            "p2": [
+              950,
+              350
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              249.75,
+              0.5,
+              960.5,
+              23.25
+            ],
+            [
+              762.75,
+              25.75,
+              960.5,
+              76.25
+            ],
+            [
+              864.75,
+              80.75,
+              960.5,
+              150.25
+            ],
+            [
+              0.5,
+              41.75,
+              188.25,
+              78.25
+            ],
+            [
+              0.5,
+              85.75,
+              131.25,
+              133.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_botsort_conf0.6\\MVI_40773.txt",
+          "sha256": "ca5b4afac4ca1585e56a5b7f31662cb13ee01becdfed47e431ef77068dd51b6e"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_botsort_conf0.6\\timing.json",
+          "sha256": "c8941cf7de043c916a7146a2d5d58f61de68e66bb5e37d6c73df6e21dfee1119"
+        }
+      },
+      "MVI_63553": {
+        "counts": {
+          "car": {
+            "total": 118,
+            "ab": 68,
+            "ba": 50
+          },
+          "bus": {
+            "total": 4,
+            "ab": 1,
+            "ba": 3
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 122,
+            "ab": 69,
+            "ba": 53
+          }
+        },
+        "tracks": 195,
+        "events": [
+          [
+            12,
+            5,
+            0,
+            -1
+          ],
+          [
+            20,
+            7,
+            1,
+            -1
+          ],
+          [
+            30,
+            4,
+            0,
+            1
+          ],
+          [
+            47,
+            6,
+            0,
+            1
+          ],
+          [
+            50,
+            11,
+            0,
+            -1
+          ],
+          [
+            56,
+            12,
+            0,
+            -1
+          ],
+          [
+            66,
+            9,
+            0,
+            1
+          ],
+          [
+            79,
+            10,
+            0,
+            1
+          ],
+          [
+            99,
+            23,
+            0,
+            -1
+          ],
+          [
+            110,
+            15,
+            0,
+            1
+          ],
+          [
+            111,
+            22,
+            0,
+            -1
+          ],
+          [
+            125,
+            25,
+            0,
+            -1
+          ],
+          [
+            133,
+            20,
+            0,
+            1
+          ],
+          [
+            154,
+            32,
+            0,
+            -1
+          ],
+          [
+            157,
+            27,
+            0,
+            1
+          ],
+          [
+            167,
+            31,
+            0,
+            1
+          ],
+          [
+            167,
+            38,
+            0,
+            -1
+          ],
+          [
+            184,
+            30,
+            0,
+            1
+          ],
+          [
+            193,
+            42,
+            0,
+            1
+          ],
+          [
+            197,
+            47,
+            0,
+            -1
+          ],
+          [
+            198,
+            39,
+            0,
+            1
+          ],
+          [
+            206,
+            43,
+            0,
+            1
+          ],
+          [
+            221,
+            46,
+            0,
+            1
+          ],
+          [
+            224,
+            49,
+            0,
+            -1
+          ],
+          [
+            240,
+            51,
+            0,
+            -1
+          ],
+          [
+            247,
+            48,
+            0,
+            1
+          ],
+          [
+            265,
+            61,
+            0,
+            -1
+          ],
+          [
+            282,
+            68,
+            0,
+            1
+          ],
+          [
+            289,
+            57,
+            0,
+            1
+          ],
+          [
+            290,
+            54,
+            0,
+            1
+          ],
+          [
+            304,
+            71,
+            1,
+            -1
+          ],
+          [
+            319,
+            74,
+            0,
+            -1
+          ],
+          [
+            325,
+            67,
+            0,
+            1
+          ],
+          [
+            338,
+            70,
+            0,
+            1
+          ],
+          [
+            349,
+            76,
+            0,
+            1
+          ],
+          [
+            349,
+            81,
+            0,
+            -1
+          ],
+          [
+            370,
+            77,
+            0,
+            1
+          ],
+          [
+            381,
+            87,
+            0,
+            -1
+          ],
+          [
+            387,
+            84,
+            0,
+            1
+          ],
+          [
+            414,
+            88,
+            0,
+            1
+          ],
+          [
+            438,
+            92,
+            0,
+            1
+          ],
+          [
+            469,
+            96,
+            0,
+            1
+          ],
+          [
+            473,
+            100,
+            0,
+            -1
+          ],
+          [
+            484,
+            101,
+            0,
+            -1
+          ],
+          [
+            504,
+            98,
+            1,
+            1
+          ],
+          [
+            524,
+            105,
+            0,
+            -1
+          ],
+          [
+            527,
+            102,
+            0,
+            1
+          ],
+          [
+            533,
+            104,
+            0,
+            1
+          ],
+          [
+            538,
+            111,
+            0,
+            -1
+          ],
+          [
+            545,
+            112,
+            0,
+            -1
+          ],
+          [
+            570,
+            113,
+            0,
+            1
+          ],
+          [
+            572,
+            119,
+            0,
+            -1
+          ],
+          [
+            600,
+            115,
+            0,
+            1
+          ],
+          [
+            604,
+            125,
+            0,
+            -1
+          ],
+          [
+            614,
+            118,
+            0,
+            1
+          ],
+          [
+            616,
+            128,
+            0,
+            -1
+          ],
+          [
+            622,
+            122,
+            0,
+            1
+          ],
+          [
+            629,
+            120,
+            0,
+            1
+          ],
+          [
+            641,
+            130,
+            0,
+            -1
+          ],
+          [
+            673,
+            133,
+            0,
+            -1
+          ],
+          [
+            676,
+            129,
+            0,
+            1
+          ],
+          [
+            688,
+            135,
+            0,
+            -1
+          ],
+          [
+            692,
+            132,
+            0,
+            1
+          ],
+          [
+            694,
+            138,
+            0,
+            -1
+          ],
+          [
+            716,
+            142,
+            0,
+            -1
+          ],
+          [
+            727,
+            145,
+            0,
+            -1
+          ],
+          [
+            739,
+            147,
+            0,
+            -1
+          ],
+          [
+            751,
+            141,
+            0,
+            1
+          ],
+          [
+            753,
+            144,
+            0,
+            1
+          ],
+          [
+            758,
+            143,
+            0,
+            1
+          ],
+          [
+            771,
+            154,
+            0,
+            -1
+          ],
+          [
+            789,
+            150,
+            0,
+            1
+          ],
+          [
+            790,
+            156,
+            0,
+            -1
+          ],
+          [
+            800,
+            157,
+            0,
+            1
+          ],
+          [
+            808,
+            161,
+            0,
+            -1
+          ],
+          [
+            817,
+            153,
+            0,
+            1
+          ],
+          [
+            825,
+            159,
+            0,
+            1
+          ],
+          [
+            858,
+            162,
+            0,
+            1
+          ],
+          [
+            863,
+            163,
+            0,
+            1
+          ],
+          [
+            872,
+            167,
+            0,
+            -1
+          ],
+          [
+            889,
+            166,
+            0,
+            1
+          ],
+          [
+            897,
+            165,
+            0,
+            1
+          ],
+          [
+            929,
+            174,
+            0,
+            -1
+          ],
+          [
+            946,
+            170,
+            0,
+            1
+          ],
+          [
+            1003,
+            183,
+            0,
+            -1
+          ],
+          [
+            1017,
+            181,
+            0,
+            1
+          ],
+          [
+            1024,
+            187,
+            0,
+            -1
+          ],
+          [
+            1027,
+            188,
+            0,
+            -1
+          ],
+          [
+            1041,
+            186,
+            0,
+            1
+          ],
+          [
+            1059,
+            196,
+            0,
+            -1
+          ],
+          [
+            1066,
+            200,
+            0,
+            -1
+          ],
+          [
+            1072,
+            193,
+            0,
+            1
+          ],
+          [
+            1088,
+            194,
+            0,
+            1
+          ],
+          [
+            1092,
+            205,
+            0,
+            -1
+          ],
+          [
+            1094,
+            199,
+            0,
+            1
+          ],
+          [
+            1122,
+            206,
+            0,
+            1
+          ],
+          [
+            1123,
+            208,
+            0,
+            -1
+          ],
+          [
+            1125,
+            211,
+            0,
+            -1
+          ],
+          [
+            1161,
+            214,
+            0,
+            -1
+          ],
+          [
+            1162,
+            210,
+            0,
+            1
+          ],
+          [
+            1174,
+            216,
+            0,
+            -1
+          ],
+          [
+            1196,
+            221,
+            0,
+            -1
+          ],
+          [
+            1197,
+            215,
+            0,
+            1
+          ],
+          [
+            1213,
+            217,
+            0,
+            1
+          ],
+          [
+            1219,
+            226,
+            0,
+            -1
+          ],
+          [
+            1225,
+            227,
+            0,
+            1
+          ],
+          [
+            1245,
+            236,
+            0,
+            -1
+          ],
+          [
+            1247,
+            219,
+            0,
+            1
+          ],
+          [
+            1259,
+            232,
+            0,
+            1
+          ],
+          [
+            1284,
+            235,
+            0,
+            1
+          ],
+          [
+            1293,
+            243,
+            0,
+            1
+          ],
+          [
+            1294,
+            249,
+            1,
+            -1
+          ],
+          [
+            1301,
+            240,
+            0,
+            1
+          ],
+          [
+            1310,
+            253,
+            0,
+            1
+          ],
+          [
+            1314,
+            256,
+            0,
+            1
+          ],
+          [
+            1326,
+            247,
+            0,
+            1
+          ],
+          [
+            1342,
+            258,
+            0,
+            1
+          ],
+          [
+            1347,
+            260,
+            0,
+            -1
+          ],
+          [
+            1375,
+            259,
+            0,
+            1
+          ],
+          [
+            1375,
+            266,
+            0,
+            -1
+          ],
+          [
+            1384,
+            261,
+            0,
+            1
+          ],
+          [
+            1397,
+            265,
+            0,
+            1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              255,
+              4
+            ],
+            "p2": [
+              142,
+              372
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              0.5,
+              71.75,
+              91.25,
+              117.25
+            ],
+            [
+              889.75,
+              390.75,
+              960.5,
+              534.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_botsort_conf0.6\\MVI_63553.txt",
+          "sha256": "15601ee793752d567baa3f37aa046ecc6c778032052d84344f203c9bd1d70971"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_botsort_conf0.6\\timing.json",
+          "sha256": "c8941cf7de043c916a7146a2d5d58f61de68e66bb5e37d6c73df6e21dfee1119"
+        }
+      }
+    },
+    "yolov8s_bytetrack_conf0.6": {
+      "MVI_20033": {
+        "counts": {
+          "car": {
+            "total": 18,
+            "ab": 2,
+            "ba": 16
+          },
+          "bus": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "truck": {
+            "total": 1,
+            "ab": 1,
+            "ba": 0
+          },
+          "all": {
+            "total": 19,
+            "ab": 3,
+            "ba": 16
+          }
+        },
+        "tracks": 26,
+        "events": [
+          [
+            26,
+            5,
+            0,
+            -1
+          ],
+          [
+            40,
+            2,
+            0,
+            1
+          ],
+          [
+            64,
+            6,
+            0,
+            -1
+          ],
+          [
+            72,
+            8,
+            0,
+            -1
+          ],
+          [
+            151,
+            11,
+            0,
+            -1
+          ],
+          [
+            279,
+            14,
+            0,
+            -1
+          ],
+          [
+            331,
+            21,
+            0,
+            -1
+          ],
+          [
+            396,
+            24,
+            0,
+            -1
+          ],
+          [
+            434,
+            25,
+            0,
+            -1
+          ],
+          [
+            466,
+            26,
+            0,
+            -1
+          ],
+          [
+            482,
+            31,
+            0,
+            -1
+          ],
+          [
+            549,
+            35,
+            0,
+            -1
+          ],
+          [
+            567,
+            23,
+            0,
+            1
+          ],
+          [
+            591,
+            36,
+            0,
+            -1
+          ],
+          [
+            622,
+            28,
+            2,
+            1
+          ],
+          [
+            659,
+            37,
+            0,
+            -1
+          ],
+          [
+            684,
+            38,
+            0,
+            -1
+          ],
+          [
+            711,
+            40,
+            0,
+            -1
+          ],
+          [
+            754,
+            41,
+            0,
+            -1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              140,
+              300
+            ],
+            "p2": [
+              950,
+              300
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              458.75,
+              0.5,
+              618.25,
+              54.25
+            ],
+            [
+              710.75,
+              29.75,
+              950.25,
+              99.25
+            ],
+            [
+              824.75,
+              101.75,
+              954.25,
+              157.25
+            ],
+            [
+              126.75,
+              39.75,
+              350.25,
+              126.25
+            ],
+            [
+              38.75,
+              126.75,
+              225.25,
+              238.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_bytetrack_conf0.6\\MVI_20033.txt",
+          "sha256": "31b5e92e16fdbb9e71a381c77767731bb4db52945dbcca391d458e5eccf2c6ce"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_bytetrack_conf0.6\\timing.json",
+          "sha256": "97b7c035f66e212eb350590294f3687a659b9b1553281810d83b948cca98c6de"
+        }
+      },
+      "MVI_40141": {
+        "counts": {
+          "car": {
+            "total": 23,
+            "ab": 12,
+            "ba": 11
+          },
+          "bus": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 23,
+            "ab": 12,
+            "ba": 11
+          }
+        },
+        "tracks": 46,
+        "events": [
+          [
+            9,
+            8,
+            0,
+            -1
+          ],
+          [
+            43,
+            3,
+            0,
+            1
+          ],
+          [
+            92,
+            5,
+            0,
+            1
+          ],
+          [
+            133,
+            7,
+            0,
+            1
+          ],
+          [
+            164,
+            6,
+            0,
+            1
+          ],
+          [
+            201,
+            18,
+            0,
+            1
+          ],
+          [
+            244,
+            19,
+            0,
+            1
+          ],
+          [
+            347,
+            26,
+            0,
+            1
+          ],
+          [
+            414,
+            31,
+            0,
+            1
+          ],
+          [
+            523,
+            48,
+            0,
+            -1
+          ],
+          [
+            641,
+            36,
+            0,
+            1
+          ],
+          [
+            667,
+            42,
+            0,
+            1
+          ],
+          [
+            673,
+            51,
+            0,
+            -1
+          ],
+          [
+            725,
+            49,
+            0,
+            1
+          ],
+          [
+            877,
+            55,
+            0,
+            -1
+          ],
+          [
+            896,
+            56,
+            0,
+            -1
+          ],
+          [
+            994,
+            57,
+            0,
+            -1
+          ],
+          [
+            1132,
+            60,
+            0,
+            -1
+          ],
+          [
+            1367,
+            72,
+            0,
+            -1
+          ],
+          [
+            1463,
+            75,
+            0,
+            -1
+          ],
+          [
+            1468,
+            76,
+            0,
+            -1
+          ],
+          [
+            1552,
+            80,
+            0,
+            -1
+          ],
+          [
+            1581,
+            74,
+            0,
+            1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              150,
+              300
+            ],
+            "p2": [
+              950,
+              300
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              438.75,
+              82.75,
+              579.25,
+              131.25
+            ],
+            [
+              656.75,
+              134.75,
+              805.25,
+              201.25
+            ],
+            [
+              753.75,
+              201.75,
+              960.5,
+              258.25
+            ],
+            [
+              848.75,
+              257.75,
+              960.5,
+              330.25
+            ],
+            [
+              0.5,
+              188.75,
+              143.25,
+              297.25
+            ],
+            [
+              176.75,
+              152.75,
+              273.25,
+              203.25
+            ],
+            [
+              275.75,
+              123.75,
+              340.25,
+              167.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_bytetrack_conf0.6\\MVI_40141.txt",
+          "sha256": "f5810acc143dc283dae1050bd8c859ce3f2b589d7b293b533c249e55bb1bb7e9"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_bytetrack_conf0.6\\timing.json",
+          "sha256": "97b7c035f66e212eb350590294f3687a659b9b1553281810d83b948cca98c6de"
+        }
+      },
+      "MVI_40171": {
+        "counts": {
+          "car": {
+            "total": 33,
+            "ab": 3,
+            "ba": 30
+          },
+          "bus": {
+            "total": 3,
+            "ab": 0,
+            "ba": 3
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 36,
+            "ab": 3,
+            "ba": 33
+          }
+        },
+        "tracks": 53,
+        "events": [
+          [
+            9,
+            4,
+            0,
+            -1
+          ],
+          [
+            53,
+            7,
+            0,
+            -1
+          ],
+          [
+            56,
+            8,
+            0,
+            -1
+          ],
+          [
+            138,
+            10,
+            0,
+            -1
+          ],
+          [
+            144,
+            2,
+            0,
+            1
+          ],
+          [
+            164,
+            11,
+            1,
+            -1
+          ],
+          [
+            178,
+            13,
+            0,
+            -1
+          ],
+          [
+            181,
+            14,
+            0,
+            -1
+          ],
+          [
+            213,
+            16,
+            0,
+            -1
+          ],
+          [
+            226,
+            12,
+            0,
+            1
+          ],
+          [
+            248,
+            20,
+            0,
+            -1
+          ],
+          [
+            252,
+            17,
+            0,
+            -1
+          ],
+          [
+            282,
+            22,
+            0,
+            -1
+          ],
+          [
+            290,
+            23,
+            0,
+            -1
+          ],
+          [
+            371,
+            25,
+            0,
+            -1
+          ],
+          [
+            412,
+            26,
+            0,
+            -1
+          ],
+          [
+            488,
+            29,
+            0,
+            -1
+          ],
+          [
+            511,
+            31,
+            0,
+            -1
+          ],
+          [
+            546,
+            33,
+            0,
+            -1
+          ],
+          [
+            588,
+            36,
+            0,
+            1
+          ],
+          [
+            617,
+            37,
+            0,
+            -1
+          ],
+          [
+            638,
+            40,
+            0,
+            -1
+          ],
+          [
+            668,
+            42,
+            0,
+            -1
+          ],
+          [
+            672,
+            38,
+            0,
+            -1
+          ],
+          [
+            711,
+            51,
+            0,
+            -1
+          ],
+          [
+            787,
+            54,
+            0,
+            -1
+          ],
+          [
+            798,
+            55,
+            0,
+            -1
+          ],
+          [
+            829,
+            57,
+            0,
+            -1
+          ],
+          [
+            895,
+            59,
+            0,
+            -1
+          ],
+          [
+            932,
+            63,
+            0,
+            -1
+          ],
+          [
+            935,
+            64,
+            0,
+            -1
+          ],
+          [
+            965,
+            27,
+            1,
+            -1
+          ],
+          [
+            969,
+            68,
+            0,
+            -1
+          ],
+          [
+            1038,
+            74,
+            0,
+            -1
+          ],
+          [
+            1107,
+            71,
+            1,
+            -1
+          ],
+          [
+            1120,
+            79,
+            0,
+            -1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              872,
+              292
+            ],
+            "p2": [
+              793,
+              4
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              593.75,
+              0.5,
+              960.5,
+              43.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_bytetrack_conf0.6\\MVI_40171.txt",
+          "sha256": "45c1ccd52d8bb6ea06bbe42bd66dffb09ed013e623bcf6c5212390b9cfd31fd1"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_bytetrack_conf0.6\\timing.json",
+          "sha256": "97b7c035f66e212eb350590294f3687a659b9b1553281810d83b948cca98c6de"
+        }
+      },
+      "MVI_40773": {
+        "counts": {
+          "car": {
+            "total": 13,
+            "ab": 1,
+            "ba": 12
+          },
+          "bus": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 13,
+            "ab": 1,
+            "ba": 12
+          }
+        },
+        "tracks": 33,
+        "events": [
+          [
+            173,
+            10,
+            0,
+            -1
+          ],
+          [
+            263,
+            12,
+            0,
+            -1
+          ],
+          [
+            289,
+            14,
+            0,
+            -1
+          ],
+          [
+            368,
+            15,
+            0,
+            -1
+          ],
+          [
+            421,
+            16,
+            0,
+            1
+          ],
+          [
+            463,
+            18,
+            0,
+            -1
+          ],
+          [
+            606,
+            25,
+            0,
+            -1
+          ],
+          [
+            667,
+            30,
+            0,
+            -1
+          ],
+          [
+            729,
+            39,
+            0,
+            -1
+          ],
+          [
+            788,
+            47,
+            0,
+            -1
+          ],
+          [
+            828,
+            48,
+            0,
+            -1
+          ],
+          [
+            873,
+            51,
+            0,
+            -1
+          ],
+          [
+            938,
+            50,
+            0,
+            -1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              60,
+              350
+            ],
+            "p2": [
+              950,
+              350
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              249.75,
+              0.5,
+              960.5,
+              23.25
+            ],
+            [
+              762.75,
+              25.75,
+              960.5,
+              76.25
+            ],
+            [
+              864.75,
+              80.75,
+              960.5,
+              150.25
+            ],
+            [
+              0.5,
+              41.75,
+              188.25,
+              78.25
+            ],
+            [
+              0.5,
+              85.75,
+              131.25,
+              133.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_bytetrack_conf0.6\\MVI_40773.txt",
+          "sha256": "60f92a95bbcb797e476d15bed8b5e18ca05f184849dc404076b149eaea850fed"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_bytetrack_conf0.6\\timing.json",
+          "sha256": "97b7c035f66e212eb350590294f3687a659b9b1553281810d83b948cca98c6de"
+        }
+      },
+      "MVI_63553": {
+        "counts": {
+          "car": {
+            "total": 118,
+            "ab": 68,
+            "ba": 50
+          },
+          "bus": {
+            "total": 4,
+            "ab": 1,
+            "ba": 3
+          },
+          "truck": {
+            "total": 0,
+            "ab": 0,
+            "ba": 0
+          },
+          "all": {
+            "total": 122,
+            "ab": 69,
+            "ba": 53
+          }
+        },
+        "tracks": 199,
+        "events": [
+          [
+            12,
+            5,
+            0,
+            -1
+          ],
+          [
+            20,
+            7,
+            1,
+            -1
+          ],
+          [
+            30,
+            4,
+            0,
+            1
+          ],
+          [
+            47,
+            6,
+            0,
+            1
+          ],
+          [
+            50,
+            11,
+            0,
+            -1
+          ],
+          [
+            56,
+            12,
+            0,
+            -1
+          ],
+          [
+            66,
+            9,
+            0,
+            1
+          ],
+          [
+            79,
+            10,
+            0,
+            1
+          ],
+          [
+            99,
+            23,
+            0,
+            -1
+          ],
+          [
+            110,
+            14,
+            0,
+            1
+          ],
+          [
+            110,
+            22,
+            0,
+            -1
+          ],
+          [
+            125,
+            25,
+            0,
+            -1
+          ],
+          [
+            133,
+            20,
+            0,
+            1
+          ],
+          [
+            154,
+            33,
+            0,
+            -1
+          ],
+          [
+            157,
+            28,
+            0,
+            1
+          ],
+          [
+            167,
+            32,
+            0,
+            1
+          ],
+          [
+            167,
+            39,
+            0,
+            -1
+          ],
+          [
+            184,
+            31,
+            0,
+            1
+          ],
+          [
+            193,
+            43,
+            0,
+            1
+          ],
+          [
+            197,
+            48,
+            0,
+            -1
+          ],
+          [
+            198,
+            40,
+            0,
+            1
+          ],
+          [
+            206,
+            44,
+            0,
+            1
+          ],
+          [
+            221,
+            47,
+            0,
+            1
+          ],
+          [
+            224,
+            50,
+            0,
+            -1
+          ],
+          [
+            240,
+            52,
+            0,
+            -1
+          ],
+          [
+            247,
+            49,
+            0,
+            1
+          ],
+          [
+            265,
+            62,
+            0,
+            -1
+          ],
+          [
+            282,
+            69,
+            0,
+            1
+          ],
+          [
+            289,
+            58,
+            0,
+            1
+          ],
+          [
+            290,
+            55,
+            0,
+            1
+          ],
+          [
+            304,
+            72,
+            1,
+            -1
+          ],
+          [
+            319,
+            75,
+            0,
+            -1
+          ],
+          [
+            325,
+            68,
+            0,
+            1
+          ],
+          [
+            338,
+            71,
+            0,
+            1
+          ],
+          [
+            349,
+            77,
+            0,
+            1
+          ],
+          [
+            349,
+            82,
+            0,
+            -1
+          ],
+          [
+            370,
+            78,
+            0,
+            1
+          ],
+          [
+            381,
+            92,
+            0,
+            -1
+          ],
+          [
+            387,
+            86,
+            0,
+            1
+          ],
+          [
+            414,
+            93,
+            0,
+            1
+          ],
+          [
+            438,
+            97,
+            0,
+            1
+          ],
+          [
+            469,
+            101,
+            0,
+            1
+          ],
+          [
+            473,
+            104,
+            0,
+            -1
+          ],
+          [
+            484,
+            105,
+            0,
+            -1
+          ],
+          [
+            504,
+            102,
+            1,
+            1
+          ],
+          [
+            524,
+            109,
+            0,
+            -1
+          ],
+          [
+            527,
+            106,
+            0,
+            1
+          ],
+          [
+            533,
+            108,
+            0,
+            1
+          ],
+          [
+            538,
+            115,
+            0,
+            -1
+          ],
+          [
+            545,
+            116,
+            0,
+            -1
+          ],
+          [
+            570,
+            117,
+            0,
+            1
+          ],
+          [
+            572,
+            123,
+            0,
+            -1
+          ],
+          [
+            600,
+            119,
+            0,
+            1
+          ],
+          [
+            604,
+            129,
+            0,
+            -1
+          ],
+          [
+            614,
+            122,
+            0,
+            1
+          ],
+          [
+            616,
+            132,
+            0,
+            -1
+          ],
+          [
+            622,
+            126,
+            0,
+            1
+          ],
+          [
+            629,
+            124,
+            0,
+            1
+          ],
+          [
+            641,
+            134,
+            0,
+            -1
+          ],
+          [
+            673,
+            137,
+            0,
+            -1
+          ],
+          [
+            676,
+            133,
+            0,
+            1
+          ],
+          [
+            688,
+            139,
+            0,
+            -1
+          ],
+          [
+            692,
+            136,
+            0,
+            1
+          ],
+          [
+            694,
+            142,
+            0,
+            -1
+          ],
+          [
+            716,
+            146,
+            0,
+            -1
+          ],
+          [
+            727,
+            150,
+            0,
+            -1
+          ],
+          [
+            738,
+            151,
+            0,
+            -1
+          ],
+          [
+            751,
+            145,
+            0,
+            1
+          ],
+          [
+            753,
+            148,
+            0,
+            1
+          ],
+          [
+            758,
+            147,
+            0,
+            1
+          ],
+          [
+            771,
+            158,
+            0,
+            -1
+          ],
+          [
+            789,
+            154,
+            0,
+            1
+          ],
+          [
+            790,
+            160,
+            0,
+            -1
+          ],
+          [
+            800,
+            161,
+            0,
+            1
+          ],
+          [
+            808,
+            165,
+            0,
+            -1
+          ],
+          [
+            817,
+            159,
+            0,
+            1
+          ],
+          [
+            825,
+            162,
+            0,
+            1
+          ],
+          [
+            858,
+            166,
+            0,
+            1
+          ],
+          [
+            863,
+            167,
+            0,
+            1
+          ],
+          [
+            872,
+            172,
+            0,
+            -1
+          ],
+          [
+            889,
+            171,
+            0,
+            1
+          ],
+          [
+            897,
+            170,
+            0,
+            1
+          ],
+          [
+            929,
+            179,
+            0,
+            -1
+          ],
+          [
+            946,
+            175,
+            0,
+            1
+          ],
+          [
+            1003,
+            189,
+            0,
+            -1
+          ],
+          [
+            1017,
+            187,
+            0,
+            1
+          ],
+          [
+            1024,
+            193,
+            0,
+            -1
+          ],
+          [
+            1027,
+            194,
+            0,
+            -1
+          ],
+          [
+            1041,
+            191,
+            0,
+            1
+          ],
+          [
+            1059,
+            202,
+            0,
+            -1
+          ],
+          [
+            1066,
+            206,
+            0,
+            -1
+          ],
+          [
+            1072,
+            199,
+            0,
+            1
+          ],
+          [
+            1088,
+            200,
+            0,
+            1
+          ],
+          [
+            1092,
+            210,
+            0,
+            -1
+          ],
+          [
+            1094,
+            205,
+            0,
+            1
+          ],
+          [
+            1122,
+            211,
+            0,
+            1
+          ],
+          [
+            1123,
+            213,
+            0,
+            -1
+          ],
+          [
+            1125,
+            216,
+            0,
+            -1
+          ],
+          [
+            1161,
+            219,
+            0,
+            -1
+          ],
+          [
+            1162,
+            215,
+            0,
+            1
+          ],
+          [
+            1174,
+            221,
+            0,
+            -1
+          ],
+          [
+            1196,
+            225,
+            0,
+            -1
+          ],
+          [
+            1197,
+            220,
+            0,
+            1
+          ],
+          [
+            1213,
+            222,
+            0,
+            1
+          ],
+          [
+            1219,
+            230,
+            0,
+            -1
+          ],
+          [
+            1225,
+            231,
+            0,
+            1
+          ],
+          [
+            1245,
+            240,
+            0,
+            -1
+          ],
+          [
+            1247,
+            224,
+            0,
+            1
+          ],
+          [
+            1259,
+            236,
+            0,
+            1
+          ],
+          [
+            1284,
+            239,
+            0,
+            1
+          ],
+          [
+            1293,
+            247,
+            0,
+            1
+          ],
+          [
+            1294,
+            253,
+            1,
+            -1
+          ],
+          [
+            1301,
+            244,
+            0,
+            1
+          ],
+          [
+            1310,
+            258,
+            0,
+            1
+          ],
+          [
+            1314,
+            261,
+            0,
+            1
+          ],
+          [
+            1326,
+            251,
+            0,
+            1
+          ],
+          [
+            1342,
+            263,
+            0,
+            1
+          ],
+          [
+            1347,
+            265,
+            0,
+            -1
+          ],
+          [
+            1375,
+            264,
+            0,
+            1
+          ],
+          [
+            1375,
+            271,
+            0,
+            -1
+          ],
+          [
+            1384,
+            266,
+            0,
+            1
+          ],
+          [
+            1397,
+            270,
+            0,
+            1
+          ]
+        ],
+        "protocol": {
+          "version": 2,
+          "line": {
+            "p1": [
+              255,
+              4
+            ],
+            "p2": [
+              142,
+              372
+            ]
+          },
+          "max_frame_gap": 1,
+          "ignored_rule": "observation_centres",
+          "ignored_regions": [
+            [
+              0.5,
+              71.75,
+              91.25,
+              117.25
+            ],
+            [
+              889.75,
+              390.75,
+              960.5,
+              534.25
+            ]
+          ]
+        },
+        "source": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_bytetrack_conf0.6\\MVI_63553.txt",
+          "sha256": "c98bb9e90d976e98ce4561ea79433e5e4b541bd5194c42b0b14788aef0116d8f"
+        },
+        "run_metadata": {
+          "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\conf0.6\\tracks\\dev\\yolov8s_bytetrack_conf0.6\\timing.json",
+          "sha256": "97b7c035f66e212eb350590294f3687a659b9b1553281810d83b948cca98c6de"
+        }
+      }
+    }
+  }
+}

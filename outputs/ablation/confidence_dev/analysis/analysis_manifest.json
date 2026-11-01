@@ -1,0 +1,101 @@
+{
+  "experiment_manifest": {
+    "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\manifest.json",
+    "sha256": "f02dd4a26e66e99fd1432416615a1cd4128089f88298d31b8c69a4fb1a6d947f"
+  },
+  "tracking_aggregation": "combined",
+  "notebook": {
+    "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\scripts\\ablation.ipynb",
+    "sha256": "5841ec44df3deb718cabea7d048f00164791550cebb73573324ef372d83f1af7"
+  },
+  "outputs": [
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\charts\\counting_sensitivity_dev.png",
+      "sha256": "9bc237875c707d8a4de7986b52b5b54df3da50bd3e48ebbe32dd48ac8254a00f"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\charts\\counting_sensitivity_dev.pdf",
+      "sha256": "cebf8303e9d768aec548339ba462711183b172857fa0c7a9b3e2d894c7069cc0"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\charts\\signed_counting_error_dev.png",
+      "sha256": "14c09d3eb687c21266dfa3cdc1184b68f347295b6fd0f71d47c0c198b8291053"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\charts\\signed_counting_error_dev.pdf",
+      "sha256": "81ca6e03a22846cd67544dc25d5da6ba6468703fee27a5246d50744ea9a3f758"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\charts\\tracking_sensitivity_dev.png",
+      "sha256": "cbea27bb1eff1aaf34e9b54d5779b93cb58f4490d2bc15b9e3f3a3322c25ef72"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\charts\\tracking_sensitivity_dev.pdf",
+      "sha256": "58b34d3fc60b4d9b9e7b3e72028ab46e541b4828e17359f955016312465bc743"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\charts\\latency_sensitivity_dev.png",
+      "sha256": "6ed63a095586d533ee19a2231deee8ee2098a02367d2d22026d4d47381fea202"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\charts\\latency_sensitivity_dev.pdf",
+      "sha256": "c4271b725ff2b37edc0dd6ca37f5425e1114090b9804716042d576cb6c4b49f6"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\charts\\sequence_errors_dev.png",
+      "sha256": "402fd6acf2f14aa322cee23a32458f1cfd9404f6d66da97f64f6a6d1b6131774"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\charts\\sequence_errors_dev.pdf",
+      "sha256": "d9c0837401d660be7a12c1050beb6c255285e26eea781b873d4be064b3d75ef8"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\tables\\ablation_summary_dev.csv",
+      "sha256": "fdc57eec03e7c51774bc19d5a576146c6b87f8bc64baa78b04a26794b1bb4040"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\tables\\ablation_summary_dev.md",
+      "sha256": "853a8fbc8b85a80e230b13d826b0a895967edde00c40a178e2dd5c83e614c60e"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\tables\\ablation_summary_dev.tex",
+      "sha256": "05be142de7082f415158f7788548d5b315c74de43854f008db1d87b4a778267d"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\tables\\ablation_report_dev.csv",
+      "sha256": "191e7f30909d2d1a0c7dfbb9ebfe30a57246b3eec7ab97c247d5dacf89750dcf"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\tables\\ablation_report_dev.md",
+      "sha256": "6eb25777ffe7a840d179deba4fd06d725cea4a88f6dd3296ccdc1291b2d160e7"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\tables\\ablation_report_dev.tex",
+      "sha256": "cc3cb9b9c8bed5f0e635c4d7843da5eba108674525d2a4c28e5339edd66a52ba"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\tables\\ablation_per_class_dev.csv",
+      "sha256": "857aae5137de45f52e7099ec418a4a63fd0e40847f8cb1f94fb19f493ce1c919"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\tables\\ablation_per_class_dev.md",
+      "sha256": "e3888753b978e6583e07d1b39b50b81464109859a9a891d5b6a6ad4ea98c8d1a"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\tables\\ablation_per_class_dev.tex",
+      "sha256": "97451b2f849cbf6b0a695918fda3062aa2605f5c72366ab8748fce82c20bea9b"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\tables\\ablation_per_sequence_dev.csv",
+      "sha256": "b67e68eddc8ac1c8d9d56836d3fd9509d14b1c3082fbadef6d7cfc4ae8c90021"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\tables\\ablation_per_sequence_dev.md",
+      "sha256": "2f972f688abf3ff5f8d917c28b42ca34edce0665bc01decec35edae744184442"
+    },
+    {
+      "path": "C:\\Users\\User\\Desktop\\mish\\Innopolis\\3 \u043a\u0443\u0440\u0441\\Introduction to Computer Vision\\debug\\VehicleDetectionAndTrafficCounting\\outputs\\ablation\\confidence_dev\\analysis\\tables\\ablation_per_sequence_dev.tex",
+      "sha256": "2c826f30d1cc22878f1cb94d127076ba19188bafa447115a6ed91d67c14f76e3"
+    }
+  ]
+}
