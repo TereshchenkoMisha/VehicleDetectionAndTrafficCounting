@@ -32,7 +32,7 @@ def _aggregate(per_seq, splits_seqs):
     means = {"HOTA": [], "DetA": [], "AssA": [], "LocA": [],
              "MOTA": [], "MOTP": [], "IDF1": [], "IDP": [], "IDR": [],
              "HOTA_50": []}
-    for seq, m in per_seq.items():
+    for _, m in per_seq.items():
         for k in sums:
             sums[k] += m["all"][k]
         for k in means:
@@ -55,10 +55,13 @@ def main():
     ap.add_argument("--classes-aware", action="store_true",
                     help="calculate per-class car/bus/truck additionally (slower)")
     ap.add_argument("--raw", default=str(RAW_ROOT))
+    ap.add_argument("--ignored", default=str(REPORTS_DIR / "ignored_regions.json"))
     args = ap.parse_args()
 
     splits = json.loads((REPORTS_DIR / "splits.json").read_text())
     gt_mot_dir = Path(args.gt_mot_dir)
+    ignored_path = Path(args.ignored)
+    ignored = json.loads(ignored_path.read_text(encoding="utf-8"))
 
     if not gt_mot_dir.exists():
         raise FileNotFoundError(
@@ -71,6 +74,10 @@ def main():
 
         if not seqs or len(seqs) != len(set(seqs)):
             ap.error(f"Split '{split}' must contain unique sequences and be non-empty.")
+
+        missing_regions = sorted(set(seqs) - set(ignored))
+        if missing_regions:
+            ap.error(f"Missing ignored region entries for {missing_regions}")
 
         split_dir = Path(args.tracks_dir) / split
 
@@ -97,12 +104,16 @@ def main():
 
         for cfg in cfg_dirs:
             try:
-                validate_tracking_run(
+                timing = validate_tracking_run(
                     split_dir / cfg,
                     seqs,
                     raw_root=Path(args.raw),
                     split=split,
                 )
+                recorded_regions = timing.get("provenance", {}).get("ignored_regions")
+                if recorded_regions is not None and any(
+                        recorded_regions.get(seq) != ignored[seq] for seq in seqs):
+                    raise ValueError(f"Ignored regions differ from the tracking run: {cfg}")
             except (ValueError, OSError) as exc:
                 ap.error(str(exc))
 
@@ -112,7 +123,10 @@ def main():
             raw_results = {}
             results[cfg] = {"per_seq": {},
                             "sources": {"timing": file_info(split_dir / cfg / "timing.json"),
-                                        "tracks": {}, "gt": {}}}
+                                        "tracks": {}, "gt": {},
+                                        "ignored": file_info(ignored_path)},
+                            "protocol": {"ignored_rule": "observation_centres",
+                                         "ignored_regions": {seq: ignored[seq] for seq in seqs}}}
             for seq in tqdm(seqs, desc=f"{split}/{cfg}", unit="seq"):
                 gt_path = gt_mot_dir / f"{seq}.txt"
                 trk_path = Path(args.tracks_dir) / split / cfg / f"{seq}.txt"
@@ -121,7 +135,7 @@ def main():
                 raw_results[seq] = {}
                 results[cfg]["per_seq"][seq] = evaluate_sequence(
                     gt_path, trk_path, classes=cls_list, frame_ids=frame_ids[seq],
-                    raw_results=raw_results[seq])
+                    raw_results=raw_results[seq], ignored_regions=ignored[seq])
                 results[cfg]["sources"]["tracks"][seq] = file_info(trk_path)
                 results[cfg]["sources"]["gt"][seq] = file_info(gt_path)
             results[cfg]["aggregate"] = _aggregate(results[cfg]["per_seq"], seqs)
@@ -147,6 +161,7 @@ def _write_markdown(out_md, split, results, seqs):
         "**IDF1** (F1 of identity matching).",
         "",
         f"Number of configs: {len(cfgs)}, Number of sequences: {len(seqs)}.",
+        "GT and predicted observations with centres inside ignored regions are excluded.",
         "",
         "## Macro average across sequences",
         "",

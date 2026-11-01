@@ -264,6 +264,89 @@ class FileTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Incomplete run"):
             validate_tracking_run(cfg, ["MVI_1"], self.root / "raw", "dev")
 
+    def test_tracking_ignored_regions_filter_both_sides_and_preserve_frames(self):
+        if importlib.util.find_spec("trackeval") is None:
+            self.skipTest("TrackEval is unavailable")
+        from src.eval.tracking_metrics import evaluate_sequence
+
+        gt = self.root / "gt.txt"
+        pred = self.root / "pred.txt"
+        gt_text = ("1,1,9,9,10,10,1,0\n"
+                   "1,2,0,0,10,10,1,1\n"
+                   "2,2,5,5,10,10,1,1\n"
+                   "3,2,0,0,10,10,1,1\n")
+        pred_text = ("1,10,9,9,10,10,1,0\n"
+                     "2,20,0,0,10,10,1,2\n"
+                     "3,20,5,5,10,10,1,2\n")
+        gt.write_text(gt_text, encoding="utf-8")
+        pred.write_text(pred_text, encoding="utf-8")
+        baseline = evaluate_sequence(gt, pred, frame_ids=[1, 2, 3])["all"]
+        self.assertEqual(baseline["GT_dets"], 4)
+        self.assertEqual(baseline["TRK_dets"], 3)
+        filtered = evaluate_sequence(
+            gt, pred, classes=["car", "bus", "truck"], frame_ids=[1, 2, 3],
+            ignored_regions=[(0, 0, 10, 10)],
+        )
+        for metric in ("HOTA", "MOTA", "IDF1"):
+            self.assertAlmostEqual(filtered["all"][metric], 100)
+        for key in ("GT_dets", "TRK_dets", "GT_IDs", "TRK_IDs"):
+            self.assertEqual(filtered["all"][key], 1)
+        self.assertEqual(filtered["all"]["frames"], 3)
+        self.assertEqual(filtered["car"]["GT_dets"], 1)
+        self.assertEqual(filtered["bus"]["GT_dets"], 0)
+        self.assertEqual(filtered["truck"]["TRK_dets"], 0)
+        self.assertEqual(gt.read_text(encoding="utf-8"), gt_text)
+        self.assertEqual(pred.read_text(encoding="utf-8"), pred_text)
+
+    def test_tracking_cli_applies_and_records_ignored_regions(self):
+        if importlib.util.find_spec("trackeval") is None:
+            self.skipTest("TrackEval is unavailable")
+        import json
+        from unittest.mock import patch
+        from src.scripts import eval_tracking
+
+        seq = "MVI_1"
+        raw = self.root / "raw"
+        sequence = raw / seq
+        sequence.mkdir(parents=True)
+        for fid in (1, 2):
+            (sequence / f"IMG{fid:05d}.jpg").touch()
+        write_json(self.root / "splits.json", {"dev": [seq], "test": []})
+        regions = {seq: [[0, 0, 10, 10]]}
+        ignored = self.root / "ignored.json"
+        write_json(ignored, regions)
+        gt_dir = self.root / "gt"
+        gt_dir.mkdir()
+        (gt_dir / f"{seq}.txt").write_text("1,1,20,20,10,10,1,0\n", encoding="utf-8")
+        tracks = self.root / "tracks"
+        cfg = tracks / "dev" / "example"
+        cfg.mkdir(parents=True)
+        (cfg / f"{seq}.txt").write_text(
+            "1,10,20,20,10,10,1,0\n2,20,0,0,10,10,1,0\n", encoding="utf-8")
+        timing = {"split": "dev", "frames": 2,
+                  "per_seq": {seq: {"frames": 2, "rows": 2}},
+                  "provenance": {"ignored_regions": regions}}
+        write_json(cfg / "timing.json", timing)
+        output = self.root / "evaluation"
+        arguments = ["eval_tracking", "--splits", "dev", "--raw", str(raw),
+                     "--gt-mot-dir", str(gt_dir), "--tracks-dir", str(tracks),
+                     "--ignored", str(ignored), "--out-prefix", str(output)]
+        with patch.object(eval_tracking, "REPORTS_DIR", self.root), patch("sys.argv", arguments):
+            eval_tracking.main()
+        result = json.loads((self.root / "evaluation_dev.json").read_text())["example"]
+        self.assertAlmostEqual(result["aggregate"]["combined"]["MOTA"], 100)
+        self.assertEqual(result["per_seq"][seq]["all"]["TRK_dets"], 1)
+        self.assertEqual(result["sources"]["ignored"], file_info(ignored))
+        self.assertEqual(result["protocol"]["ignored_regions"], regions)
+        self.assertEqual(result["protocol"]["ignored_rule"], "observation_centres")
+        original_report = (self.root / "evaluation_dev.json").read_bytes()
+        for invalid in ({}, {seq: []}):
+            write_json(ignored, invalid)
+            with patch.object(eval_tracking, "REPORTS_DIR", self.root), patch("sys.argv", arguments):
+                with self.assertRaises(SystemExit):
+                    eval_tracking.main()
+            self.assertEqual((self.root / "evaluation_dev.json").read_bytes(), original_report)
+
 
 if __name__ == "__main__":
     unittest.main()

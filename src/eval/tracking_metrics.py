@@ -1,6 +1,7 @@
 import numpy as np
 from ..data.config import CLASSES
 from ..data.mot import load_mot
+from .line_crossing import in_regions
 
 
 def _iou_matrix(gt_boxes, trk_boxes):
@@ -71,12 +72,27 @@ def _build_trackeval_data(gt_frames, trk_frames, cls_filter=None, frame_ids=None
     }
 
 
-def evaluate_sequence(gt_path, trk_path, classes=None, frame_ids=None, raw_results=None):
+def _drop_ignored_observations(frames, regions):
+    return {
+        frame: [
+            target for target in targets
+            if not in_regions(
+                ((target[1][0] + target[1][2]) / 2,
+                 (target[1][1] + target[1][3]) / 2),
+                regions,
+            )
+        ]
+        for frame, targets in frames.items()
+    }
+
+
+def evaluate_sequence(gt_path, trk_path, classes=None, frame_ids=None, raw_results=None,
+                      ignored_regions=()):
     from trackeval.metrics import HOTA, CLEAR, Identity
 
     # Calculate tracking metrics for one sequence
-    gt = load_mot(gt_path)
-    trk = load_mot(trk_path)
+    gt = _drop_ignored_observations(load_mot(gt_path), ignored_regions)
+    trk = _drop_ignored_observations(load_mot(trk_path), ignored_regions)
 
     hota_m, clear_m, id_m = HOTA(), CLEAR(), Identity()
 
