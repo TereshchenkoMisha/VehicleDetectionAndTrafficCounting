@@ -1,11 +1,196 @@
+# ---------------------------------------------------------------
+# Project-specific
+# ---------------------------------------------------------------
+# Datasets (UA-DETRAC raw + converted YOLO store) - large, downloaded separately
 /data/
-/models/*
 
-
+# Pretrained / trained weights (downloaded automatically by Ultralytics)
+/models/
 *.pt
+*.pth
+*.onnx
+*.engine
+*.torchscript
+*.safetensors
+*.ckpt
 
-__pycache__/
-.venv/
-venv/
+# Regenerable run results: tracks, annotated videos, previews.
+# Small final tables live in reports/ and stay versioned.
+/outputs/
 
+# Debug / sanity images
 reports/sanity/
+
+# Ultralytics output folders created by YOLO train/val/predict runs
+runs/
+
+# Videos and large media produced by checks
+*.mp4
+*.avi
+*.mov
+
+# Personal review notes
+.nocommit/
+
+# ---------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+.python-version
+
+# Packaging / build
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+pip-wheel-metadata/
+wheels/
+*.whl
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Test / coverage / type-check / lint caches
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+coverage.xml
+*.cover
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+
+# ---------------------------------------------------------------
+# Jupyter
+# ---------------------------------------------------------------
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# ---------------------------------------------------------------
+# Experiment tracking / ML tooling
+# ---------------------------------------------------------------
+wandb/
+mlruns/
+lightning_logs/
+tensorboard/
+events.out.tfevents.*
+.dvc/cache
+.dvc/tmp
+
+# ---------------------------------------------------------------
+# Secrets and local config
+# ---------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.*
+
+# ---------------------------------------------------------------
+# Editors / IDEs
+# ---------------------------------------------------------------
+.vscode/
+!.vscode/settings.json.example
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# ---------------------------------------------------------------
+# OS files
+# ---------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ---------------------------------------------------------------
+# Logs and temp files
+# ---------------------------------------------------------------
+*.log
+*.tmp
+*.bak
+tmp/
+temp/
+
+# ---------------------------------------------------------------
+# AI workspace specific files
+# ---------------------------------------------------------------
+.claude/
+CLAUDE.local.md
+
+# OpenAI Codex CLI
+.codex/
+
+# OpenCode
+.opencode/
+
+# Cursor
+.cursor/
+.cursorignore
+.cursorindexingignore
+
+# Windsurf / Codeium
+.windsurf/
+.codeium/
+.windsurfrules
+
+# Cline / Roo Code / Kilo Code
+.cline/
+.clinerules/
+.roo/
+.roomodes
+.kilocode/
+
+# Aider
+.aider*
+
+# Continue
+.continue/
+
+# Gemini CLI / Qwen Code
+.gemini/
+.qwen/
+
+# GitHub Copilot (local state only; .github/copilot-instructions.md stays versioned)
+.copilot/
+
+# Kiro, Trae, Augment, JetBrains Junie, Amp, Zed
+.kiro/
+.trae/
+.augment/
+.junie/
+.amp/
+.zed/
+
+# Agent memory / task tools
+.serena/
+.taskmaster/
+.superpowers/
+.specstory/
+
+# Shared agent instruction files are NOT ignored on purpose (AGENTS.md, CLAUDE.md, GEMINI.md, .cursor/rules). If your team keeps them private, uncomment:
+AGENTS.md
+CLAUDE.md
+GEMINI.md
