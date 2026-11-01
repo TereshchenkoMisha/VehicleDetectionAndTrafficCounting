@@ -1,3 +1,4 @@
+"""Tests for line-crossing detection, GT/track counting parity and line placement helpers."""
 import math
 import tempfile
 import unittest

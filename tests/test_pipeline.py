@@ -1,3 +1,4 @@
+"""Tests for the ignored-region rule, trajectory building, tracker settings and the detect-track loop."""
 import unittest
 from types import SimpleNamespace
 from unittest.mock import patch

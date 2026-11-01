@@ -1,11 +1,23 @@
-"""HOTA / MOTA / IDF1 / IDSW of every tracking run against GT (TrackEval). Writes reports/tracking_eval_<split>.*
+"""Tracking quality (HOTA, MOTA, IDF1, IDSW) of every tracking run against GT, via TrackEval.
 
     python scripts/evaluate_tracking.py --splits dev test
 
-GT MOT files (reports/gt_mot/<seq>.txt) are created on the first run and need the raw dataset.
+For each configuration of a split, every sequence's tracker output is compared with the GT of the same
+sequence. The script writes per-sequence metrics, their macro average (every sequence weighs the same)
+and the dataset-level metrics TrackEval computes by merging all sequences.
+
+Needs:
+    outputs/tracks/<split>/<configuration>/    complete runs (run_tracking)
+    data/raw/UA-DETRAC/                        frame lists, and GT for the conversion below
+    reports/splits.json, reports/ignored_regions.json
+    reports/gt_mot/<sequence>.txt              GT in MOT format; created from the XML annotations if missing
+Produces:
+    <out-prefix>_<split>.json                  per sequence, macro average and dataset-level combination
+    <out-prefix>_<split>.md                    the same as tables (default prefix reports/tracking_eval)
 """
 import argparse
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 from tqdm import tqdm
@@ -17,14 +29,19 @@ from src.eval.tracking import combine_sequence_metrics, evaluate_sequence
 from src.eval.validation import run_dirs, validate_tracking_run
 from src.utils import file_info, read_json, write_json
 
-SUMS = ("IDSW", "MT", "ML", "Frag", "CLR_TP", "CLR_FN", "CLR_FP", "GT_dets", "TRK_dets")
-MEANS = ("HOTA", "DetA", "AssA", "LocA", "MOTA", "MOTP", "IDF1", "IDP", "IDR", "HOTA_50")
+# Metrics added up over sequences (counters), and metrics averaged over sequences (rates)
+SUMS: tuple[str, ...] = ("IDSW", "MT", "ML", "Frag", "CLR_TP", "CLR_FN", "CLR_FP", "GT_dets", "TRK_dets")
+MEANS: tuple[str, ...] = ("HOTA", "DetA", "AssA", "LocA", "MOTA", "MOTP", "IDF1", "IDP", "IDR", "HOTA_50")
 
 
-def aggregate(per_seq, sequences):
-    """Macro average (equal weight per sequence) of the rate metrics and sum of the counters."""
+def aggregate(per_seq: dict[str, dict[str, Any]], sequences: list[str]) -> dict[str, Any]:
+    """Combine per-sequence metrics: macro average of the rates, sum of the counters.
+
+    Requires results for exactly the expected sequences, so a missing sequence cannot make a
+    configuration look better.
+    """
     if not sequences or set(per_seq) != set(sequences):
-        raise ValueError(f"Cannot aggregate incomplete tracking results: "
+        raise ValueError("Cannot aggregate incomplete tracking results: "
                          f"missing={sorted(set(sequences) - set(per_seq))}, "
                          f"unexpected={sorted(set(per_seq) - set(sequences))}")
     return {"aggregation": "macro average with equal sequence weights",
@@ -33,7 +50,8 @@ def aggregate(per_seq, sequences):
             "n_seq": len(per_seq)}
 
 
-def write_markdown(path, split, results, seqs):
+def write_markdown(path: Path, split: str, results: dict[str, Any], seqs: list[str]) -> None:
+    """Write three tables: macro average per configuration, dataset-level metrics, and every sequence."""
     cfgs = list(results)
     lines = [f"# Tracking evaluation - {split} split", "",
              "Metrics: **HOTA** (geometric mean of DetA & AssA, averaged over IoU 0.05-0.95), "
@@ -46,11 +64,13 @@ def write_markdown(path, split, results, seqs):
         a, s = results[cfg]["aggregate"]["mean"], results[cfg]["aggregate"]["sum"]
         lines.append(f"| {cfg} | {a['HOTA']:.2f} | {a['DetA']:.2f} | {a['AssA']:.2f} | "
                      f"{a['MOTA']:.2f} | {a['MOTP']:.2f} | {a['IDF1']:.2f} | {s['IDSW']} |")
+
     lines += ["", "## Combined dataset metrics (TrackEval combination of all sequences)", "",
               "| Config | HOTA (%) | MOTA (%) | IDF1 (%) |", "|---|---|---|---|"]
     for cfg in cfgs:
         c = results[cfg]["aggregate"]["combined"]
         lines.append(f"| {cfg} | {c['HOTA']:.2f} | {c['MOTA']:.2f} | {c['IDF1']:.2f} |")
+
     lines += ["", "## Per-sequence (HOTA / MOTA / IDF1 / IDSW)", "",
               "| Config | Sequence | HOTA (%) | MOTA (%) | IDF1 (%) | IDSW |", "|---|---|---|---|---|---|"]
     for cfg in cfgs:
@@ -60,49 +80,58 @@ def write_markdown(path, split, results, seqs):
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def main():
+def parse_args() -> argparse.Namespace:
+    """Command-line options; see the module docstring for what the script reads and writes."""
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--splits", nargs="+", choices=["dev", "test"], default=["dev", "test"])
     ap.add_argument("--gt-mot-dir", default=str(REPORTS_DIR / "gt_mot"))
     ap.add_argument("--tracks-dir", default=str(TRACKS_DIR))
     ap.add_argument("--out-prefix", default=str(REPORTS_DIR / "tracking_eval"))
     ap.add_argument("--raw", default=str(RAW_ROOT))
-    args = ap.parse_args()
+    return ap.parse_args()
 
+
+def main() -> None:
+    """For each split: check the inputs, evaluate every configuration and sequence, write the reports."""
+    args = parse_args()
     all_splits = read_json(REPORTS_DIR / "splits.json")
     gt_dir = Path(args.gt_mot_dir)
 
     for split in args.splits:
-        seqs = list(all_splits[split])
+        # Inputs: finished runs, GT for every sequence (converted from the XML when missing), and
+        # a consistency check of each run against the raw dataset
+        seqs: list[str] = list(all_splits[split])
         split_dir = Path(args.tracks_dir) / split
         if not split_dir.is_dir():
-            ap.error(f"Tracking directory does not exist: {split_dir}")
+            raise SystemExit(f"Tracking directory does not exist: {split_dir}")
         cfg_dirs = run_dirs(split_dir)
         if not cfg_dirs:
-            ap.error(f"No tracking configurations found in {split_dir}")
+            raise SystemExit(f"No tracking configurations found in {split_dir}")
         if any(not (gt_dir / f"{seq}.txt").is_file() for seq in seqs):
             convert_all(seqs, gt_dir, raw_root=args.raw, ignored_path=REPORTS_DIR / "ignored_regions.json")
         for cfg_dir in cfg_dirs:
             try:
                 validate_tracking_run(cfg_dir, seqs, raw_root=Path(args.raw), split=split)
             except (ValueError, OSError) as exc:
-                ap.error(str(exc))
+                raise SystemExit(str(exc)) from exc
 
+        # Metrics per configuration and sequence. The full frame list of each sequence is passed so
+        # frames where the tracker output nothing still count as frames.
         frame_ids = {seq: [fid for fid, _ in list_frames(seq, args.raw)] for seq in seqs}
-        results = {}
+        results: dict[str, Any] = {}
         for cfg_dir in cfg_dirs:
-            raw_results = {}
-            results[cfg_dir.name] = {"per_seq": {}, "sources": {"timing": file_info(cfg_dir / "timing.json"),
-                                                                "tracks": {}, "gt": {}}}
+            raw_results: dict[str, Any] = {}        # TrackEval's raw output per sequence, for the dataset-level merge
+            result = {"per_seq": {}, "sources": {"timing": file_info(cfg_dir / "timing.json"), "tracks": {}, "gt": {}}}
             for seq in tqdm(seqs, desc=f"{split}/{cfg_dir.name}", unit="seq"):
                 raw_results[seq] = {}
-                results[cfg_dir.name]["per_seq"][seq] = evaluate_sequence(
+                result["per_seq"][seq] = evaluate_sequence(
                     gt_dir / f"{seq}.txt", cfg_dir / f"{seq}.txt", frame_ids=frame_ids[seq],
                     raw_results=raw_results[seq])
-                results[cfg_dir.name]["sources"]["tracks"][seq] = file_info(cfg_dir / f"{seq}.txt")
-                results[cfg_dir.name]["sources"]["gt"][seq] = file_info(gt_dir / f"{seq}.txt")
-            results[cfg_dir.name]["aggregate"] = aggregate(results[cfg_dir.name]["per_seq"], seqs)
-            results[cfg_dir.name]["aggregate"]["combined"] = combine_sequence_metrics(raw_results)
+                result["sources"]["tracks"][seq] = file_info(cfg_dir / f"{seq}.txt")
+                result["sources"]["gt"][seq] = file_info(gt_dir / f"{seq}.txt")
+            result["aggregate"] = aggregate(result["per_seq"], seqs)
+            result["aggregate"]["combined"] = combine_sequence_metrics(raw_results)
+            results[cfg_dir.name] = result
 
         out_json, out_md = Path(f"{args.out_prefix}_{split}.json"), Path(f"{args.out_prefix}_{split}.md")
         write_json(out_json, results)

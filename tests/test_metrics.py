@@ -1,3 +1,4 @@
+"""Tests for count errors, detector matching, TrackEval wrappers and the dev/test split."""
 import random
 import tempfile
 import unittest

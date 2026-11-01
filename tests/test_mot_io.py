@@ -1,3 +1,4 @@
+"""Tests for MOT parsing, frame naming, JSON writing, GT export, GT video and run validation."""
 import tempfile
 import unittest
 from pathlib import Path
