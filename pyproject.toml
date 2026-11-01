@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vehicle-counting"
+version = "0.1.0"
+description = "Vehicle detection, tracking and line-crossing counting on UA-DETRAC"
+requires-python = ">=3.12"
+dependencies = [
+    "ultralytics>=8.2",
+    "torch>=2.1",
+    "torchvision",
+    "torchmetrics[detection]",
+    "opencv-python",
+    "pandas",
+    "numpy",
+    "trackeval",
+    "matplotlib",
+    "seaborn",
+    "tabulate",
+    "pillow",
+    "tqdm",
+]
+
+[project.optional-dependencies]
+notebook = ["jupyter"]
+dev = ["pytest", "ruff", "mypy"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 120
+src = ["."]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "ARG", "SIM"]

@@ -1,0 +1,71 @@
+{
+  "sources": {
+    "weights": {
+      "path": "D:\\Programming\\innopolis\\cv\\VehicleDetectionAndTrafficCounting\\models\\yolov8n.pt",
+      "sha256": "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36"
+    },
+    "data_root": "D:\\Programming\\innopolis\\cv\\VehicleDetectionAndTrafficCounting\\data\\processed\\detrac_yolo",
+    "ignored": {
+      "path": "D:\\Programming\\innopolis\\cv\\VehicleDetectionAndTrafficCounting\\data\\processed\\detrac_yolo\\ignored_regions.json",
+      "sha256": "f072618b0ed070f01fd519c954d4593b1a93bd12a0cdc9f23076fd2b5f061a63"
+    }
+  },
+  "protocol": {
+    "predict_conf": 0.001,
+    "nms_iou": 0.7,
+    "pr_conf": 0.25,
+    "pr_iou": 0.5,
+    "ignored_rule": "observation_centres"
+  },
+  "model": "yolov8n.pt",
+  "split": "test",
+  "imgsz": 960,
+  "seed": 42,
+  "deterministic": true,
+  "env": {
+    "device": "cpu",
+    "torch": "2.14.1+cu126",
+    "ultralytics": "8.4.197",
+    "opencv": "5.0.0",
+    "numpy": "2.5.4",
+    "python": "3.13.16",
+    "cuda": "12.6",
+    "cudnn": 91002,
+    "date": "2026-11-01 20:26:34"
+  },
+  "frames": 1718,
+  "ms_per_frame": 10.0,
+  "timing_scope": "prediction, image loading and metric updates",
+  "mAP@0.5": 0.7177,
+  "mAP@0.5:0.95": 0.4954,
+  "mAP@0.75": 0.613,
+  "per_class": {
+    "car": {
+      "TP": 9912,
+      "FP": 2086,
+      "FN": 1704,
+      "P@0.25": 0.8261,
+      "R@0.25": 0.8533,
+      "F1@0.25": 0.8395,
+      "AP50_95": 0.5912
+    },
+    "bus": {
+      "TP": 873,
+      "FP": 329,
+      "FN": 161,
+      "P@0.25": 0.7263,
+      "R@0.25": 0.8443,
+      "F1@0.25": 0.7809,
+      "AP50_95": 0.5632
+    },
+    "truck": {
+      "TP": 43,
+      "FP": 373,
+      "FN": 6,
+      "P@0.25": 0.1034,
+      "R@0.25": 0.8776,
+      "F1@0.25": 0.1849,
+      "AP50_95": 0.3317
+    }
+  }
+}

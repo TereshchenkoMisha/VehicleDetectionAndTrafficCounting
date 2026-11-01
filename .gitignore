@@ -2,7 +2,9 @@
 # Project-specific
 # ---------------------------------------------------------------
 # Datasets (UA-DETRAC raw + converted YOLO store) - large, downloaded separately
-/data/
+/data/**
+!/data/**/
+!/data/**/.gitkeep
 
 # Pretrained / trained weights (downloaded automatically by Ultralytics)
 /models/
@@ -194,3 +196,6 @@ CLAUDE.local.md
 AGENTS.md
 CLAUDE.md
 GEMINI.md
+
+# Unfinished tracking runs
+*.partial/

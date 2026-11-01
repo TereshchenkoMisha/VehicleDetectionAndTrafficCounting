@@ -13,23 +13,24 @@ Team: Mikhail Tereshchenko, Kamil Gainutdinov, Artem Salakhutdinov, Danis Abdulo
 |---|---|
 | Data pipeline (parse, YOLO conversion, split) | done |
 | Detector evaluation (mAP, P/R) on dev | done |
-| Detection + tracking, 4 configurations, timing, on dev | done (`run_tracking`) |
-| Results table and plot (`scripts/results.ipynb` -> `reports/charts/`) | done (dev) |
+| Detection + tracking, 4 configurations, timing, on dev | code fixed (detector now runs at `track_low_thresh`); **results must be re-generated** |
+| Results table and plot (`notebooks/results.ipynb` -> `outputs/reports/<split>/`) | done (dev) |
 | Ground-truth counts, counting line, line counter | done |
-| Counting metrics tables (MAE, WAPE, SCE) | done (`eval_counting` -> `counting_eval_*.md`) |
-| Tracking metrics (TrackEval: IDF1, IDSW) | done |
+| Counting metrics tables (MAE, WAPE, SCE) | code done (`evaluate_counting`); numbers below are from the old tracks |
+| Tracking metrics (TrackEval: HOTA, IDF1, IDSW) | code done (`evaluate_tracking`); numbers must be re-generated |
+| Code review fixes and migration to `src/` + `scripts/` | done (see `.nocommit/code_review_it-0.md` for open items) |
 | Confidence-threshold ablation | todo |
 | Failure analysis | todo |
 
 ## 1. Setup
 
-Python 3.12+ (reference runs on 3.13). Run every command **from the repository root**
-(`python -m src....` does not work from other directories).
+Python 3.12+ (reference runs on 3.13). All paths are resolved from the repository root, so commands
+work from any directory, but `pip install -e .` is needed once so that `scripts/*.py` can import `src`.
 
 ```bash
 python -m venv venv
 source venv/bin/activate        # Windows: venv\Scripts\activate
-pip install -r requirements.txt
+pip install -e .            # add ".[notebook]" for Jupyter, ".[dev]" for pytest, ruff, mypy
 ```
 
 `pip install` may pull a CPU-only PyTorch build. With an NVIDIA GPU, reinstall the CUDA build and check it:
@@ -78,7 +79,7 @@ are **day/night only**, not cloudy/sunny/rainy/night as originally planned.
 ## 3. Data preparation
 
 ```bash
-python -m src.scripts.prepare_dataset --frame-step 5 --copy
+python scripts/prepare_dataset.py --frame-step 5 --copy
 ```
 
 - `--frame-step 5` keeps every 5th frame for the **detector evaluation** store (25 fps, neighbouring
@@ -91,20 +92,13 @@ Output in `data/processed/detrac_yolo/`: `images/{dev,test}`, `labels/{dev,test}
 `detrac.yaml`, `splits.json`, `ignored_regions.json` (absolute xyxy pixels), `stats.json`.
 Copies of `splits.json` and `ignored_regions.json` are kept in `reports/`. The split is deterministic
 (seed 42), so a fresh `prepare_dataset` run reproduces `reports/splits.json` exactly (checked). `run_tracking`
-falls back to the copies in `reports/`; `evaluate_detectors` needs them in `data/processed/detrac_yolo/`,
-so copy them there if they are missing:
+falls back to the copies in `reports/`; `evaluate_detectors` needs `ignored_regions.json` in
+`data/processed/detrac_yolo/` (`prepare_dataset` writes it; copy it there if it is missing):
 
 ```bash
-cp reports/splits.json reports/ignored_regions.json data/processed/detrac_yolo/
+cp reports/ignored_regions.json data/processed/detrac_yolo/       # PowerShell: same command (cp is an alias)
 ```
 
-And for Windows (PowerShell):
-```powershell
-cp reports/splits.json data/processed/detrac_yolo/
-cp reports/ignored_regions.json data/processed/detrac_yolo/
-```
-
-Visual check of the converted GT boxes: `python scripts/peek_labels.py` (writes to `reports/sanity/`).
 
 ### Split (fixed, seed 42)
 
@@ -136,7 +130,7 @@ The `truck` class is rare (test: two sequences, MVI_40792 and MVI_40902), so per
 ## 4. Detector evaluation (mAP)
 
 ```bash
-python -m src.scripts.evaluate_detectors --models yolov8n.pt yolov8s.pt --split dev --device 0
+python scripts/evaluate_detectors.py --models yolov8n.pt yolov8s.pt --split dev --device 0
 ```
 
 Writes `reports/detection_<model>_<split>.json`. Settings: `imgsz=960`, `conf=0.001` for mAP, P/R at
@@ -158,8 +152,8 @@ measure (it varied 2-3x between runs). Speed comes only from `run_tracking`.
 ## 5. Detection + tracking (4 configurations)
 
 ```bash
-python -m src.scripts.run_tracking --split dev            # all 4 configs on the dev sequences
-python -m src.scripts.run_tracking --split dev --seqs MVI_20033 --max-frames 100 --vis-dir outputs/vis   # quick check
+python scripts/run_tracking.py --split dev            # all 4 configs on the dev sequences
+python scripts/run_tracking.py --split dev --seqs MVI_20033 --max-frames 100 --vis-dir outputs/vis   # quick check
 ```
 
 Runs YOLOv8n/s x ByteTrack/BoT-SORT with a progress bar. Key options: `--conf` (default 0.25), `--imgsz`
@@ -174,8 +168,12 @@ How it works:
   (`track_high_thresh`, `track_low_thresh`, `new_track_thresh`, `track_buffer`, `match_thresh`) are
   identical. BoT-SORT keeps its default camera motion compensation, ReID is off, so both trackers are purely
   motion-based. Input size, confidence and counting rules are the same for all four configurations.
-- The detector `--conf` filters detections before the tracker. Above `track_low_thresh` (0.1) it switches off
-  the low-score association step of both trackers; keep this in mind when interpreting the ablation.
+- `--conf` is the tracker's high-score threshold (`track_high_thresh`, `new_track_thresh`). The detector itself
+  runs at `track_low_thresh` (0.1), so the low-score association step of both trackers is active. Runs made
+  before this change (detector at `conf` 0.25) had that step switched off and are not comparable.
+- Seeds are always set. `--deterministic` additionally makes GPU results repeatable but is slower; do not use it
+  for speed measurements. `timing.json` records which one was used.
+- A run is written to `<config>.partial/` and renamed when finished, so a crash does not block the next run.
 - Timing excludes image reading, a warm-up is run first. Detector time = preprocess + inference + NMS +
   GPU->CPU copy; tracker time = ignored-region mask + `tracker.update`. Compare timings only between runs on
   the same machine.
@@ -185,6 +183,12 @@ Output, per configuration, in `outputs/tracks/<split>/<det>_<trk>_conf<conf>/`:
 - `<seq>.txt`: MOTChallenge rows `frame,id,x,y,w,h,conf,cls,-1,-1` (frame is 1-based, `cls`: 0 car, 1 bus,
   2 truck, local ids);
 - `timing.json`: ms/frame for the detector and the tracker, FPS, per-sequence stats, environment.
+
+**The numbers in this section and in sections 7-8 come from runs made before the review fixes.** Those runs
+used a detector confidence of 0.25 (the trackers' low-score step was off) and ran in deterministic mode with
+single-threaded OpenCV, which probably inflates the BoT-SORT time. Re-run `run_tracking`, then
+`evaluate_tracking`, `count_tracks` and `evaluate_counting`, before quoting any of them. Old runs in
+`outputs/tracks/` have the same directory names, so use a new `--out` or delete them.
 
 Speed (single runs on the reference machine, GTX 1070 Ti; dev = 5924 frames; latency =
 detector + tracker, ms/frame; FPS = 1000 / latency):
@@ -198,21 +202,31 @@ detector + tracker, ms/frame; FPS = 1000 / latency):
 
 The tracker cost of BoT-SORT (about 6 ms vs 0.8 ms) is the camera motion compensation overhead.
 
+### Tracking evaluation (HOTA, MOTA, IDF1, IDSW)
+
+```bash
+python scripts/evaluate_tracking.py --splits dev     # then test; writes reports/tracking_eval_<split>.md/json
+```
+
+GT in MOT format (`reports/gt_mot/<seq>.txt`) is created on the first run and needs the raw dataset.
+Metrics are class-agnostic (TrackEval HOTA, CLEAR, Identity), reported as a macro average over sequences and as
+a TrackEval combination over the whole split.
+
 Run `--split test` only after the configurations, `conf` and the counting line are frozen on dev.
 
 ## 6. Results table and plot
 
-`scripts/results.ipynb` builds the comparison table and the plot from `reports/detection_<det>_<SPLIT>.json`
+`notebooks/results.ipynb` builds the comparison table and the plot from `reports/detection_<det>_<SPLIT>.json`
 and `outputs/tracks/<SPLIT>/*/timing.json`. It finds the repository root by itself, so it can be run from the
 repository root in one command (with the virtual environment activated, so that the `python` kernel is the
 project one):
 
 ```bash
-jupyter nbconvert --to notebook --execute --inplace scripts/results.ipynb             # dev (default)
-SPLIT=test jupyter nbconvert --to notebook --execute --inplace scripts/results.ipynb  # test
+jupyter nbconvert --to notebook --execute --inplace notebooks/results.ipynb             # dev (default)
+SPLIT=test jupyter nbconvert --to notebook --execute --inplace notebooks/results.ipynb  # test
 ```
 
-On Windows PowerShell set the split with `$env:SPLIT = "test"` first. Outputs go to `reports/charts/` and carry
+On Windows PowerShell set the split with `$env:SPLIT = "test"` first. Outputs go to `outputs/reports/<split>/` and carry
 the split in the name: `metrics_table_<split>.md`, `metrics_table_<split>.tex`,
 `models_comparison_charts_<split>.png`. mAP is a detector property, so it is identical for both trackers of one
 detector; "Latency_ms" is detector + tracker time from `run_tracking`.
@@ -221,20 +235,20 @@ detector; "Latency_ms" is detector + tracker time from `run_tracking`.
 
 The counting line is placed per sequence to count vehicles crossing it. Lines are stored in
 `reports/counting_lines.json` (auto-placed from the GT flow field, then manually corrected).
-Each target is counted once, at its first crossing of the line (src/eval/line_crossing.py).
+Each target is counted once, at its first crossing of the line (`src/counting/line_crossing.py`).
 
 ### Placing the line
 
-Auto-placement (`scripts/place_lines.py`) uses the GT trajectories to find the dominant traffic stream
+Auto-placement (`scripts/place_lines.py`, default split `dev`) uses the GT trajectories to find the dominant traffic stream
 and builds a line perpendicular to it. The resulting preview is in `reports/line_previews/<seq>.png`.
-Manual correction is done with `src/scripts/annotate_line.py`:
+Manual correction is done with `scripts/annotate_line.py`:
 
 ```bash
 # interactive mode
-python -m src.scripts.annotate_line --sequence MVI_20033
+python scripts/annotate_line.py --sequence MVI_20033
 
 # headless mode (already placed)
-python -m src.scripts.annotate_line --sequence MVI_20033 --p1 140,300 --p2 950,300
+python scripts/annotate_line.py --sequence MVI_20033 --p1 140,300 --p2 950,300
 ```
 
 All 12 sequences of the reference split have lines now: 10 of them achieve 100% coverage of
@@ -247,7 +261,7 @@ trajectories during placement (scripts/place_lines.py + the coverage check in th
 GT counts (with ignored regions excluded) are computed from the raw XML annotations:
 
 ```bash
-python -m src.scripts.count_gt_crossings --vis-dir outputs/vis
+python scripts/count_gt.py --vis-dir outputs/vis
 ```
 
 Output:
@@ -265,8 +279,8 @@ GT totals (exclude_ignored):
 Counts from the saved MOT tracks (same line, same crossing rule):
 
 ```bash
-python -m src.scripts.count_tracks_crossings --splits dev
-python -m src.scripts.count_tracks_crossings --splits test
+python scripts/count_tracks.py --splits dev
+python scripts/count_tracks.py --splits test
 ```
 
 Output: `reports/track_counts.json`.
@@ -279,12 +293,12 @@ Example dev results (yolov8s_bytetrack_conf0.25):
 ## 8. Counting evaluation (MAE, WAPE, SCE)
 
 Compares the four detector x tracker configurations against GT using
-src/eval/counting_metrics.py. The GT variant `exclude_ignored` is used (targets with centres in ignored
+`src/counting/metrics.py`. The GT variant `exclude_ignored` is used (targets with centres in ignored
 regions are dropped before tracking, so this is the comparable protocol).
 
 ```bash
-python -m src.scripts.eval_counting --splits dev
-python -m src.scripts.eval_counting --splits test
+python scripts/evaluate_counting.py --splits dev
+python scripts/evaluate_counting.py --splits test
 ```
 
 Output:
@@ -319,33 +333,39 @@ Re-run on another machine (RTX 2080 Super, Ultralytics 8.4.176, torch 2.14.1+cu1
 - split, ignored regions and all box counts: identical;
 - detector mAP/P/R: identical on dev;
 - dev tracks (141 858 rows): same frames, rows, classes and track IDs, boxes within 0.27 px (files are not
-  byte-identical: GPU numerics, no seeds are set in tracking);
+  byte-identical: GPU numerics; tracking sets seeds but only `--deterministic` makes the GPU path bit-repeatable);
 - timings: **not** reproducible across machines (2-3x lower FPS on the laptop GPU, same ordering of the four
   configurations). Compare timings only on one machine.
+
+## Tests and checks
+
+```bash
+pytest                                        # or: PYTHONPATH=. python -m unittest discover -s tests
+ruff check . && ruff format --check .         # needs ".[dev]"
+```
+
+Tests cover line crossing, MOT parsing and validation, ignored-region rule, split quotas, count and detector
+metrics, TrackEval combination, and the tracker loop with a stub model (no GPU or dataset needed).
 
 ## Repository layout
 
 ```
-configs/            tracker configs (shared thresholds)
-models/             pretrained weights, downloaded automatically (git-ignored)
-src/data/           UA-DETRAC parser, YOLO conversion, split, brightness proxy
-src/eval/           detector evaluation, counting metrics (MAE, WAPE, SCE)
-src/tracking/       detector + tracker loop
-src/scripts/        prepare_dataset, evaluate_detectors, run_tracking,
-                   annotate_line, place_lines, count_gt_crossings,
-                   count_tracks_crossings, eval_counting
-scripts/            peek_labels.py, results.ipynb
-reports/            detector metrics, split and ignored-region copies,
-                   counting_lines.json, line_previews/, gt_counts.*,
-                   track_counts.json, counting_eval_*.md/json
-outputs/tracks/     MOTChallenge tracks + timing.json per split and configuration
-outputs/vis/        annotated example videos, GT line check videos
-reports/charts/     results tables and plots (generated by the notebook)
+pyproject.toml     package (src), dependencies, ruff and pytest settings
+configs/           tracker configs (shared thresholds)
+src/          library: config, utils, data/, tracking/, counting/, eval/
+scripts/           command-line entry points (thin wrappers around src/):
+                   prepare_dataset, evaluate_detectors, run_tracking, evaluate_tracking,
+                   place_lines, annotate_line, count_gt, count_tracks, evaluate_counting
+tests/             unit tests (pytest, or PYTHONPATH=. python -m unittest discover -s tests)
+notebooks/         results.ipynb: comparison tables and plots
+reports/           committed results: split, ignored regions, counting lines, metrics
+data/ models/      dataset and weights (git-ignored)
+outputs/           tracks, videos, notebook output (git-ignored)
 ```
 
 ## Known pitfalls
 
-- Run `python -m src.scripts.*` from the repository root.
+- Install the package first (`pip install -e .`) so that `scripts/*.py` can import `src`.
 - `data/` and `*.pt` are not in git; a fresh clone needs sections 1-3 first.
 - `--iou 0.7` (detector NMS) is fixed for all configurations and recorded in `timing.json`.
 - Detector mAP uses the COCO protocol with at most 100 detections per frame (measured effect on mAP@0.5/0.75
