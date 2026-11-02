@@ -108,6 +108,18 @@ class FileTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Incomplete run"):
             validate_tracking_run(cfg, ["MVI_1"], self.root / "raw", "dev")
 
+    def test_run_must_use_the_same_ignored_regions(self):
+        (self.root / "raw" / "MVI_1").mkdir(parents=True)
+        (self.root / "raw" / "MVI_1" / "IMG00001.jpg").touch()
+        cfg = self.root / "run"
+        cfg.mkdir()
+        (cfg / "MVI_1.txt").write_text("", encoding="utf-8")
+        write_json(cfg / "timing.json", {"split": "dev", "frames": 1, "per_seq": {"MVI_1": {"frames": 1, "rows": 0}},
+                                         "provenance": {"ignored_regions": {"MVI_1": [[0, 0, 10, 10]]}}})
+        validate_tracking_run(cfg, ["MVI_1"], self.root / "raw", "dev", ignored={"MVI_1": [[0, 0, 10, 10]]})
+        with self.assertRaisesRegex(ValueError, "Ignored regions differ"):
+            validate_tracking_run(cfg, ["MVI_1"], self.root / "raw", "dev", ignored={"MVI_1": []})
+
     def test_unfinished_runs_are_skipped(self):
         for name in ("yolov8n_bytetrack_conf0.25", "yolov8n_botsort_conf0.25.partial"):
             (self.root / name).mkdir()

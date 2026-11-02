@@ -75,6 +75,21 @@ class TrackingMetricTests(unittest.TestCase):
             self.assertAlmostEqual(combined["MOTA"], 25)
             self.assertAlmostEqual(combined["IDF1"], 40)
 
+    def test_ignored_regions_filter_both_sides_and_keep_frames(self):
+        # Centre-in-region rule, border included: only the box at (9, 9) has its centre outside (0, 0, 10, 10)
+        with tempfile.TemporaryDirectory() as folder:
+            gt, pred = Path(folder) / "gt.txt", Path(folder) / "pred.txt"
+            gt.write_text("1,1,9,9,10,10,1,0\n1,2,0,0,10,10,1,1\n2,2,5,5,10,10,1,1\n3,2,0,0,10,10,1,1\n",
+                          encoding="utf-8")
+            pred.write_text("1,10,9,9,10,10,1,0\n2,20,0,0,10,10,1,2\n3,20,5,5,10,10,1,2\n", encoding="utf-8")
+            plain = evaluate_sequence(gt, pred, frame_ids=[1, 2, 3])["all"]
+            self.assertEqual((plain["GT_dets"], plain["TRK_dets"]), (4, 3))
+
+            metrics = evaluate_sequence(gt, pred, frame_ids=[1, 2, 3], ignored_regions=[(0, 0, 10, 10)])["all"]
+            for name in ("HOTA", "MOTA", "IDF1"):
+                self.assertAlmostEqual(metrics[name], 100)
+            self.assertEqual((metrics["GT_dets"], metrics["TRK_dets"], metrics["frames"]), (1, 1, 3))
+
 
 class SplitTests(unittest.TestCase):
     def test_quotas_add_up(self):

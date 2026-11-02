@@ -10,6 +10,9 @@ detections (between `track_low_thresh` and `track_high_thresh`). If the detector
 dropped everything below the high threshold, that step would have nothing to match and the
 tracker would degrade. So the detector runs at the low threshold, and the tracker's own high
 threshold (`conf`) decides which detections can start or extend tracks.
+
+NMS is class-agnostic here (`TRACK_AGNOSTIC_NMS`): otherwise one vehicle can reach the tracker as two
+boxes of different classes and get two tracks.
 """
 import time
 from collections.abc import Callable
@@ -23,7 +26,7 @@ from ultralytics import YOLO
 from ultralytics.trackers import BOTSORT, BYTETracker
 from ultralytics.utils import YAML, IterableSimpleNamespace
 
-from ..config import COCO_CLASSES, COCO_TO_LOCAL, CONF, CONFIG_DIR, weights_path
+from ..config import COCO_CLASSES, COCO_TO_LOCAL, CONF, CONFIG_DIR, TRACK_AGNOSTIC_NMS, weights_path
 from ..data.mot import MotOutRow, write_mot
 from ..data.regions import Region, inside_any
 from ..data.sequences import read_frame
@@ -97,7 +100,8 @@ def warmup(model: YOLO, frame: NDArray[np.uint8], imgsz: int, device: str | int 
     keeps that one-time cost out of the measured frames.
     """
     for _ in range(n):
-        model.predict(frame, imgsz=imgsz, conf=conf, classes=COCO_CLASSES, device=device, verbose=False)
+        model.predict(frame, imgsz=imgsz, conf=conf, classes=COCO_CLASSES, device=device, verbose=False,
+                      agnostic_nms=TRACK_AGNOSTIC_NMS)
     sync(device)
 
 
@@ -126,7 +130,7 @@ def run_sequence(model: YOLO, tracker: Any, frames: list[tuple[int, Path]], regi
         # Detect. Timed: preprocessing, inference, NMS and the copy of the result to the CPU.
         t0 = time.perf_counter()
         res = model.predict(img, imgsz=imgsz, conf=conf, iou=iou, classes=COCO_CLASSES,
-                            device=device, verbose=False)[0]
+                            device=device, verbose=False, agnostic_nms=TRACK_AGNOSTIC_NMS)[0]
         sync(device)
         det = res.boxes.cpu().numpy()
         t1 = time.perf_counter()
@@ -206,7 +210,7 @@ def track_config(weights: str, tracker_name: str, seq_frames: dict[str, list[tup
         total_trk += trk_s
 
     return {"detector": weights, "tracker": tracker_name, "conf": conf, "detector_conf": det_conf,
-            "iou": iou, "imgsz": imgsz, "seed": seed, "frames": total_frames,
+            "iou": iou, "agnostic_nms": TRACK_AGNOSTIC_NMS, "imgsz": imgsz, "seed": seed, "frames": total_frames,
             "det_ms_per_frame": 1000 * total_det / total_frames,
             "trk_ms_per_frame": 1000 * total_trk / total_frames,
             "total_ms_per_frame": 1000 * (total_det + total_trk) / total_frames,

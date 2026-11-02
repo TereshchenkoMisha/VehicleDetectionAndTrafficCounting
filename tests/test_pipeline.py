@@ -7,7 +7,7 @@ import numpy as np
 
 from src.counting.trajectories import build_trajectories
 from src.data.regions import inside_any
-from src.tracking.pipeline import detector_conf, keep_mask, run_sequence, tracker_settings
+from src.tracking.pipeline import detector_conf, keep_mask, run_sequence, tracker_settings, warmup
 
 
 class RegionTests(unittest.TestCase):
@@ -62,6 +62,25 @@ class FakeBoxes:
 
 
 class RunSequenceTests(unittest.TestCase):
+    def test_detector_nms_is_class_agnostic(self):
+        calls = []
+
+        class Model:
+            def predict(self, *args, **kwargs):
+                calls.append(kwargs)
+                return [SimpleNamespace(boxes=FakeBoxes(np.zeros((0, 4))))]
+
+        class Tracker:
+            def update(self, det, img):
+                return np.zeros((0, 8))
+
+        image = np.zeros((10, 10, 3), dtype=np.uint8)
+        with patch("src.tracking.pipeline.read_frame", return_value=image), \
+                patch("src.tracking.pipeline.sync"):
+            run_sequence(Model(), Tracker(), [(1, "a.jpg")], [], 0.1, 960, 0.7, "cpu")
+            warmup(Model(), image, 960, "cpu", 0.1, n=1)
+        self.assertEqual([c["agnostic_nms"] for c in calls], [True, True])
+
     def test_ignored_detections_never_reach_the_tracker(self):
         received = []
 

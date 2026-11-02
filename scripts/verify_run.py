@@ -88,6 +88,7 @@ def check_tracks(tracks_root: Path, split: str, sequences: list[str], raw_root: 
               f"{split}/{cfg_dir.name} detector ran below the tracker threshold (low-score step active)",
               f"detector_conf={timing['detector_conf']} conf={timing['conf']}")
         check(timing["deterministic"] is False, f"{split}/{cfg_dir.name} timed without deterministic mode")
+        check(timing.get("agnostic_nms") is True, f"{split}/{cfg_dir.name} class-agnostic NMS before the tracker")
 
 
 def check_gt_counts(new_dir: Path, split: str) -> None:

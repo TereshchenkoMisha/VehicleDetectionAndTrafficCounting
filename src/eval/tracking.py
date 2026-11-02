@@ -23,6 +23,7 @@ from numpy.typing import NDArray
 from trackeval.metrics import CLEAR, HOTA, Identity
 
 from ..data.mot import MotRow, load_mot
+from ..data.regions import Region, box_centres, inside_any
 
 # HOTA is computed at 19 IoU thresholds (0.05 .. 0.95); this is the index of the one at 0.5
 _HOTA_50: int = int(np.flatnonzero(np.isclose(HOTA().array_labels, 0.5))[0])
@@ -45,6 +46,21 @@ def _iou_matrix(gt_boxes: NDArray, trk_boxes: NDArray) -> NDArray[np.float64]:
     area_t = (t[..., 2] - t[..., 0]) * (t[..., 3] - t[..., 1])
     union = area_g + area_t - inter
     return np.divide(inter, union, out=np.zeros_like(inter), where=union > 0)       # 0 where a box has no area
+
+
+def drop_ignored(frames: dict[int, list[MotRow]], regions: list[Region]) -> dict[int, list[MotRow]]:
+    """Remove the boxes whose centre is in an ignored region; frames stay, possibly empty.
+
+    The tracker never sees detections in these regions, but its boxes can still drift into them, and
+    GT there is unreliable. Filtering both sides with the same rule keeps the metrics comparable.
+    """
+    def keep(targets: list[MotRow]) -> list[MotRow]:
+        if not targets:
+            return targets
+        inside = inside_any(box_centres([box for _, box, *_ in targets]), regions)
+        return [target for target, skip in zip(targets, inside, strict=True) if not skip]
+
+    return {fid: keep(targets) for fid, targets in frames.items()}
 
 
 def _build_trackeval_data(gt_frames: dict[int, list[MotRow]], trk_frames: dict[int, list[MotRow]],
@@ -85,15 +101,19 @@ def _build_trackeval_data(gt_frames: dict[int, list[MotRow]], trk_frames: dict[i
 
 
 def evaluate_sequence(gt_path: str | Path, trk_path: str | Path, frame_ids: list[int] | None = None,
-                      raw_results: dict[str, Any] | None = None) -> dict[str, dict[str, float]]:
+                      raw_results: dict[str, Any] | None = None,
+                      ignored_regions: list[Region] = ()) -> dict[str, dict[str, float]]:
     """Compute the tracking metrics of one sequence from a GT and a tracker MOT file.
+
+    Boxes whose centre is in `ignored_regions` are dropped from both files first (see `drop_ignored`).
 
     Returns {"all": {...}} with rates in percent and counters as ints. HOTA, DetA, AssA and LocA
     are averaged over the IoU thresholds 0.05-0.95; HOTA_50 is HOTA at IoU 0.5 only.
     If `raw_results` is given, TrackEval's unprocessed output is stored in it so
     `combine_sequence_metrics` can later merge several sequences correctly.
     """
-    data = _build_trackeval_data(load_mot(gt_path), load_mot(trk_path), frame_ids=frame_ids)
+    data = _build_trackeval_data(drop_ignored(load_mot(gt_path), ignored_regions),
+                                 drop_ignored(load_mot(trk_path), ignored_regions), frame_ids=frame_ids)
     hota = HOTA().eval_sequence(data)
     clear = CLEAR().eval_sequence(data)
     identity = Identity().eval_sequence(data)

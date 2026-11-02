@@ -16,6 +16,8 @@ Stages, selected with --from / --to by number or name:
      8 countingeval   evaluate_counting
      9 notebook       tables and charts (needs jupyter)
     10 verify         verify_run
+    11 ablation       run_ablation (confidence sweep on dev, 16 tracking runs) and its notebook; not in the
+                      default range: pass --to ablation, or --from ablation to run it alone
 
 Needs, before any stage runs (nothing runs if something is missing):
     external inputs of the selected stages: raw dataset, reports/splits.json, reports/ignored_regions.json,
@@ -26,6 +28,7 @@ Produces, per tag:
     reports/<tag>/                         detector reports, tracking and counting evaluation, GT and track counts
     outputs/tracks_<tag>/                  MOT tracks and timing.json per configuration
     outputs/reports_<tag>/                 notebook tables and charts
+    outputs/ablation_<tag>/                confidence sweep (stage 11); an existing one is continued, not redone
 --clean first deletes what the selected stages produce for this tag (and the prepared dataset when stage 2
 is selected), after a confirmation. Without it, existing results are never overwritten.
 Child processes write straight to the console, so progress bars look as usual.
@@ -49,7 +52,8 @@ from src.data.sequences import find_sequence_dir  # noqa: E402
 from src.utils import read_json  # noqa: E402
 
 STAGES: list[str] = ["tests", "prepare", "detectors", "tracking", "trackeval", "gtcounts", "trackcounts",
-                     "countingeval", "notebook", "verify"]
+                     "countingeval", "notebook", "verify", "ablation"]
+DEFAULT_LAST: int = 10      # the ablation is long and independent, so it runs only when asked for
 DETECTORS: list[str] = ["yolov8n", "yolov8s"]
 RAW = "data/raw/UA-DETRAC"
 PROCESSED = "data/processed/detrac_yolo"
@@ -96,6 +100,7 @@ class Run:
         self.reports = f"reports/{args.tag}"
         self.tracks = f"outputs/tracks_{args.tag}"
         self.charts = f"outputs/reports_{args.tag}"
+        self.ablation = f"outputs/ablation_{args.tag}"
         self.device: list[str] = ["--device", args.device] if args.device else []
         self.timings: list[tuple[str, float, int]] = []
 
@@ -124,19 +129,23 @@ class Run:
         need(2, f"{RAW}/DETRAC-Test-Annotations-XML", "dir", 0, "raw test annotations")
         need(2, SPLITS_JSON, "file", 0, "reference split")
         need(3, IGNORED_JSON, "file", 0, f"ignored regions (copied into {PROCESSED} when missing)")
-        for stage in (4, 5, 6, 7):
+        for stage in (4, 5, 6, 7, 11):
             need(stage, f"{RAW}/DETRAC-Images", "dir", 0, "raw frames")
             need(stage, SPLITS_JSON, "file", 0, "split")
-        for stage in (4, 5, 7):
+        for stage in (4, 5, 7, 11):
             need(stage, IGNORED_JSON, "file", 0, "ignored regions")
-        need(4, "configs/bytetrack.yaml", "file", 0, "tracker config")
-        need(4, "configs/botsort.yaml", "file", 0, "tracker config")
-        need(6, f"{RAW}/DETRAC-Train-Annotations-XML", "dir", 0, "XML annotations")
-        need(6, LINES_JSON, "file", 0, "counting lines")
-        need(7, LINES_JSON, "file", 0, "counting lines")
+        for stage in (4, 11):
+            need(stage, "configs/bytetrack.yaml", "file", 0, "tracker config")
+            need(stage, "configs/botsort.yaml", "file", 0, "tracker config")
+        for stage in (6, 11):
+            need(stage, f"{RAW}/DETRAC-Train-Annotations-XML", "dir", 0, "XML annotations")
+        for stage in (6, 7, 11):
+            need(stage, LINES_JSON, "file", 0, "counting lines")
         need(8, SPLITS_JSON, "file", 0, "split")
         need(9, "notebooks/results.ipynb", "file", 0, "notebook")
         need(10, SPLITS_JSON, "file", 0, "split")
+        need(11, SPLITS_JSON, "file", 0, "split")
+        need(11, "notebooks/ablation.ipynb", "file", 0, "ablation notebook")
 
         # Results of earlier stages
         need(3, f"{PROCESSED}/images", "dir", 2, "prepared images")
@@ -205,7 +214,7 @@ class Run:
         sequences = [seq for s in a.splits for seq in splits.get(s, [])]
 
         # Counting lines: present and valid for each sequence
-        if self.will_run(6) or self.will_run(7):
+        if any(self.will_run(s) for s in (6, 7, 11)):
             try:
                 lines = read_json(REPORTS_DIR / "counting_lines.json")
             except (OSError, ValueError):
@@ -217,7 +226,7 @@ class Run:
                     check(False, f"valid counting line for {seq} in counting_lines.json")
 
         # Ignored regions
-        if any(self.will_run(s) for s in (4, 5, 7)):
+        if any(self.will_run(s) for s in (4, 5, 7, 11)):
             try:
                 ignored = read_json(REPORTS_DIR / "ignored_regions.json")
             except (OSError, ValueError):
@@ -226,7 +235,7 @@ class Run:
                 check(seq in ignored, f"ignored regions for {seq} in ignored_regions.json")
 
         # Raw dataset
-        if any(self.will_run(s) for s in (2, 4, 5, 6, 7)):
+        if any(self.will_run(s) for s in (2, 4, 5, 6, 7, 11)):
             xml_names = {p.stem for p in Path(RAW_ROOT).rglob("MVI_*.xml")}
             for seq in sequences:
                 check(find_sequence_dir(RAW_ROOT, seq) is not None, f"raw frames of {seq}")
@@ -241,7 +250,8 @@ class Run:
     def clean_targets(self) -> list[str]:
         """Existing paths that the selected stages would produce for this tag.
 
-        Stage 2 owns the prepared dataset, stage 4 the tracks folder, stage 9 the charts folder; the
+        Stage 2 owns the prepared dataset, stage 4 the tracks folder, stage 9 the charts folder, stage 11
+        the ablation folder; the
         other stages own report files named with the tag. Only paths that exist are returned.
         """
         targets: list[str] = []
@@ -260,6 +270,8 @@ class Run:
             targets.append(self.tracks)
         if self.will_run(9):
             targets.append(self.charts)
+        if self.will_run(11):
+            targets.append(self.ablation)
         return [p for p in dict.fromkeys(targets) if (ROOT / p).exists()]
 
     def clean(self) -> None:
@@ -397,6 +409,18 @@ class Run:
             self.step("10. Verify results (consistency checks + comparison with the reference results)",
                       ["scripts/verify_run.py", "--tag", self.tag, "--splits", *s])
 
+        # Stage 11: the confidence sweep. It makes its own GT counts and tracks, so it needs nothing from
+        # stages 3-10. An unfinished sweep of this tag is continued: run_ablation checks it against its hashes.
+        if self.will_run(11):
+            resume = ["--resume"] if (ROOT / self.ablation / "manifest.json").is_file() else []
+            self.step("11. Confidence ablation (dev)",
+                      ["scripts/run_ablation.py", "--out", self.ablation, *resume, *self.device])
+            if not a.skip_notebook and importlib.util.find_spec("nbconvert") is not None:
+                os.environ["ABLATION_DIR"] = str(ROOT / self.ablation)
+                self.step("11. Ablation tables and charts",
+                          ["-m", "jupyter", "nbconvert", "--to", "notebook", "--execute", "notebooks/ablation.ipynb",
+                           "--output-dir", f"{self.ablation}/analysis", "--output", "ablation_executed.ipynb"])
+
         print(color("\n" + "=" * 100 + f"\nFINISHED stages {a.first}-{a.last}. Tag: {self.tag}", GREEN))
         self.summary()
         print(f"Results: {self.reports}   Tracks: {self.tracks}   Charts: {self.charts}")
@@ -407,15 +431,17 @@ def parse_args() -> argparse.Namespace:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--tag", default=time.strftime("run_%Y%m%d_%H%M%S"), help="name of this run (default: timestamp)")
     ap.add_argument("--from", dest="first", type=stage_number, default=1, help="first stage (number or name)")
-    ap.add_argument("--to", dest="last", type=stage_number, default=len(STAGES), help="last stage (number or name)")
+    ap.add_argument("--to", dest="last", type=stage_number, default=None,
+                    help=f"last stage (number or name; default {STAGES[DEFAULT_LAST - 1]}, or --from if later)")
     ap.add_argument("--device", default="", help="e.g. 0 or cpu (default: automatic)")
     ap.add_argument("--splits", nargs="+", choices=["dev", "test"], default=["dev", "test"])
     ap.add_argument("--skip-tests", action="store_true", help="skip stage 1 even if it is in range")
-    ap.add_argument("--skip-notebook", action="store_true", help="skip stage 9 even if it is in range")
+    ap.add_argument("--skip-notebook", action="store_true", help="skip the notebooks of stages 9 and 11")
     ap.add_argument("--clean", action="store_true",
                     help="delete what the selected stages produce for this tag before running (asks first)")
     ap.add_argument("--yes", action="store_true", help="do not ask for confirmation with --clean")
     args = ap.parse_args()
+    args.last = args.last or max(args.first, DEFAULT_LAST)
     if args.first > args.last:
         ap.error("--from is after --to")
     return args

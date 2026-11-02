@@ -25,13 +25,14 @@ def run_dirs(split_dir: str | Path) -> list[Path]:
 
 
 def validate_tracking_run(cfg_dir: str | Path, sequences: Sequence[str], raw_root: str | Path = RAW_ROOT,
-                          split: str | None = None) -> dict[str, Any]:
+                          split: str | None = None, ignored: dict[str, Any] | None = None) -> dict[str, Any]:
     """Raise ValueError unless `cfg_dir` is a complete, unmodified run of exactly `sequences`.
 
     Checks, in order: the sequence list and the MOT files match the expected set; the number of
     frames processed equals the number of frames in the raw dataset; every MOT file parses, only
     uses real frame numbers, has the row count recorded in timing.json and has the recorded
-    SHA-256; the total frame count adds up. Returns the parsed timing.json.
+    SHA-256; the total frame count adds up. If `ignored` is given, the ignored regions the run
+    recorded must equal it. Returns the parsed timing.json.
     """
     cfg_dir = Path(cfg_dir)
     sequences = list(sequences)
@@ -48,6 +49,9 @@ def validate_tracking_run(cfg_dir: str | Path, sequences: Sequence[str], raw_roo
         raise ValueError(f"Incomplete sequence metadata in {timing_path}")
     if {path.stem for path in cfg_dir.glob("MVI_*.txt")} != expected:
         raise ValueError(f"MOT files mismatch in {cfg_dir}")
+    recorded = timing.get("provenance", {}).get("ignored_regions")
+    if ignored is not None and recorded is not None and any(recorded.get(seq) != ignored[seq] for seq in sequences):
+        raise ValueError(f"Ignored regions differ from the tracking run: {cfg_dir.name}")
 
     # Each sequence: every frame processed, and the MOT file is the one the run wrote
     total_frames = 0

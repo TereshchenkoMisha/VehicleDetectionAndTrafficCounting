@@ -3,13 +3,14 @@
     python scripts/evaluate_tracking.py --splits dev test
 
 For each configuration of a split, every sequence's tracker output is compared with the GT of the same
-sequence. The script writes per-sequence metrics, their macro average (every sequence weighs the same)
-and the dataset-level metrics TrackEval computes by merging all sequences.
+sequence. Boxes whose centre is in an ignored region are dropped from both sides first. The script
+writes per-sequence metrics, their macro average (every sequence weighs the same) and the
+dataset-level metrics TrackEval computes by merging all sequences.
 
 Needs:
     outputs/tracks/<split>/<configuration>/    complete runs (run_tracking)
     data/raw/UA-DETRAC/                        frame lists, and GT for the conversion below
-    reports/splits.json, reports/ignored_regions.json
+    reports/splits.json, reports/ignored_regions.json (--ignored)
     reports/gt_mot/<sequence>.txt              GT in MOT format; created from the XML annotations if missing
 Produces:
     <out-prefix>_<split>.json                  per sequence, macro average and dataset-level combination
@@ -56,7 +57,8 @@ def write_markdown(path: Path, split: str, results: dict[str, Any], seqs: list[s
     lines = [f"# Tracking evaluation - {split} split", "",
              "Metrics: **HOTA** (geometric mean of DetA & AssA, averaged over IoU 0.05-0.95), "
              "**MOTA** (1 - (FN+FP+IDSW)/GT), **IDSW** (identity switches), **IDF1** (F1 of identity matching).", "",
-             f"Number of configs: {len(cfgs)}, number of sequences: {len(seqs)}.", "",
+             f"Number of configs: {len(cfgs)}, number of sequences: {len(seqs)}.",
+             "GT and tracker boxes with the centre inside an ignored region are excluded.", "",
              "## Macro average across sequences", "",
              "| Config | HOTA (%) | DetA (%) | AssA (%) | MOTA (%) | MOTP (%) | IDF1 (%) | IDSW |",
              "|---|---|---|---|---|---|---|---|"]
@@ -88,6 +90,7 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--tracks-dir", default=str(TRACKS_DIR))
     ap.add_argument("--out-prefix", default=str(REPORTS_DIR / "tracking_eval"))
     ap.add_argument("--raw", default=str(RAW_ROOT))
+    ap.add_argument("--ignored", default=str(REPORTS_DIR / "ignored_regions.json"))
     return ap.parse_args()
 
 
@@ -96,11 +99,14 @@ def main() -> None:
     args = parse_args()
     all_splits = read_json(REPORTS_DIR / "splits.json")
     gt_dir = Path(args.gt_mot_dir)
+    ignored = read_json(args.ignored)
 
     for split in args.splits:
         # Inputs: finished runs, GT for every sequence (converted from the XML when missing), and
         # a consistency check of each run against the raw dataset
         seqs: list[str] = list(all_splits[split])
+        if set(seqs) - set(ignored):
+            raise SystemExit(f"Missing ignored region entries for {sorted(set(seqs) - set(ignored))}")
         split_dir = Path(args.tracks_dir) / split
         if not split_dir.is_dir():
             raise SystemExit(f"Tracking directory does not exist: {split_dir}")
@@ -108,10 +114,10 @@ def main() -> None:
         if not cfg_dirs:
             raise SystemExit(f"No tracking configurations found in {split_dir}")
         if any(not (gt_dir / f"{seq}.txt").is_file() for seq in seqs):
-            convert_all(seqs, gt_dir, raw_root=args.raw, ignored_path=REPORTS_DIR / "ignored_regions.json")
+            convert_all(seqs, gt_dir, raw_root=args.raw, ignored_path=args.ignored)
         for cfg_dir in cfg_dirs:
             try:
-                validate_tracking_run(cfg_dir, seqs, raw_root=Path(args.raw), split=split)
+                validate_tracking_run(cfg_dir, seqs, raw_root=Path(args.raw), split=split, ignored=ignored)
             except (ValueError, OSError) as exc:
                 raise SystemExit(str(exc)) from exc
 
@@ -121,12 +127,14 @@ def main() -> None:
         results: dict[str, Any] = {}
         for cfg_dir in cfg_dirs:
             raw_results: dict[str, Any] = {}        # TrackEval's raw output per sequence, for the dataset-level merge
-            result = {"per_seq": {}, "sources": {"timing": file_info(cfg_dir / "timing.json"), "tracks": {}, "gt": {}}}
+            result = {"per_seq": {}, "protocol": {"ignored_rule": "box centre inside region"},
+                      "sources": {"timing": file_info(cfg_dir / "timing.json"), "ignored": file_info(args.ignored),
+                                  "tracks": {}, "gt": {}}}
             for seq in tqdm(seqs, desc=f"{split}/{cfg_dir.name}", unit="seq"):
                 raw_results[seq] = {}
                 result["per_seq"][seq] = evaluate_sequence(
                     gt_dir / f"{seq}.txt", cfg_dir / f"{seq}.txt", frame_ids=frame_ids[seq],
-                    raw_results=raw_results[seq])
+                    raw_results=raw_results[seq], ignored_regions=ignored[seq])
                 result["sources"]["tracks"][seq] = file_info(cfg_dir / f"{seq}.txt")
                 result["sources"]["gt"][seq] = file_info(gt_dir / f"{seq}.txt")
             result["aggregate"] = aggregate(result["per_seq"], seqs)
