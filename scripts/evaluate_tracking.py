@@ -16,6 +16,7 @@ Produces:
     <out-prefix>_<split>.json                  per sequence, macro average and dataset-level combination
     <out-prefix>_<split>.md                    the same as tables (default prefix reports/tracking_eval)
 """
+
 import argparse
 from pathlib import Path
 from typing import Any
@@ -23,7 +24,7 @@ from typing import Any
 import numpy as np
 from tqdm import tqdm
 
-from src.config import RAW_ROOT, REPORTS_DIR, TRACKS_DIR
+from src.config import CLASSES, RAW_ROOT, REPORTS_DIR, TRACKS_DIR
 from src.data.export import convert_all
 from src.data.sequences import list_frames
 from src.eval.tracking import combine_sequence_metrics, evaluate_sequence
@@ -89,6 +90,8 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--gt-mot-dir", default=str(REPORTS_DIR / "gt_mot"))
     ap.add_argument("--tracks-dir", default=str(TRACKS_DIR))
     ap.add_argument("--out-prefix", default=str(REPORTS_DIR / "tracking_eval"))
+    ap.add_argument("--prepare-gt-only", action="store_true", help="export selected GT MOT files and exit")
+    ap.add_argument("--classes-aware", action="store_true", help="also compute car/bus/truck tracking metrics")
     ap.add_argument("--raw", default=str(RAW_ROOT))
     ap.add_argument("--ignored", default=str(REPORTS_DIR / "ignored_regions.json"))
     return ap.parse_args()
@@ -98,6 +101,10 @@ def main() -> None:
     """For each split: check the inputs, evaluate every configuration and sequence, write the reports."""
     args = parse_args()
     all_splits = read_json(REPORTS_DIR / "splits.json")
+    if args.prepare_gt_only:
+        sequences = [seq for split in args.splits for seq in all_splits[split]]
+        convert_all(sequences, args.gt_mot_dir, raw_root=args.raw, ignored_path=args.ignored)
+        return
     gt_dir = Path(args.gt_mot_dir)
     ignored = read_json(args.ignored)
 
@@ -126,15 +133,20 @@ def main() -> None:
         frame_ids = {seq: [fid for fid, _ in list_frames(seq, args.raw)] for seq in seqs}
         results: dict[str, Any] = {}
         for cfg_dir in cfg_dirs:
-            raw_results: dict[str, Any] = {}        # TrackEval's raw output per sequence, for the dataset-level merge
+            raw_results: dict[str, Any] = {}  # TrackEval's raw output per sequence, for the dataset-level merge
             result = {"per_seq": {}, "protocol": {"ignored_rule": "box centre inside region"},
                       "sources": {"timing": file_info(cfg_dir / "timing.json"), "ignored": file_info(args.ignored),
                                   "tracks": {}, "gt": {}}}
             for seq in tqdm(seqs, desc=f"{split}/{cfg_dir.name}", unit="seq"):
                 raw_results[seq] = {}
                 result["per_seq"][seq] = evaluate_sequence(
-                    gt_dir / f"{seq}.txt", cfg_dir / f"{seq}.txt", frame_ids=frame_ids[seq],
-                    raw_results=raw_results[seq], ignored_regions=ignored[seq])
+                    gt_dir / f"{seq}.txt",
+                    cfg_dir / f"{seq}.txt",
+                    frame_ids=frame_ids[seq],
+                    raw_results=raw_results[seq],
+                    ignored_regions=ignored[seq],
+                    classes=CLASSES if args.classes_aware else None,
+                )
                 result["sources"]["tracks"][seq] = file_info(cfg_dir / f"{seq}.txt")
                 result["sources"]["gt"][seq] = file_info(gt_dir / f"{seq}.txt")
             result["aggregate"] = aggregate(result["per_seq"], seqs)

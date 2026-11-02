@@ -7,6 +7,24 @@ and at what computational cost?
 
 Team: Mikhail Tereshchenko, Kamil Gainutdinov, Artem Salakhutdinov, Danis Abdulov.
 
+## Current protocol
+
+Tracking preserves low-score detections as in refactor: detector confidence is min(low, high),
+while --conf controls tracker high/new thresholds. Inference is deterministic by default.
+One tracking NMS policy is selected on dev; see [comparison](docs/NMS_SELECTION.md).
+Per-class tracking, ablation integrity checks and diagnostic exports are restored in the existing modules.
+See [run instructions](docs/RERUN.md) and [review of the saved runs](docs/RESULTS_REVIEW.md).
+The historical numerical tables below include runs with other protocols.
+
+## Fresh rerun
+
+Previous generated reports, archived runs, GT MOT exports and line previews have been removed.
+Only the fixed inputs `reports/splits.json`, `reports/ignored_regions.json` and `reports/counting_lines.json` remain.
+See [the PowerShell rerun guide](docs/RERUN.md) for environment setup, the full `scripts/run_all.py` command,
+result locations, verification, recovery and the optional ablation.
+Numerical tables below describe historical experiments; regenerate results under a new run tag before using them.
+The status table describes implemented functionality, not a completed run of this cleaned checkout.
+
 ## Status
 
 | Stage | State |
@@ -18,7 +36,7 @@ Team: Mikhail Tereshchenko, Kamil Gainutdinov, Artem Salakhutdinov, Danis Abdulo
 | Ground-truth counts, counting line, line counter | done |
 | Counting metrics tables (MAE, WAPE, SCE) | done on dev (run `run_20261102_agnostic`); test numbers are from the earlier run |
 | Tracking metrics (TrackEval: HOTA, IDF1, IDSW) | done on dev (run `run_20261102_agnostic`); test must be re-run |
-| Code review fixes and migration to `src/` + `scripts/` | done (see `.nocommit/code_review_it-0.md` for open items) |
+| Code review fixes and migration to `src/` + `scripts/` | implemented |
 | Confidence-threshold ablation | code done (`run_ablation`, `notebooks/ablation.ipynb`); not run yet |
 | Failure analysis | todo |
 
@@ -149,7 +167,7 @@ Writes `reports/detection_<model>_<split>.json`. Settings: `imgsz=960`, `conf=0.
 `others` class (47 dev boxes; AP@0.5:0.95 0.08 on dev against 0.33 on test), so it is noisy and drags the
 mean. Read the car and bus rows separately. Vans are labelled `car`, but COCO detectors often call them
 `truck`, which is the main source of truck false positives (precision 0.07).
-Detector mAP uses per-class NMS (standard protocol); only the tracking stage uses class-agnostic NMS.
+Detector mAP and the current tracking protocol both use per-class NMS.
 
 The test split is reserved for the final run (`--split test`).
 
@@ -179,17 +197,9 @@ How it works:
   Kalman filter over (x, y, aspect, h) and BoT-SORT over (x, y, w, h). A BoT-SORT gain in ID switches or AssA
   therefore cannot be credited to camera motion compensation alone; that needs a run with
   `gmc_method: none` (not done yet).
-- NMS before the tracker is **class-agnostic** (`TRACK_AGNOSTIC_NMS` in `src/config.py`). With per-class NMS
-  a vehicle can arrive as two boxes of different classes (e.g. car 0.6 and truck 0.3); both pass the tracker's
-  thresholds and the second starts a duplicate track. Measured on the run of 2026-11-02, 0.9-1.4% of the output
-  rows were such duplicate pairs (IoU > 0.8, different class), and e.g. MVI_39311 had 206 tracks against 142
-  without them. `timing.json` records `agnostic_nms`; runs made before this change do not have it and must be
-  re-generated.
-- `--conf` is the tracker's high-score threshold (`track_high_thresh`, `new_track_thresh`). The detector itself
-  runs at `track_low_thresh` (0.1), so the low-score association step of both trackers is active. Runs made
-  before this change (detector at `conf` 0.25) had that step switched off and are not comparable.
-- Seeds are always set. `--deterministic` additionally makes GPU results repeatable but is slower; do not use it
-  for speed measurements. `timing.json` records which one was used.
+- NMS before the tracker is per-class, matching the original ablation branch.
+- --conf controls tracker high/new thresholds. Detector input preserves low-score observations.
+- Seeds and deterministic inference are always configured, matching the ablation branch.
 - A run is written to `<config>.partial/` and renamed when finished, so a crash does not block the next run.
 - Timing excludes image reading, a warm-up is run first. Detector time = preprocess + inference + NMS +
   GPU->CPU copy; tracker time = ignored-region mask + `tracker.update`. Compare timings only between runs on
@@ -411,10 +421,9 @@ metrics, TrackEval combination, and the tracker loop with a stub model (no GPU o
 The same four detector + tracker pairs at several confidences on the dev split; confidence is the only factor
 that changes. GT counts are made once, then each confidence gets its own tracking runs and evaluations.
 
-Note what "confidence" is here: the detector always runs at `track_low_thresh` (0.1); the swept value is the
-tracker's `track_high_thresh` and `new_track_thresh` together. At 0.1 it equals `track_low_thresh`, so the
-low-score association step is empty; at 0.4 and 0.6 that step covers a wider score band. The sweep therefore
-changes the first-step threshold, the track-birth threshold and the width of the second step at once.
+Confidence sweeps change track_high_thresh and new_track_thresh together. Detector inference preserves
+low-score observations at min(track_low_thresh, track_high_thresh). This is a sweep of the tracker decision
+threshold, not an isolated detector confidence experiment.
 
 ```bash
 python scripts/run_ablation.py --device 0 --dry-run    # check the inputs, print the plan
@@ -437,7 +446,7 @@ scripts/           command-line entry points (thin wrappers around src/):
                    place_lines, annotate_line, count_gt, count_tracks, evaluate_counting, run_ablation
 tests/             unit tests (pytest, or PYTHONPATH=. python -m unittest discover -s tests)
 notebooks/         results.ipynb: comparison tables and plots; ablation.ipynb: confidence sweep
-reports/           committed results: split, ignored regions, counting lines, metrics
+reports/           fixed inputs (split, ignored regions, counting lines); generated results per run tag
 data/ models/      dataset and weights (git-ignored)
 outputs/           tracks, videos, notebook output (git-ignored)
 ```

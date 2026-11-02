@@ -11,8 +11,8 @@ dropped everything below the high threshold, that step would have nothing to mat
 tracker would degrade. So the detector runs at the low threshold, and the tracker's own high
 threshold (`conf`) decides which detections can start or extend tracks.
 
-NMS is class-agnostic here (`TRACK_AGNOSTIC_NMS`): otherwise one vehicle can reach the tracker as two
-boxes of different classes and get two tracks.
+NMS is class-aware here (`TRACK_AGNOSTIC_NMS=False`), selected on dev by counting MAE.
+See docs/NMS_SELECTION.md for the comparison and tracking-metric tradeoff.
 """
 import time
 from collections.abc import Callable

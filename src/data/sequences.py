@@ -96,7 +96,12 @@ def read_frame(path: str | Path) -> NDArray[np.uint8]:
     """
     import cv2
 
-    image = cv2.imread(str(path))
+    # Decode bytes: OpenCV filename I/O cannot handle Unicode paths on some Windows builds.
+    try:
+        data = np.frombuffer(Path(path).read_bytes(), dtype=np.uint8)
+    except OSError as exc:
+        raise RuntimeError(f"Cannot read image: {path}") from exc
+    image = cv2.imdecode(data, cv2.IMREAD_COLOR) if data.size else None
     if image is None:
         raise RuntimeError(f"Cannot read image: {path}")
     return image

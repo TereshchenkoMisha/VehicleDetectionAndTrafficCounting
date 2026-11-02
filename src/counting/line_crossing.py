@@ -99,6 +99,7 @@ def first_crossing(points: Iterable[tuple[int, float, float]], a: Point, b: Poin
     A point exactly on the line is not decided at once: the target may touch the line and turn
     back, so the decision waits for the next off-line point.
     """
+    validate_line(a, b)
     if type(max_frame_gap) is not int or max_frame_gap < 1:
         raise ValueError("max_frame_gap must be a positive integer")
 
@@ -175,6 +176,8 @@ def counting_protocol(line: dict[str, list[int]], regions: Sequence[Sequence[flo
     the tracker.
     """
     validate_line(line["p1"], line["p2"])
+    if type(max_frame_gap) is not int or max_frame_gap < 1:
+        raise ValueError("max_frame_gap must be a positive integer")
     return {"version": PROTOCOL_VERSION, "line": line,
             "max_frame_gap": max_frame_gap, "ignored_rule": "observation_centres",
             "ignored_regions": [list(region) for region in regions]}

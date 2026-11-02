@@ -15,16 +15,18 @@ Produces (in data/processed/detrac_yolo/):
     stats.json, detrac.yaml                box counts per sequence, dataset description
 Refuses to run if images/ or labels/ already exist in the output folder.
 """
+
 import argparse
 from pathlib import Path
 
 import pandas as pd
 
-from src.config import N_DEV, N_SELECT, OUT_DIR, RAW_ROOT
+from src.config import N_DEV, N_SELECT, OUT_DIR, RAW_ROOT, REPORTS_DIR
 from src.data.detrac import load_all
 from src.data.export import convert
 from src.data.sequences import find_sequence_dir
 from src.data.split import build_proxy_metas, save_or_load_split, select_and_split
+from src.tracking.viz import write_label_previews
 from src.utils import positive_int, read_json
 
 
@@ -38,6 +40,8 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--copy", action="store_true", help="copy images instead of symlinking")
     ap.add_argument("--force", action="store_true", help="re-draw the split (never after the split is fixed)")
     ap.add_argument("--out", default=str(OUT_DIR))
+    ap.add_argument("--preview", type=positive_int, default=0, help="write N YOLO sanity previews")
+    ap.add_argument("--preview-only", action="store_true", help="preview existing prepared data without rebuilding")
     ap.add_argument("--split-file", default=None, help="use an existing fixed split JSON")
     return ap.parse_args()
 
@@ -46,6 +50,9 @@ def main() -> None:
     """Load the dataset, settle the split, export the chosen sequences and print a summary table."""
     args = parse_args()
     out_dir = Path(args.out)
+    if args.preview_only:
+        write_label_previews(out_dir, REPORTS_DIR / "sanity", args.preview or 6)
+        return
     if (out_dir / "images").exists() or (out_dir / "labels").exists():
         raise SystemExit(f"Prepared images or labels already exist in {out_dir}. Choose a new --out directory.")
 
@@ -84,6 +91,8 @@ def main() -> None:
     # Export, then print boxes per sequence and class so an empty class is noticed immediately
     stats = convert({n: anns[n] for n in with_frames}, split, frame_step=args.frame_step, copy=args.copy,
                     out_dir=out_dir, frames_root=Path(args.raw))
+    if args.preview:
+        write_label_previews(out_dir, REPORTS_DIR / "sanity", args.preview)
     rows = [{"split": s, "seq": q, "weather": v["weather"], "frames": v["frames"], **v["boxes"]}
             for s, d in stats.items() for q, v in d.items()]
     print(pd.DataFrame(rows).to_string(index=False))

@@ -1,5 +1,6 @@
 """Small helpers used across the project: reproducibility switches, JSON and hash helpers, the
 environment record stored next to results, and argparse value validators."""
+
 import argparse
 import hashlib
 import json
@@ -13,20 +14,17 @@ from typing import Any
 
 from .config import SEED
 
-
 # ---------------------------------------------------------------- reproducibility
 
-def set_seed(seed: int = SEED) -> None:
-    """Seed every random generator the project touches.
 
-    Covers Python's `random`, NumPy, OpenCV and PyTorch (CPU and all GPUs). This only fixes the
-    random streams; it does not force deterministic GPU kernels and does not change speed. For
-    bit-repeatable GPU results call `set_deterministic` as well.
-    """
+def set_seed(seed: int = SEED) -> None:
+    """Seed Python, NumPy, OpenCV and PyTorch and apply the original deterministic protocol."""
     import cv2
     import numpy as np
     import torch
 
+    set_deterministic()
+    cv2.setNumThreads(1)
     random.seed(seed)
     np.random.seed(seed)
     cv2.setRNGSeed(seed)
@@ -45,11 +43,14 @@ def set_deterministic() -> None:
     import torch
 
     torch.use_deterministic_algorithms(True)
-    torch.backends.cudnn.benchmark = False          # benchmark mode picks algorithms by timing: not repeatable
+    torch.backends.cudnn.benchmark = False  # benchmark mode picks algorithms by timing: not repeatable
     torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.allow_tf32 = False
+    torch.backends.cuda.matmul.allow_tf32 = False
 
 
 # ---------------------------------------------------------------- files
+
 
 def file_info(path: str | Path) -> dict[str, str]:
     """Absolute path and SHA-256 of a file.
@@ -91,7 +92,7 @@ def write_json(path: str | Path, value: Any) -> None:
         os.replace(temporary, path)     # atomic when source and target are on one filesystem
     finally:
         if temporary is not None:
-            temporary.unlink(missing_ok=True)       # no-op after a successful replace
+            temporary.unlink(missing_ok=True)  # no-op after a successful replace
 
 
 def env_info(device: Any = None) -> dict[str, Any]:
@@ -114,6 +115,7 @@ def env_info(device: Any = None) -> dict[str, Any]:
 # ---------------------------------------------------------------- argparse validators
 # Used as `type=` in add_argument. Raising ArgumentTypeError makes argparse print a clean usage
 # error instead of a traceback.
+
 
 def positive_int(text: str) -> int:
     """Integer >= 1."""

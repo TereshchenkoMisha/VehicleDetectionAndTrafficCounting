@@ -15,6 +15,7 @@ What the reported numbers mean (all in percent unless noted; a box matches a GT 
          trajectory. Reads like "how long a vehicle keeps its own ID".
   IDSW   number of ID switches: how often a GT vehicle's matched track ID changes. A count, not a rate.
 """
+
 from pathlib import Path
 from typing import Any
 
@@ -22,6 +23,7 @@ import numpy as np
 from numpy.typing import NDArray
 from trackeval.metrics import CLEAR, HOTA, Identity
 
+from ..config import CLASSES
 from ..data.mot import MotRow, load_mot
 from ..data.regions import Region, box_centres, inside_any
 
@@ -45,7 +47,7 @@ def _iou_matrix(gt_boxes: NDArray, trk_boxes: NDArray) -> NDArray[np.float64]:
     area_g = (g[..., 2] - g[..., 0]) * (g[..., 3] - g[..., 1])
     area_t = (t[..., 2] - t[..., 0]) * (t[..., 3] - t[..., 1])
     union = area_g + area_t - inter
-    return np.divide(inter, union, out=np.zeros_like(inter), where=union > 0)       # 0 where a box has no area
+    return np.divide(inter, union, out=np.zeros_like(inter), where=union > 0)  # 0 where a box has no area
 
 
 def drop_ignored(frames: dict[int, list[MotRow]], regions: list[Region]) -> dict[int, list[MotRow]]:
@@ -100,9 +102,14 @@ def _build_trackeval_data(gt_frames: dict[int, list[MotRow]], trk_frames: dict[i
             "num_tracker_ids": len(trk_id_map), "num_tracker_dets": sum(len(a) for a in trk_ids)}
 
 
-def evaluate_sequence(gt_path: str | Path, trk_path: str | Path, frame_ids: list[int] | None = None,
-                      raw_results: dict[str, Any] | None = None,
-                      ignored_regions: list[Region] = ()) -> dict[str, dict[str, float]]:
+def evaluate_sequence(
+    gt_path: str | Path,
+    trk_path: str | Path,
+    frame_ids: list[int] | None = None,
+    raw_results: dict[str, Any] | None = None,
+    ignored_regions: list[Region] = (),
+    classes: list[str] | None = None,
+) -> dict[str, dict[str, float]]:
     """Compute the tracking metrics of one sequence from a GT and a tracker MOT file.
 
     Boxes whose centre is in `ignored_regions` are dropped from both files first (see `drop_ignored`).
@@ -112,28 +119,45 @@ def evaluate_sequence(gt_path: str | Path, trk_path: str | Path, frame_ids: list
     If `raw_results` is given, TrackEval's unprocessed output is stored in it so
     `combine_sequence_metrics` can later merge several sequences correctly.
     """
-    data = _build_trackeval_data(drop_ignored(load_mot(gt_path), ignored_regions),
-                                 drop_ignored(load_mot(trk_path), ignored_regions), frame_ids=frame_ids)
-    hota = HOTA().eval_sequence(data)
-    clear = CLEAR().eval_sequence(data)
-    identity = Identity().eval_sequence(data)
-    if raw_results is not None:
-        raw_results["all"] = {"hota": hota, "clear": clear, "identity": identity}
+    gt_all = drop_ignored(load_mot(gt_path), ignored_regions)
+    trk_all = drop_ignored(load_mot(trk_path), ignored_regions)
+    result = {}
+    targets = [("all", None)] + ([(name, i) for i, name in enumerate(CLASSES)] if classes is not None else [])
+    for name, cls_id in targets:
+        gt = {f: [r for r in rows if cls_id is None or r[2] == cls_id] for f, rows in gt_all.items()}
+        trk = {f: [r for r in rows if cls_id is None or r[2] == cls_id] for f, rows in trk_all.items()}
+        data = _build_trackeval_data(gt, trk, frame_ids=frame_ids)
+        hota = HOTA().eval_sequence(data)
+        clear = CLEAR().eval_sequence(data)
+        identity = Identity().eval_sequence(data)
+        if raw_results is not None:
+            raw_results[name] = {"hota": hota, "clear": clear, "identity": identity}
 
-    return {"all": {
-        "HOTA": float(np.mean(hota["HOTA"])) * 100,
-        "DetA": float(np.mean(hota["DetA"])) * 100,
-        "AssA": float(np.mean(hota["AssA"])) * 100,
-        "LocA": float(np.mean(hota["LocA"])) * 100,
-        "HOTA_50": float(hota["HOTA"][_HOTA_50]) * 100,
-        "MOTA": float(clear["MOTA"]) * 100,
-        "MOTP": float(clear["MOTP"]) * 100,
-        "IDSW": int(clear["IDSW"]), "MT": int(clear["MT"]), "ML": int(clear["ML"]), "Frag": int(clear["Frag"]),
-        "CLR_TP": int(clear["CLR_TP"]), "CLR_FN": int(clear["CLR_FN"]), "CLR_FP": int(clear["CLR_FP"]),
-        "IDF1": float(identity["IDF1"]) * 100, "IDP": float(identity["IDP"]) * 100,
-        "IDR": float(identity["IDR"]) * 100,
-        "GT_IDs": data["num_gt_ids"], "TRK_IDs": data["num_tracker_ids"],
-        "GT_dets": data["num_gt_dets"], "TRK_dets": data["num_tracker_dets"], "frames": data["num_frames"]}}
+        result[name] = {
+            "HOTA": float(np.mean(hota["HOTA"])) * 100,
+            "DetA": float(np.mean(hota["DetA"])) * 100,
+            "AssA": float(np.mean(hota["AssA"])) * 100,
+            "LocA": float(np.mean(hota["LocA"])) * 100,
+            "HOTA_50": float(hota["HOTA"][_HOTA_50]) * 100,
+            "MOTA": float(clear["MOTA"]) * 100,
+            "MOTP": float(clear["MOTP"]) * 100,
+            "IDSW": int(clear["IDSW"]),
+            "MT": int(clear["MT"]),
+            "ML": int(clear["ML"]),
+            "Frag": int(clear["Frag"]),
+            "CLR_TP": int(clear["CLR_TP"]),
+            "CLR_FN": int(clear["CLR_FN"]),
+            "CLR_FP": int(clear["CLR_FP"]),
+            "IDF1": float(identity["IDF1"]) * 100,
+            "IDP": float(identity["IDP"]) * 100,
+            "IDR": float(identity["IDR"]) * 100,
+            "GT_IDs": data["num_gt_ids"],
+            "TRK_IDs": data["num_tracker_ids"],
+            "GT_dets": data["num_gt_dets"],
+            "TRK_dets": data["num_tracker_dets"],
+            "frames": data["num_frames"],
+        }
+    return result
 
 
 def combine_sequence_metrics(raw_per_seq: dict[str, dict[str, Any]]) -> dict[str, float]:

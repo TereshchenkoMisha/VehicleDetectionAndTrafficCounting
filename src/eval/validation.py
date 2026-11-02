@@ -5,6 +5,7 @@ A run folder is `<tracks>/<split>/<configuration>/` with one MOT file per sequen
 `validate_tracking_run` first, so a half-finished, partly copied or edited run fails loudly instead
 of producing plausible but wrong numbers.
 """
+
 from collections.abc import Sequence
 from pathlib import Path
 from typing import Any
@@ -76,3 +77,55 @@ def validate_tracking_run(cfg_dir: str | Path, sequences: Sequence[str], raw_roo
     if timing["frames"] != total_frames:
         raise ValueError(f"Total frame count mismatch in {timing_path}")
     return timing
+
+
+def validate_sweep(directory: str | Path) -> dict[str, Any]:
+    """Read either ablation manifest format and verify complete stages, files and report sources.
+
+    This is a read-only check: old results can be analysed without rewriting their provenance.
+    """
+    directory = Path(directory).resolve()
+    manifest = read_json(directory / "manifest.json")
+    finished = manifest.get("status") == "complete" if "status" in manifest else manifest.get("complete")
+    if not finished:
+        raise ValueError("The sweep is not finished")
+    plan = manifest["plan"]
+    expected = {"gt_counts"} | {f"tracks/{j['config']}" for j in plan["jobs"]}
+    expected |= {f"{kind}/{c:g}" for c in plan["confidences"] for kind in ("counts", "counting", "tracking")}
+    if manifest.get("version") in (1, 2):
+        expected.add("gt_mot")
+    if manifest.get("version") == 2:
+        expected.add("inputs")
+    if set(manifest["stages"]) != expected:
+        raise ValueError("The manifest has missing or unexpected stages")
+    normalized = {}
+    for key, stage in manifest["stages"].items():
+        if "outputs" in stage:
+            if stage.get("status") != "complete":
+                raise ValueError(f"Incomplete stage: {key}")
+            stage = {r["path"]: r["sha256"] for r in stage["outputs"]}
+        if not stage:
+            raise ValueError(f"Empty output list: {key}")
+        for rel, digest in stage.items():
+            target = (directory / rel).resolve()
+            if not target.is_relative_to(directory):
+                raise ValueError("Manifest output path points outside the experiment")
+            if file_info(target)["sha256"] != digest:
+                raise ValueError(f"Output changed since the sweep: {rel}")
+        normalized[key] = stage
+    for c in plan["confidences"]:
+        reports = directory / f"conf{c:g}/reports"
+        counting = read_json(reports / "counting_eval_dev.json")
+        tracking = read_json(reports / "tracking_eval_dev.json")
+        sources = counting["_sources"]
+        for key, source in (("gt", directory / "shared/gt_counts.json"), ("tracks", reports / "track_counts.json")):
+            if sources[key]["sha256"] != file_info(source)["sha256"]:
+                raise ValueError(f"Counting report source changed: {source}")
+        configs = {j["config"] for j in plan["jobs"] if j["confidence"] == c}
+        if {k for k in counting if not k.startswith("_")} != configs or set(tracking) != configs:
+            raise ValueError(f"Missing or unexpected configurations at confidence {c}")
+        for cfg in configs:
+            timing = directory / f"conf{c:g}/tracks/dev" / cfg / "timing.json"
+            if tracking[cfg]["sources"]["timing"]["sha256"] != file_info(timing)["sha256"]:
+                raise ValueError(f"Tracking report source changed: {cfg}")
+    return {**manifest, "complete": True, "stages": normalized}

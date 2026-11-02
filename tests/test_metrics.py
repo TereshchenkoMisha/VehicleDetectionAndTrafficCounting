@@ -1,4 +1,5 @@
 """Tests for count errors, detector matching, TrackEval wrappers and the dev/test split."""
+
 import random
 import tempfile
 import unittest
@@ -21,6 +22,11 @@ class CountErrorTests(unittest.TestCase):
         self.assertEqual(m["sce"], [-1.0, 0.0, 2.0])
         self.assertAlmostEqual(m["over"], 1 / 3)
         self.assertAlmostEqual(m["under"], 1 / 3)
+
+    def test_invalid_count_values(self):
+        for value in (-1, float("nan"), float("inf")):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                count_errors([value], [1])
 
     def test_zero_gt_and_bad_shapes(self):
         self.assertIsNone(count_errors([1], [0])["wape"])
@@ -58,6 +64,18 @@ class TrackingMetricTests(unittest.TestCase):
         self.assertEqual(len(data["gt_ids"][1]), 0)
         with self.assertRaises(ValueError):
             _build_trackeval_data({5: [target]}, {}, frame_ids=[1, 2])
+
+    def test_per_class_tracking(self):
+        with tempfile.TemporaryDirectory() as folder:
+            gt, pred = Path(folder) / "gt.txt", Path(folder) / "pred.txt"
+            gt.write_text("1,1,0,0,10,10,1,0\n1,2,20,0,10,10,1,1\n", encoding="utf-8")
+            pred.write_text("1,5,0,0,10,10,1,0\n1,6,20,0,10,10,1,2\n", encoding="utf-8")
+            result = evaluate_sequence(gt, pred, frame_ids=[1, 2], classes=["car", "bus", "truck"])
+            self.assertEqual(set(result), {"all", "car", "bus", "truck"})
+            self.assertAlmostEqual(result["all"]["HOTA"], 100)
+            self.assertAlmostEqual(result["car"]["HOTA"], 100)
+            self.assertEqual(result["bus"]["CLR_FN"], 1)
+            self.assertEqual(result["truck"]["CLR_FP"], 1)
 
     def test_trackeval_combination(self):
         with tempfile.TemporaryDirectory() as folder:

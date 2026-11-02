@@ -16,12 +16,14 @@
 *.safetensors
 *.ckpt
 
-# Regenerable run results: tracks, annotated videos, previews.
-# Small final tables live in reports/ and stay versioned.
+# Regenerable run results: tracks, annotated videos, tables and previews.
 /outputs/
 
-# Debug / sanity images
-reports/sanity/
+# Keep experiment inputs versioned; regenerate all other reports.
+/reports/*
+!/reports/splits.json
+!/reports/ignored_regions.json
+!/reports/counting_lines.json
 
 # Ultralytics output folders created by YOLO train/val/predict runs
 runs/

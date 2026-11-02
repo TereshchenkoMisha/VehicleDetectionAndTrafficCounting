@@ -13,14 +13,16 @@ Needs:
     reports/*.json                         reference results; a missing reference skips its comparison
 Produces nothing. Exit code 1 if any check failed.
 """
+
 import argparse
 import math
 import sys
 from pathlib import Path
 from typing import Any
 
-from src.config import CLASSES, REPORTS_DIR, ROOT
-from src.eval.validation import run_dirs, validate_tracking_run
+from src.config import CLASSES, REPORTS_DIR, ROOT, TRACK_AGNOSTIC_NMS
+from src.eval.validation import run_dirs, validate_sweep, validate_tracking_run
+from src.tracking.pipeline import detector_conf, tracker_settings
 from src.utils import read_json
 
 DETECTORS: tuple[str, ...] = ("yolov8n", "yolov8s")
@@ -69,9 +71,10 @@ def check_detectors(new_dir: Path, split: str) -> None:
                      f"old={(o['TP'], o['FP'], o['FN'])}")
 
 
-def check_tracks(tracks_root: Path, split: str, sequences: list[str], raw_root: Path) -> None:
-    """Tracking runs of a split: four finished configurations, each complete and consistent with the raw
-    dataset, run with the low-score matching step active and not in deterministic (slow) mode."""
+def check_tracks(
+    tracks_root: Path, split: str, sequences: list[str], raw_root: Path, protocol: str = "recorded"
+) -> None:
+    """Check four complete tracking configurations and, optionally, the restored protocol."""
     cfg_dirs = run_dirs(tracks_root / split) if (tracks_root / split).is_dir() else []
     check(len(cfg_dirs) == 4, f"{split}: 4 tracking configurations finished", str([d.name for d in cfg_dirs]))
 
@@ -84,11 +87,20 @@ def check_tracks(tracks_root: Path, split: str, sequences: list[str], raw_root: 
         check(True, f"{split}/{cfg_dir.name} complete and consistent",
               f"{timing['frames']} frames, {timing['fps']:.1f} FPS "
               f"(det {timing['det_ms_per_frame']:.1f} ms, trk {timing['trk_ms_per_frame']:.1f} ms)")
-        check(timing["detector_conf"] < timing["conf"],
-              f"{split}/{cfg_dir.name} detector ran below the tracker threshold (low-score step active)",
-              f"detector_conf={timing['detector_conf']} conf={timing['conf']}")
-        check(timing["deterministic"] is False, f"{split}/{cfg_dir.name} timed without deterministic mode")
-        check(timing.get("agnostic_nms") is True, f"{split}/{cfg_dir.name} class-agnostic NMS before the tracker")
+        if protocol == "current":
+            settings = tracker_settings(timing["tracker"], timing["conf"])
+            check(
+                timing.get("detector_conf") == detector_conf(settings),
+                f"{cfg_dir.name} detector preserves low-score observations",
+            )
+            check(timing.get("tracker_settings") == settings, f"{cfg_dir.name} tracker decision thresholds match CLI")
+            check(timing.get("deterministic") is True, f"{cfg_dir.name} deterministic inference")
+            check(timing.get("agnostic_nms") is TRACK_AGNOSTIC_NMS, f"{cfg_dir.name} selected NMS policy")
+        else:
+            info(
+                f"{cfg_dir.name} recorded protocol: detector_conf={timing.get('detector_conf', timing['conf'])}, "
+                f"agnostic_nms={timing.get('agnostic_nms', False)}, deterministic={timing.get('deterministic')}"
+            )
 
 
 def check_gt_counts(new_dir: Path, split: str) -> None:
@@ -149,17 +161,28 @@ def check_counting_eval(new_dir: Path, split: str) -> None:
 def main() -> None:
     """Run all checks for the chosen splits and exit with 1 if any failed."""
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--tag", required=True, help="run tag used by run_all.py")
+    ap.add_argument("--tag", help="run tag used by run_all.py")
     ap.add_argument("--splits", nargs="+", choices=["dev", "test"], default=["dev", "test"])
+    ap.add_argument("--ablation-dir", help="verify a completed sweep, including legacy manifests")
+    ap.add_argument("--protocol", choices=["recorded", "current"], default="recorded")
     ap.add_argument("--raw", default=str(ROOT / "data/raw/UA-DETRAC"))
     args = ap.parse_args()
 
+    if args.ablation_dir:
+        try:
+            manifest = validate_sweep(args.ablation_dir)
+            print(f"[PASS] Complete ablation: {len(manifest['plan']['jobs'])} configurations; hashes and sources match")
+        except (OSError, ValueError, KeyError) as exc:
+            raise SystemExit(str(exc)) from exc
+        return
+    if not args.tag:
+        ap.error("provide --tag or --ablation-dir")
     new_dir, tracks_root = REPORTS_DIR / args.tag, ROOT / "outputs" / f"tracks_{args.tag}"
     splits = read_json(REPORTS_DIR / "splits.json")
     for split in args.splits:
         print(f"\n===== {split} =====")
         check_detectors(new_dir, split)
-        check_tracks(tracks_root, split, splits[split], Path(args.raw))
+        check_tracks(tracks_root, split, splits[split], Path(args.raw), args.protocol)
         check_gt_counts(new_dir, split)
         check_tracking_eval(new_dir, split)
         check_counting_eval(new_dir, split)

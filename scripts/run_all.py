@@ -407,7 +407,8 @@ class Run:
         # Stage 10: consistency checks and comparison with the reference results
         if self.will_run(10):
             self.step("10. Verify results (consistency checks + comparison with the reference results)",
-                      ["scripts/verify_run.py", "--tag", self.tag, "--splits", *s])
+                      ["scripts/verify_run.py", "--tag", self.tag, "--splits", *s,
+                       "--protocol", "current"])
 
         # Stage 11: the confidence sweep. It makes its own GT counts and tracks, so it needs nothing from
         # stages 3-10. An unfinished sweep of this tag is continued: run_ablation checks it against its hashes.

@@ -3,6 +3,7 @@
 The inputs are per-sequence totals (one number per sequence), so every metric here compares how many
 vehicles were counted with how many there were, sequence by sequence.
 """
+
 from collections.abc import Sequence
 from typing import Any
 
@@ -27,6 +28,10 @@ def count_errors(pred: Sequence[float], gt: Sequence[float]) -> dict[str, Any]:
         raise ValueError("pred and gt must be non-empty 1-D arrays of equal length: "
                          f"{pred_arr.shape}, {gt_arr.shape}")
 
+    if not np.isfinite(pred_arr).all() or not np.isfinite(gt_arr).all():
+        raise ValueError("Counts must be finite")
+    if (pred_arr < 0).any() or (gt_arr < 0).any():
+        raise ValueError("Counts must not be negative")
     error = pred_arr - gt_arr
     total_gt = gt_arr.sum()
     return {"mae": float(np.abs(error).mean()),

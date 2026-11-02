@@ -141,7 +141,7 @@ def convert(anns: dict[str, SequenceAnn], split: dict[str, Any], frame_step: int
         "train: images/dev   # not used (fine-tuning is not planned)\n"
         "val: images/dev\n"
         "test: images/test\n"
-        "names:\n  0: car\n  1: bus\n  2: truck\n")
+        "names:\n  0: car\n  1: bus\n  2: truck\n", encoding="utf-8")
     write_json(out_dir / "ignored_regions.json", ignored_out)
     write_json(out_dir / "stats.json", stats)
     return stats

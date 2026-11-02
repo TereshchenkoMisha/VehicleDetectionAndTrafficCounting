@@ -18,8 +18,9 @@ Produces, per configuration, in <out>/<split>/<detector>_<tracker>_conf<conf>/:
     timing.json                            ms per frame, FPS, settings, hashes of inputs, environment
     <vis-dir>/<configuration>_<sequence>.mp4   with --vis-dir
 A configuration is written to a `.partial` folder and renamed when finished. Seeds are always set;
---deterministic also makes the GPU path repeatable but slower, so it is not meant for timing.
+deterministic inference is enabled for every run.
 """
+
 import argparse
 import platform
 import shutil
@@ -33,8 +34,7 @@ from src.config import (CONF, CONFIG_DIR, IMGSZ, NMS_IOU, OUT_DIR, RAW_ROOT, REP
                         weights_path)
 from src.data.sequences import list_frames
 from src.tracking.pipeline import track_config
-from src.utils import (env_info, file_info, fraction, positive_int, read_json, seed_value, set_deterministic,
-                       set_seed, write_json)
+from src.utils import env_info, file_info, fraction, positive_int, read_json, seed_value, set_seed, write_json
 
 
 def find_metadata(name: str, data_dir: Path) -> Path:
@@ -67,8 +67,12 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--split", choices=["dev", "test"], default="dev")
     ap.add_argument("--seqs", nargs="+", default=None, help="subset of sequences (default: whole split)")
     ap.add_argument("--data", default=str(OUT_DIR), help="processed-data folder (fallback: reports/)")
-    ap.add_argument("--conf", type=fraction, default=CONF,
-                    help="tracker high-score threshold; the detector itself runs at track_low_thresh")
+    ap.add_argument(
+        "--conf",
+        type=fraction,
+        default=CONF,
+        help="tracker high/new threshold; detector preserves low-score observations",
+    )
     ap.add_argument("--iou", type=fraction, default=NMS_IOU, help="detector NMS IoU")
     ap.add_argument("--imgsz", type=positive_int, default=IMGSZ)
     ap.add_argument("--device", default=None, help="e.g. 0 or cpu (default: auto)")
@@ -76,7 +80,6 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--vis-dir", default=None, help="write an annotated mp4 per sequence there")
     ap.add_argument("--out", default=str(TRACKS_DIR))
     ap.add_argument("--seed", type=seed_value, default=SEED)
-    ap.add_argument("--deterministic", action="store_true", help="repeatable GPU results, slower; not for timing")
     return ap.parse_args()
 
 
@@ -84,8 +87,6 @@ def main() -> None:
     """Validate the request, then run every configuration and save its tracks and timing."""
     args = parse_args()
     set_seed(args.seed)
-    if args.deterministic:
-        set_deterministic()
     device: str | int = args.device if args.device is not None else (0 if torch.cuda.is_available() else "cpu")
 
     # Which sequences to run: the whole split, or a subset that must belong to it. Each needs
@@ -125,6 +126,7 @@ def main() -> None:
     # One progress bar over all frames of all configurations. It shows the running mean detector and
     # tracker time of the current sequence.
     with tqdm(total=total, unit="frame", dynamic_ncols=True) as bar:
+
         def on_frame(seq: str, index: int, det_s: float, trk_s: float) -> None:
             bar.update(1)
             bar.set_postfix(seq=seq, det_ms=f"{1000 * det_s / index:.1f}", trk_ms=f"{1000 * trk_s / index:.1f}")
@@ -144,13 +146,20 @@ def main() -> None:
             # Record which inputs and software produced these tracks, so the result can be traced and
             # a changed input detected later
             timing.update(
-                split=args.split, deterministic=args.deterministic, max_frames=args.max_frames,
-                provenance={"weights": file_info(weights_path(weights)),
-                            "tracker_config": file_info(CONFIG_DIR / f"{tracker}.yaml"),
-                            "splits": file_info(splits_path), "ignored": file_info(ignored_path),
-                            "ignored_regions": {seq: ignored[seq] for seq in seqs},
-                            "raw_root": str(Path(args.raw).resolve()), "data_root": str(data.resolve())},
-                env=env_info(device_name(device)))
+                split=args.split,
+                deterministic=True,
+                max_frames=args.max_frames,
+                provenance={
+                    "weights": file_info(weights_path(weights)),
+                    "tracker_config": file_info(CONFIG_DIR / f"{tracker}.yaml"),
+                    "splits": file_info(splits_path),
+                    "ignored": file_info(ignored_path),
+                    "ignored_regions": {seq: ignored[seq] for seq in seqs},
+                    "raw_root": str(Path(args.raw).resolve()),
+                    "data_root": str(data.resolve()),
+                },
+                env=env_info(device_name(device)),
+            )
             write_json(partial / "timing.json", timing)
             partial.rename(out_dir)
             tqdm.write(f"[done] {out_dir.name}: det {timing['det_ms_per_frame']:.1f} ms, "

@@ -39,11 +39,9 @@ COCO_CLASSES: list[int] = list(COCO_TO_LOCAL)           # passed to the detector
 # ---------------------------------------------------------------- detector and tracker protocol
 IMGSZ: int = 960
 NMS_IOU: float = 0.7
-# NMS across classes before the tracker. With per-class NMS one vehicle can come out as "car 0.6" and
-# "truck 0.3" (vans, SUVs); both boxes reach the tracker and the second one starts a duplicate track.
-# Tracking metrics are class-agnostic, so the tracker needs one box per vehicle. Detector mAP keeps
-# per-class NMS (the standard protocol) and does not use this.
-TRACK_AGNOSTIC_NMS: bool = True
+# Selected on dev by counting MAE; see docs/NMS_SELECTION.md.
+# One tracking policy: NMS within each COCO class.
+TRACK_AGNOSTIC_NMS: bool = False
 FPS: int = 25                # UA-DETRAC frame rate, used for output videos only
 
 # Two confidence thresholds, for two different jobs:

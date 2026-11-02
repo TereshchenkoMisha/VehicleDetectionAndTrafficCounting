@@ -8,7 +8,7 @@ import numpy as np
 
 from src.data.detrac import FrameAnn, SequenceAnn
 from src.data.mot import load_mot
-from src.data.sequences import frame_paths, resolve_naming
+from src.data.sequences import frame_paths, read_frame, resolve_naming
 from src.eval.validation import run_dirs, validate_tracking_run
 from src.utils import file_info, write_json
 
@@ -23,6 +23,33 @@ class FileTests(unittest.TestCase):
         path = self.root / "track.txt"
         path.write_text(text, encoding="utf-8")
         return path
+
+    def test_unicode_image_paths(self):
+        from PIL import Image
+
+        from src.data.split import mean_brightness
+        from src.tracking.viz import write_preview
+
+        folder = self.root / "кадры 课程"
+        folder.mkdir()
+        image_path = folder / "img00001.jpg"
+        Image.new("RGB", (80, 60), (10, 20, 30)).save(image_path)
+        frame = read_frame(image_path)
+        self.assertEqual(frame.shape, (60, 80, 3))
+        np.testing.assert_allclose(frame[0, 0], [30, 20, 10], atol=2)
+        self.assertAlmostEqual(mean_brightness(folder), float(frame.mean()))
+        preview = folder / "линия.png"
+        write_preview([(1, image_path)], "MVI_1", {"p1": [10, 0], "p2": [10, 59]}, preview)
+        self.assertEqual(read_frame(preview).shape, frame.shape)
+
+    def test_unreadable_images(self):
+        for name, content in (("empty.jpg", b""), ("broken.jpg", b"invalid")):
+            file = self.root / name
+            file.write_bytes(content)
+            with self.subTest(name=name), self.assertRaisesRegex(RuntimeError, "Cannot read image"):
+                read_frame(file)
+        with self.assertRaisesRegex(RuntimeError, "Cannot read image"):
+            read_frame(self.root / "missing.jpg")
 
     def test_mot_validation(self):
         for text in ("1,1,0,0,10,10,1,0\n1,1,1,1,10,10,1,0\n", "1,1,nan,0,10,10,1,0\n",

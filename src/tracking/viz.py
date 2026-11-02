@@ -2,6 +2,7 @@
 
 All images are BGR uint8 arrays (OpenCV's order), and all colours are BGR tuples.
 """
+
 from collections.abc import Iterator, Sequence
 from contextlib import contextmanager
 from pathlib import Path
@@ -24,10 +25,8 @@ Point = tuple[float, float]
 
 LINE_COLOR: Color = (0, 255, 255)
 TEXT_COLOR: Color = (255, 255, 255)
-CLASS_COLORS: dict[int, Color] = {0: (80, 200, 80), 1: (40, 140, 255), 2: (80, 80, 255)}    # car, bus, truck
-# A fixed palette, indexed by track id, so a track keeps its colour in every run and every video.
-PALETTE: list[Color] = [(int(b), int(g), int(r)) for b, g, r in np.random.RandomState(0).randint(60, 255, (64, 3))]
-TRAIL_FRAMES: int = 12                  # how long a crossing marker stays visible in GT videos, in frames
+CLASS_COLORS: dict[int, Color] = {0: (80, 200, 80), 1: (40, 140, 255), 2: (80, 80, 255)}  # car, bus, truck
+TRAIL_FRAMES: int = 12  # how long a crossing marker stays visible in GT videos, in frames
 
 
 @contextmanager
@@ -65,7 +64,7 @@ def draw_tracks(img: Image, tracks: Sequence[Sequence[float]], regions: list[Reg
     out = cv2.addWeighted(shade, 0.35, img, 0.65, 0)
 
     for x1, y1, x2, y2, tid, *_ in tracks:
-        colour = PALETTE[int(tid) % len(PALETTE)]
+        colour = tuple(int(v) for v in np.random.RandomState(int(tid) * 7919 % 2**31).randint(60, 255, 3))
         cv2.rectangle(out, (int(x1), int(y1)), (int(x2), int(y2)), colour, 2)
         cv2.putText(out, f"{int(tid)}", (int(x1), max(12, int(y1) - 4)),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, colour, 1, cv2.LINE_AA)
@@ -109,8 +108,10 @@ def write_preview(frames: list[tuple[int, Path]], seq: str, line: dict[str, list
     cv2.putText(img, f"counting line - {seq} (frame {fid})", (8, img.shape[0] - 12),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, TEXT_COLOR, 2, cv2.LINE_AA)
     Path(path).parent.mkdir(parents=True, exist_ok=True)
-    if not cv2.imwrite(str(path), img):
+    ok, encoded = cv2.imencode(Path(path).suffix, img)
+    if not ok:
         raise RuntimeError(f"Cannot write preview image: {path}")
+    Path(path).write_bytes(encoded.tobytes())
 
 
 def write_gt_video(ann: SequenceAnn, line: dict[str, list[int]], seq: str, events: list[dict[str, Any]],
@@ -159,3 +160,30 @@ def write_gt_video(ann: SequenceAnn, line: dict[str, list[int]], seq: str, event
             cv2.putText(image, f"{seq} f{fid} crossed: {running_total}", (8, 21),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, TEXT_COLOR, 1, cv2.LINE_AA)
             writer.write(image)
+
+
+def write_label_previews(data: str | Path, out: str | Path, limit: int = 6, seed: int = 42) -> None:
+    """Draw prepared YOLO labels on a seeded sample of dev/test images."""
+    import random
+
+    data, out = Path(data), Path(out)
+    images = sorted(p for split in ("dev", "test") for p in (data / "images" / split).glob("*.jpg"))
+    if not images:
+        raise ValueError(f"No prepared images in {data}")
+    out.mkdir(parents=True, exist_ok=True)
+    for path in random.Random(seed).sample(images, min(limit, len(images))):
+        image = read_frame(path)
+        h, w = image.shape[:2]
+        labels = data / "labels" / path.parent.name / f"{path.stem}.txt"
+        for line in labels.read_text(encoding="utf-8").splitlines():
+            if not line.strip():
+                continue
+            cls, cx, cy, bw, bh = map(float, line.split())
+            a = (int((cx - bw / 2) * w), int((cy - bh / 2) * h))
+            b = (int((cx + bw / 2) * w), int((cy + bh / 2) * h))
+            cv2.rectangle(image, a, b, (0, 255, 0), 2)
+            cv2.putText(image, ("car", "bus", "truck")[int(cls)], a, cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+        ok, encoded = cv2.imencode(".jpg", image)
+        if not ok:
+            raise RuntimeError(f"Cannot encode preview: {path}")
+        (out / f"{path.stem}_gt.jpg").write_bytes(encoded.tobytes())

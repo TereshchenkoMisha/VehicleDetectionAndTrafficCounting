@@ -9,14 +9,13 @@ import random
 from pathlib import Path
 from typing import Any
 
-import cv2
 import numpy as np
 from tqdm import tqdm
 
 from ..config import N_DEV, N_SELECT, RAW_ROOT, SEED
 from ..utils import read_json, write_json
 from .detrac import SequenceAnn, SequenceMeta
-from .sequences import find_sequence_dir
+from .sequences import find_sequence_dir, read_frame
 
 NIGHT_THRESHOLD: float = 90.0       # mean pixel value (0-255) below which a sequence counts as night
 
@@ -31,7 +30,12 @@ def mean_brightness(seq_dir: Path) -> float | None:
     if not files:
         return None
     picks = [files[len(files) // 3], files[len(files) // 2], files[2 * len(files) // 3]]
-    values = [float(im.mean()) for im in (cv2.imread(str(p)) for p in picks) if im is not None]
+    values = []
+    for frame in picks:
+        try:
+            values.append(float(read_frame(frame).mean()))
+        except RuntimeError:
+            continue
     return float(np.mean(values)) if values else None
 
 
