@@ -7,24 +7,6 @@ and at what computational cost?
 
 Team: Mikhail Tereshchenko, Kamil Gainutdinov, Artem Salakhutdinov, Danis Abdulov.
 
-## Current protocol
-
-Tracking preserves low-score detections as in refactor: detector confidence is min(low, high),
-while --conf controls tracker high/new thresholds. Inference is deterministic by default.
-One tracking NMS policy is selected on dev; see [comparison](docs/NMS_SELECTION.md).
-Per-class tracking, ablation integrity checks and diagnostic exports are restored in the existing modules.
-See [run instructions](docs/RERUN.md) and [review of the saved runs](docs/RESULTS_REVIEW.md).
-The historical numerical tables below include runs with other protocols.
-
-## Fresh rerun
-
-Previous generated reports, archived runs, GT MOT exports and line previews have been removed.
-Only the fixed inputs `reports/splits.json`, `reports/ignored_regions.json` and `reports/counting_lines.json` remain.
-See [the PowerShell rerun guide](docs/RERUN.md) for environment setup, the full `scripts/run_all.py` command,
-result locations, verification, recovery and the optional ablation.
-Numerical tables below describe historical experiments; regenerate results under a new run tag before using them.
-The status table describes implemented functionality, not a completed run of this cleaned checkout.
-
 ## Status
 
 | Stage | State |

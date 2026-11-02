@@ -27,6 +27,8 @@ class AblationTests(unittest.TestCase):
         self.project = Path(temporary.name)
         for folder in ("src", "scripts", "configs", "notebooks"):
             shutil.copytree(ROOT / folder, self.project / folder, ignore=shutil.ignore_patterns("__pycache__"))
+            shutil.copy2(ROOT / "pyproject.toml", self.project / "pyproject.toml")
+
         reports = self.project / "reports"
         write_json(reports / "splits.json", {"dev": ["MVI_1"], "test": []})
         write_json(reports / "ignored_regions.json", {"MVI_1": []})
