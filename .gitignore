@@ -54,6 +54,7 @@ __pypackages__/
 env/
 ENV/
 .python-version
+uv.lock
 
 # Packaging / build
 build/
