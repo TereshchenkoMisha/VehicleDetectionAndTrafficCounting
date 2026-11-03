@@ -15,6 +15,7 @@ dependencies = [
     "opencv-python",
     "pandas",
     "numpy",
+    "scipy",
     "trackeval",
     "matplotlib",
     "seaborn",

@@ -24,6 +24,7 @@
 !/reports/splits.json
 !/reports/ignored_regions.json
 !/reports/counting_lines.json
+!/reports/failure_review.json
 
 # Ultralytics output folders created by YOLO train/val/predict runs
 runs/

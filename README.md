@@ -19,9 +19,9 @@ The local pipeline results are complete and checked under run_20261103_final for
 | Main results notebooks | Executed dev/test copies and exported tables/charts |
 | Verification | Both splits pass --protocol current; 0 failed checks |
 | Confidence ablation | Complete 16-condition dev sweep; hashes and saved sources verified |
-| Failure analysis | Three reviewed examples in the separate [failure_analysis folder](../failure_analysis/REPORT.md) |
+| Failure analysis | Diagnostic candidates for all four configurations and three reviewed cases, stage 12 (see [Failure analysis](#failure-analysis)) |
 
-Additional checks: 54 project tests and 17 failure-analysis tests passed; all three source notebooks executed successfully. The failure analysis is intentionally outside this Git repository. Package it separately when submitting the whole project.
+Additional checks: 54 project tests and 17 failure-analysis tests passed; all three source notebooks executed successfully.
 
 Generated datasets, weights, run outputs, execution notebooks and personal environment settings are not stored in Git. This README preserves the compact numerical result; the detailed artifacts listed below are local and reproducible from the code.
 
@@ -124,7 +124,7 @@ $runTag = 'run_' + (Get-Date -Format 'yyyyMMdd_HHmmss')
 .\.venv\Scripts\python.exe scripts/run_all.py --tag $runTag --splits dev test --device 0 --to ablation
 ~~~
 
-The runner executes tests, data preparation, detector evaluation, tracking, TrackEval, GT counting, predicted counting, counting evaluation, both main notebooks and verification. Stage 11 adds the independent dev confidence sweep and its notebook. Prepared data is reused when present. Without --to ablation, the default range ends at verification.
+The runner executes tests, data preparation, detector evaluation, tracking, TrackEval, GT counting, predicted counting, counting evaluation, both main notebooks and verification. Stage 11 adds the independent dev confidence sweep and its notebook. Stage 12 (`--from failures`) analyses the saved dev tracks for failures and needs no model run. Prepared data is reused when present. Without --to ablation, the default range ends at verification.
 
 To continue finished tracking without running models again:
 
@@ -154,7 +154,8 @@ Both commands must exit with code 0. Missing or incomplete inputs are reported; 
 | outputs/ablation_run_20261103_final/ | Complete dev experiment: manifest, frozen inputs, GT, tracks and reports |
 | outputs/ablation_run_20261103_final/analysis/ | Confidence tables, charts and executed ablation notebook |
 | outputs/pipeline_review_20261103/ | Completion log, source provenance, before/after checks and executed-source notebook backups |
-| ../failure_analysis/outputs/current_dev_paths_checked/ | Three reviewed cases, PNG/MP4, probes, event tables and verification |
+| reports/run_20261103_final/failure_*.json/.md | Failure candidates of the dev split and the report of the three reviewed cases |
+| outputs/failures_run_20261103_final/dev/ | PNG/MP4 comparison of every reviewed case |
 
 The earlier standard dev reports/tracks remain in reports/ and outputs/tracks/dev/. They are identical inputs copied into the complete tagged result; do not mix unrelated tags when assembling comparisons.
 
@@ -172,7 +173,23 @@ os.environ.update(SPLIT="test", REPORTS_DIR="reports/run_20261103_final",
 
 Optional variables: DETECTOR_REPORTS_DIR, RESULT_OUTPUT_ROOT and RUN_CONF. For the sweep, use ABLATION_DIR="outputs/ablation_run_20261103_final". Automatic selection requires a unique complete matching set and prints the selected paths and saved NMS. An explicit invalid path is never replaced by an archive.
 
-The separate [failure analysis](../failure_analysis/README.md) compares all four configurations on the same dev frames. Its three reviewed mechanisms are a tracker-dependent gap at the line, van-class ambiguity combined with track-level voting, and concurrent duplicate tracks producing a double count. Automatic missing/extra/class-error candidates are diagnostic outcomes, not population frequencies of causes. Its notebook resolves FAILURE_ANALYSIS_DIR relative to the failure_analysis folder.
+## Failure analysis
+
+Every counting configuration is checked against the GT on identical dev frames. The analysis reads only saved files (GT counts, track counts, MOT tracks), so it adds no inference. It runs as stage 12, or step by step:
+
+~~~powershell
+$tag = 'run_20261103_final'
+.\.venv\Scripts\python.exe scripts/analyze_failures.py --splits dev --gt reports/$tag/gt_counts.json --tracks reports/$tag/track_counts.json --tracks-dir outputs/tracks_$tag --out-prefix reports/$tag/failure_analysis
+.\.venv\Scripts\python.exe scripts/render_failure_cases.py --analysis reports/$tag/failure_analysis_dev.json --tracks-dir outputs/tracks_$tag --out-dir outputs/failures_$tag --video
+.\.venv\Scripts\python.exe scripts/report_failures.py --analysis reports/$tag/failure_analysis_dev.json --tracks reports/$tag/track_counts.json --picture-dir outputs/failures_$tag/dev --out reports/$tag/failure_cases.md
+~~~
+
+1. `analyze_failures.py` pairs the predicted line crossings with the GT crossings by box overlap (IoU >= 0.3), direction and timing (at most 10 frames apart, at least two shared boxes). Classes and track ids are not compared on purpose, so a wrong class or a duplicated track stays visible. Each crossing gets an outcome: `matched`, `missed_candidate`, `extra_candidate` or `class_confusion_candidate`, plus flags from the boxes near the line. The result also lists suggested cases to review.
+2. `render_failure_cases.py` draws the same vehicle and frames for all four configurations side by side (PNG, and MP4 with `--video`).
+3. `reports/failure_review.json` holds the reviewed cases: what failed, the likely cause, its confidence and limits, and how every configuration counted the vehicle. `report_failures.py` rejects a review that contradicts the saved crossing events or covers fewer than three vehicles, and writes `failure_cases.md`.
+4. `probe_detector.py` (optional, needs the weights) replays the detectors on the frames around a case to show the scores of the boxes at the line. It is a diagnostic replay of isolated frames, not the original raw detections.
+
+The three reviewed mechanisms are a tracker-dependent gap at the line, van-class ambiguity combined with track-level voting, and concurrent duplicate tracks producing a double count. The candidate counts are diagnostic outcomes, not frequencies of causes. To review other cases, take ids from `suggested_cases` in the analysis JSON, draw them with `--case-id`, and describe them in the review file in the same format (see `src/failure/review.py`). Test is not used for choosing cases.
 
 ## Git policy
 

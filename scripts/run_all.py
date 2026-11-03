@@ -18,6 +18,8 @@ Stages, selected with --from / --to by number or name:
     10 verify         verify_run
     11 ablation       run_ablation (confidence sweep on dev, 16 tracking runs) and its notebook; not in the
                       default range: pass --to ablation, or --from ablation to run it alone
+    12 failures       failure candidates, pictures and report of the reviewed cases (dev; saved files only, no
+                      inference); not in the default range: pass --to failures, or --from failures to run it alone
 
 Needs, before any stage runs (nothing runs if something is missing):
     external inputs of the selected stages: raw dataset, reports/splits.json, reports/ignored_regions.json,
@@ -25,10 +27,12 @@ Needs, before any stage runs (nothing runs if something is missing):
     (every sequence covered, valid lines)
     results of earlier stages when you start in the middle: pass the --tag of that run
 Produces, per tag:
-    reports/<tag>/                         detector reports, tracking and counting evaluation, GT and track counts
+    reports/<tag>/                         detector reports, tracking and counting evaluation, GT and track counts,
+                                           failure analysis and report
     outputs/tracks_<tag>/                  MOT tracks and timing.json per configuration
     outputs/reports_<tag>/                 notebook tables and charts
     outputs/ablation_<tag>/                confidence sweep (stage 11); an existing one is continued, not redone
+    outputs/failures_<tag>/                pictures and clips of the reviewed failure cases (stage 12)
 --clean first deletes what the selected stages produce for this tag (and the prepared dataset when stage 2
 is selected), after a confirmation. Without it, existing results are never overwritten.
 Child processes write straight to the console, so progress bars look as usual.
@@ -52,7 +56,7 @@ from src.data.sequences import find_sequence_dir  # noqa: E402
 from src.utils import read_json  # noqa: E402
 
 STAGES: list[str] = ["tests", "prepare", "detectors", "tracking", "trackeval", "gtcounts", "trackcounts",
-                     "countingeval", "notebook", "verify", "ablation"]
+                     "countingeval", "notebook", "verify", "ablation", "failures"]
 DEFAULT_LAST: int = 10      # the ablation is long and independent, so it runs only when asked for
 DETECTORS: list[str] = ["yolov8n", "yolov8s"]
 RAW = "data/raw/UA-DETRAC"
@@ -60,6 +64,7 @@ PROCESSED = "data/processed/detrac_yolo"
 SPLITS_JSON = "reports/splits.json"
 IGNORED_JSON = "reports/ignored_regions.json"
 LINES_JSON = "reports/counting_lines.json"
+REVIEW_JSON = "reports/failure_review.json"
 
 GREEN, RED, YELLOW, CYAN, RESET = "\033[32m", "\033[31m", "\033[33m", "\033[36m", "\033[0m"
 
@@ -101,6 +106,7 @@ class Run:
         self.tracks = f"outputs/tracks_{args.tag}"
         self.charts = f"outputs/reports_{args.tag}"
         self.ablation = f"outputs/ablation_{args.tag}"
+        self.failures = f"outputs/failures_{args.tag}"
         self.device: list[str] = ["--device", args.device] if args.device else []
         self.timings: list[tuple[str, float, int]] = []
 
@@ -129,23 +135,25 @@ class Run:
         need(2, f"{RAW}/DETRAC-Test-Annotations-XML", "dir", 0, "raw test annotations")
         need(2, SPLITS_JSON, "file", 0, "reference split")
         need(3, IGNORED_JSON, "file", 0, f"ignored regions (copied into {PROCESSED} when missing)")
-        for stage in (4, 5, 6, 7, 11):
+        for stage in (4, 5, 6, 7, 11, 12):
             need(stage, f"{RAW}/DETRAC-Images", "dir", 0, "raw frames")
             need(stage, SPLITS_JSON, "file", 0, "split")
-        for stage in (4, 5, 7, 11):
+        for stage in (4, 5, 7, 11, 12):
             need(stage, IGNORED_JSON, "file", 0, "ignored regions")
         for stage in (4, 11):
             need(stage, "configs/bytetrack.yaml", "file", 0, "tracker config")
             need(stage, "configs/botsort.yaml", "file", 0, "tracker config")
-        for stage in (6, 11):
+        for stage in (6, 11, 12):
             need(stage, f"{RAW}/DETRAC-Train-Annotations-XML", "dir", 0, "XML annotations")
-        for stage in (6, 7, 11):
+        for stage in (6, 7, 11, 12):
             need(stage, LINES_JSON, "file", 0, "counting lines")
         need(8, SPLITS_JSON, "file", 0, "split")
         need(9, "notebooks/results.ipynb", "file", 0, "notebook")
         need(10, SPLITS_JSON, "file", 0, "split")
         need(11, SPLITS_JSON, "file", 0, "split")
         need(11, "notebooks/ablation.ipynb", "file", 0, "ablation notebook")
+        need(12, REVIEW_JSON, "file", 0, "reviewed failure cases")
+        need(12, SPLITS_JSON, "file", 0, "split")
 
         # Results of earlier stages
         need(3, f"{PROCESSED}/images", "dir", 2, "prepared images")
@@ -162,6 +170,11 @@ class Run:
         need(8, f"{self.reports}/gt_counts.json", "file", 6, "GT counts")
         need(8, f"{self.reports}/track_counts.json", "file", 7, "track counts")
         need(10, f"{self.reports}/gt_counts.json", "file", 6, "GT counts")
+
+        # Failure analysis reads the dev tracks and both count files
+        need(12, f"{self.tracks}/dev", "dir", 4, "tracks of split dev")
+        need(12, f"{self.reports}/gt_counts.json", "file", 6, "GT counts")
+        need(12, f"{self.reports}/track_counts.json", "file", 7, "track counts")
         return r
 
     def check_files(self) -> int:
@@ -214,7 +227,7 @@ class Run:
         sequences = [seq for s in a.splits for seq in splits.get(s, [])]
 
         # Counting lines: present and valid for each sequence
-        if any(self.will_run(s) for s in (6, 7, 11)):
+        if any(self.will_run(s) for s in (6, 7, 11, 12)):
             try:
                 lines = read_json(REPORTS_DIR / "counting_lines.json")
             except (OSError, ValueError):
@@ -226,7 +239,7 @@ class Run:
                     check(False, f"valid counting line for {seq} in counting_lines.json")
 
         # Ignored regions
-        if any(self.will_run(s) for s in (4, 5, 7, 11)):
+        if any(self.will_run(s) for s in (4, 5, 7, 11, 12)):
             try:
                 ignored = read_json(REPORTS_DIR / "ignored_regions.json")
             except (OSError, ValueError):
@@ -235,7 +248,7 @@ class Run:
                 check(seq in ignored, f"ignored regions for {seq} in ignored_regions.json")
 
         # Raw dataset
-        if any(self.will_run(s) for s in (2, 4, 5, 6, 7, 11)):
+        if any(self.will_run(s) for s in (2, 4, 5, 6, 7, 11, 12)):
             xml_names = {p.stem for p in Path(RAW_ROOT).rglob("MVI_*.xml")}
             for seq in sequences:
                 check(find_sequence_dir(RAW_ROOT, seq) is not None, f"raw frames of {seq}")
@@ -251,7 +264,7 @@ class Run:
         """Existing paths that the selected stages would produce for this tag.
 
         Stage 2 owns the prepared dataset, stage 4 the tracks folder, stage 9 the charts folder, stage 11
-        the ablation folder; the
+        the ablation folder, stage 12 the failure pictures; the
         other stages own report files named with the tag. Only paths that exist are returned.
         """
         targets: list[str] = []
@@ -261,7 +274,8 @@ class Run:
                     5: [f"{self.reports}/tracking_eval_*"],
                     6: [f"{self.reports}/gt_counts.*"],
                     7: [f"{self.reports}/track_counts.json"],
-                    8: [f"{self.reports}/counting_eval_*"]}
+                    8: [f"{self.reports}/counting_eval_*"],
+                    12: [f"{self.reports}/failure_*"]}
         for stage, globs in patterns.items():
             if self.will_run(stage):
                 for pattern in globs:
@@ -272,6 +286,8 @@ class Run:
             targets.append(self.charts)
         if self.will_run(11):
             targets.append(self.ablation)
+        if self.will_run(12):
+            targets.append(self.failures)
         return [p for p in dict.fromkeys(targets) if (ROOT / p).exists()]
 
     def clean(self) -> None:
@@ -421,6 +437,22 @@ class Run:
                 self.step("11. Ablation tables and charts",
                           ["-m", "jupyter", "nbconvert", "--to", "notebook", "--execute", "notebooks/ablation.ipynb",
                            "--output-dir", f"{self.ablation}/analysis", "--output", "ablation_executed.ipynb"])
+
+        # Stage 12: failure analysis of the dev tracks. Candidates, pictures of the reviewed cases, and the report
+        # of those cases, which is refused when the review contradicts the saved events. Test is not analysed.
+        if self.will_run(12):
+            analysis = f"{self.reports}/failure_analysis_dev.json"
+            self.step("12. Failure candidates (dev)",
+                      ["scripts/analyze_failures.py", "--splits", "dev", "--gt", f"{self.reports}/gt_counts.json",
+                       "--tracks", f"{self.reports}/track_counts.json", "--tracks-dir", self.tracks,
+                       "--out-prefix", f"{self.reports}/failure_analysis"])
+            self.step("12. Pictures of the reviewed failure cases",
+                      ["scripts/render_failure_cases.py", "--analysis", analysis, "--tracks-dir", self.tracks,
+                       "--out-dir", self.failures, "--video", "--replace"])
+            self.step("12. Report of the reviewed failure cases",
+                      ["scripts/report_failures.py", "--analysis", analysis,
+                       "--tracks", f"{self.reports}/track_counts.json", "--picture-dir", f"{self.failures}/dev",
+                       "--out", f"{self.reports}/failure_cases.md"])
 
         print(color("\n" + "=" * 100 + f"\nFINISHED stages {a.first}-{a.last}. Tag: {self.tag}", GREEN))
         self.summary()
