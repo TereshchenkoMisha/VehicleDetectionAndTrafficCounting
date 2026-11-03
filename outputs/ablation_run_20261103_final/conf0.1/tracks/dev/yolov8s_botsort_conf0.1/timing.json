@@ -1,0 +1,238 @@
+{
+  "detector": "yolov8s.pt",
+  "tracker": "botsort",
+  "conf": 0.1,
+  "detector_conf": 0.1,
+  "iou": 0.7,
+  "agnostic_nms": false,
+  "imgsz": 960,
+  "seed": 42,
+  "frames": 5924,
+  "det_ms_per_frame": 12.597845087643332,
+  "trk_ms_per_frame": 6.562160719202968,
+  "total_ms_per_frame": 19.1600058068463,
+  "fps": 52.19205098793225,
+  "per_seq": {
+    "MVI_20033": {
+      "frames": 784,
+      "det_ms": 12.609926147702861,
+      "trk_ms": 6.283946301293178,
+      "tracks": 60,
+      "rows": 4715,
+      "mot_sha256": "49606ac35633c34717d31aea85ab773b7e40208e33021e3fcf870d051a53ed9d"
+    },
+    "MVI_40141": {
+      "frames": 1600,
+      "det_ms": 12.568158187395966,
+      "trk_ms": 5.786826124967774,
+      "tracks": 157,
+      "rows": 9150,
+      "mot_sha256": "76636c4c527ed0b8f00341b525b0c8a50fdd7190d095b04bb2d738b05f8b3007"
+    },
+    "MVI_40171": {
+      "frames": 1150,
+      "det_ms": 12.62381330447565,
+      "trk_ms": 6.878323564913286,
+      "tracks": 116,
+      "rows": 7257,
+      "mot_sha256": "300b1ff4b06fefabb2d5982029b6510a0a761b7dabb9636cf0f3aa7594cd2fbe"
+    },
+    "MVI_40773": {
+      "frames": 985,
+      "det_ms": 12.591142740944486,
+      "trk_ms": 6.248524975058798,
+      "tracks": 53,
+      "rows": 7253,
+      "mot_sha256": "2fbc93b833b17e505d947784df1a6cc160ef1aa13c99e3c05e5eb9c0983d94a0"
+    },
+    "MVI_63553": {
+      "frames": 1405,
+      "det_ms": 12.60835459045494,
+      "trk_ms": 7.5614485411479695,
+      "tracks": 264,
+      "rows": 9453,
+      "mot_sha256": "3ab5409c19b039da3f7f99b37f987261bcd2414bd947968d4aa36e6f13ee9f4a"
+    }
+  },
+  "tracker_settings": {
+    "tracker_type": "botsort",
+    "track_high_thresh": 0.1,
+    "track_low_thresh": 0.1,
+    "new_track_thresh": 0.1,
+    "track_buffer": 30,
+    "match_thresh": 0.8,
+    "fuse_score": true,
+    "gmc_method": "sparseOptFlow",
+    "proximity_thresh": 0.5,
+    "appearance_thresh": 0.8,
+    "with_reid": false,
+    "model": "auto"
+  },
+  "note": "image reading excluded; detector = predict (pre+infer+NMS+GPU->CPU); tracker = ignored-region mask + tracker.update",
+  "split": "dev",
+  "deterministic": true,
+  "max_frames": null,
+  "provenance": {
+    "weights": {
+      "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\models\\yolov8s.pt",
+      "sha256": "1f47a78bf100391c2a140b7ac73a1caae18c32779be7d310658112f7ac9aa78a"
+    },
+    "tracker_config": {
+      "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\configs\\botsort.yaml",
+      "sha256": "2839bf874b2850e659611f2db80eea50ed89cc8e4de82357f6fa07b123590c88"
+    },
+    "splits": {
+      "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\data\\splits.json",
+      "sha256": "1fc24fa51d675a6e55724fc3be34705ca0af252e36f2ef41f40eaebe6225fbfb"
+    },
+    "ignored": {
+      "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\data\\ignored_regions.json",
+      "sha256": "9f2accc86b42bfe1978c21c1419cc11e936d01dff88d6a0be7faf92dbd6e9b10"
+    },
+    "ignored_regions": {
+      "MVI_20033": [
+        [
+          458.75,
+          0.5,
+          618.25,
+          54.25
+        ],
+        [
+          710.75,
+          29.75,
+          950.25,
+          99.25
+        ],
+        [
+          824.75,
+          101.75,
+          954.25,
+          157.25
+        ],
+        [
+          126.75,
+          39.75,
+          350.25,
+          126.25
+        ],
+        [
+          38.75,
+          126.75,
+          225.25,
+          238.25
+        ]
+      ],
+      "MVI_40141": [
+        [
+          438.75,
+          82.75,
+          579.25,
+          131.25
+        ],
+        [
+          656.75,
+          134.75,
+          805.25,
+          201.25
+        ],
+        [
+          753.75,
+          201.75,
+          960.5,
+          258.25
+        ],
+        [
+          848.75,
+          257.75,
+          960.5,
+          330.25
+        ],
+        [
+          0.5,
+          188.75,
+          143.25,
+          297.25
+        ],
+        [
+          176.75,
+          152.75,
+          273.25,
+          203.25
+        ],
+        [
+          275.75,
+          123.75,
+          340.25,
+          167.25
+        ]
+      ],
+      "MVI_40171": [
+        [
+          593.75,
+          0.5,
+          960.5,
+          43.25
+        ]
+      ],
+      "MVI_40773": [
+        [
+          249.75,
+          0.5,
+          960.5,
+          23.25
+        ],
+        [
+          762.75,
+          25.75,
+          960.5,
+          76.25
+        ],
+        [
+          864.75,
+          80.75,
+          960.5,
+          150.25
+        ],
+        [
+          0.5,
+          41.75,
+          188.25,
+          78.25
+        ],
+        [
+          0.5,
+          85.75,
+          131.25,
+          133.25
+        ]
+      ],
+      "MVI_63553": [
+        [
+          0.5,
+          71.75,
+          91.25,
+          117.25
+        ],
+        [
+          889.75,
+          390.75,
+          960.5,
+          534.25
+        ]
+      ]
+    },
+    "raw_root": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC",
+    "data_root": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\data"
+  },
+  "env": {
+    "device": "NVIDIA GeForce RTX 3060",
+    "torch": "2.11.0+cu128",
+    "ultralytics": "8.4.201",
+    "opencv": "5.0.0",
+    "numpy": "2.5.4",
+    "python": "3.14.3",
+    "cuda": "12.8",
+    "cudnn": 91900,
+    "date": "2026-11-03 17:48:07"
+  }
+}

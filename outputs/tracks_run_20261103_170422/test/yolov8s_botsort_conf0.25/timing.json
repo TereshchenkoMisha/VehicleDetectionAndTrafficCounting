@@ -1,0 +1,384 @@
+{
+  "detector": "yolov8s.pt",
+  "tracker": "botsort",
+  "conf": 0.25,
+  "detector_conf": 0.1,
+  "iou": 0.7,
+  "agnostic_nms": false,
+  "imgsz": 960,
+  "seed": 42,
+  "frames": 8590,
+  "det_ms_per_frame": 13.189909348163168,
+  "trk_ms_per_frame": 6.717914644787598,
+  "total_ms_per_frame": 19.907823992950764,
+  "fps": 50.23150698710686,
+  "per_seq": {
+    "MVI_20064": {
+      "frames": 800,
+      "det_ms": 13.400490999920294,
+      "trk_ms": 7.037878000046476,
+      "tracks": 108,
+      "rows": 11351,
+      "mot_sha256": "80252f035535a1c1056c96d81d728fcb0b629a83bf24bc6c677e68e86edb8ee3"
+    },
+    "MVI_39031": {
+      "frames": 1470,
+      "det_ms": 13.42471503374661,
+      "trk_ms": 6.809472312816564,
+      "tracks": 70,
+      "rows": 6777,
+      "mot_sha256": "a516ce51664444e2a326f74d7fc98eac89ef122520768bf6a22162bc17c66049"
+    },
+    "MVI_39051": {
+      "frames": 1120,
+      "det_ms": 13.362331696914355,
+      "trk_ms": 6.673956963887966,
+      "tracks": 50,
+      "rows": 3021,
+      "mot_sha256": "c42a0a5cebb8e6b28e51a182a3a6561464aa2509076c5129360bbb14c7a09057"
+    },
+    "MVI_39311": {
+      "frames": 1505,
+      "det_ms": 13.352997873921762,
+      "trk_ms": 7.160820930007307,
+      "tracks": 165,
+      "rows": 23232,
+      "mot_sha256": "9d5fa58f75ced3d8133d80388fa4e8a6ab20dd7940af2cad3a891918d5722800"
+    },
+    "MVI_39821": {
+      "frames": 880,
+      "det_ms": 13.300309886306588,
+      "trk_ms": 6.720111136184476,
+      "tracks": 116,
+      "rows": 7468,
+      "mot_sha256": "02236e2595df0390c06f377c83c11d1d77315fbba45174a6edcdad6b98eb2be0"
+    },
+    "MVI_40792": {
+      "frames": 1810,
+      "det_ms": 12.916325193417235,
+      "trk_ms": 6.1358748619040755,
+      "tracks": 79,
+      "rows": 8890,
+      "mot_sha256": "96a21efb882a217278997a7377e0e7098d9f0b67df505a6f164fddfafe6199d2"
+    },
+    "MVI_40902": {
+      "frames": 1005,
+      "det_ms": 12.638510249101033,
+      "trk_ms": 6.761354726113133,
+      "tracks": 125,
+      "rows": 9786,
+      "mot_sha256": "98c76c1f4c3ca89bb633f001cabe66ba02653b731f990d594c816323081ee19b"
+    }
+  },
+  "tracker_settings": {
+    "tracker_type": "botsort",
+    "track_high_thresh": 0.25,
+    "track_low_thresh": 0.1,
+    "new_track_thresh": 0.25,
+    "track_buffer": 30,
+    "match_thresh": 0.8,
+    "fuse_score": true,
+    "gmc_method": "sparseOptFlow",
+    "proximity_thresh": 0.5,
+    "appearance_thresh": 0.8,
+    "with_reid": false,
+    "model": "auto"
+  },
+  "note": "image reading excluded; detector = predict (pre+infer+NMS+GPU->CPU); tracker = ignored-region mask + tracker.update",
+  "split": "test",
+  "deterministic": true,
+  "max_frames": null,
+  "provenance": {
+    "weights": {
+      "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\models\\yolov8s.pt",
+      "sha256": "1f47a78bf100391c2a140b7ac73a1caae18c32779be7d310658112f7ac9aa78a"
+    },
+    "tracker_config": {
+      "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\configs\\botsort.yaml",
+      "sha256": "2839bf874b2850e659611f2db80eea50ed89cc8e4de82357f6fa07b123590c88"
+    },
+    "splits": {
+      "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\data\\processed\\detrac_yolo\\splits.json",
+      "sha256": "a6edf00d1e3411b25e95086e60c1d33d2bdf9ef43269562f7b7caf7fd4060217"
+    },
+    "ignored": {
+      "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\data\\processed\\detrac_yolo\\ignored_regions.json",
+      "sha256": "f072618b0ed070f01fd519c954d4593b1a93bd12a0cdc9f23076fd2b5f061a63"
+    },
+    "ignored_regions": {
+      "MVI_20064": [
+        [
+          511.75,
+          0.5,
+          781.25,
+          28.25
+        ],
+        [
+          852.75,
+          27.75,
+          954.25,
+          51.25
+        ],
+        [
+          895.75,
+          54.75,
+          960.5,
+          75.25
+        ],
+        [
+          0.5,
+          215.75,
+          102.25,
+          313.25
+        ],
+        [
+          106.75,
+          89.75,
+          163.25,
+          246.25
+        ],
+        [
+          166.75,
+          137.75,
+          216.25,
+          208.25
+        ],
+        [
+          218.75,
+          90.75,
+          254.25,
+          179.25
+        ],
+        [
+          257.75,
+          71.75,
+          345.25,
+          126.25
+        ],
+        [
+          347.75,
+          21.75,
+          425.25,
+          90.25
+        ]
+      ],
+      "MVI_39031": [
+        [
+          335.75,
+          52.75,
+          592.25,
+          170.25
+        ],
+        [
+          0.5,
+          296.75,
+          224.25,
+          417.25
+        ],
+        [
+          690.75,
+          116.75,
+          960.5,
+          211.25
+        ]
+      ],
+      "MVI_39051": [
+        [
+          916.75,
+          283.75,
+          960.5,
+          325.25
+        ],
+        [
+          853.75,
+          443.75,
+          953.25,
+          535.25
+        ]
+      ],
+      "MVI_39311": [
+        [
+          0.5,
+          218.75,
+          337.25,
+          284.25
+        ],
+        [
+          0.5,
+          283.75,
+          253.25,
+          358.75
+        ],
+        [
+          0.5,
+          358.75,
+          200.5,
+          408.75
+        ],
+        [
+          0.5,
+          408.75,
+          150.5,
+          458.75
+        ],
+        [
+          487.75,
+          125.75,
+          960.5,
+          220.25
+        ],
+        [
+          763.75,
+          232.75,
+          960.5,
+          347.25
+        ],
+        [
+          818.75,
+          350.75,
+          960.5,
+          396.25
+        ]
+      ],
+      "MVI_39821": [
+        [
+          0.5,
+          83.75,
+          75.25,
+          222.25
+        ],
+        [
+          166.75,
+          52.75,
+          332.25,
+          94.25
+        ],
+        [
+          163.75,
+          96.75,
+          266.25,
+          125.25
+        ],
+        [
+          870.75,
+          129.75,
+          950.25,
+          195.25
+        ],
+        [
+          785.75,
+          119.75,
+          867.25,
+          178.25
+        ],
+        [
+          668.75,
+          96.75,
+          734.25,
+          151.25
+        ],
+        [
+          620.75,
+          92.75,
+          666.25,
+          134.25
+        ],
+        [
+          577.75,
+          88.75,
+          618.25,
+          126.25
+        ],
+        [
+          532.75,
+          83.75,
+          575.25,
+          118.25
+        ],
+        [
+          498.75,
+          80.75,
+          530.25,
+          112.25
+        ]
+      ],
+      "MVI_40792": [
+        [
+          373.75,
+          0.5,
+          960.5,
+          57.25
+        ],
+        [
+          522.75,
+          61.75,
+          960.5,
+          94.25
+        ],
+        [
+          0.5,
+          56.75,
+          325.25,
+          85.25
+        ],
+        [
+          0.5,
+          90.75,
+          162.25,
+          121.25
+        ]
+      ],
+      "MVI_40902": [
+        [
+          0.5,
+          300.75,
+          960.5,
+          540.5
+        ],
+        [
+          812.75,
+          0.5,
+          960.5,
+          41.25
+        ],
+        [
+          878.75,
+          45.75,
+          960.5,
+          86.25
+        ],
+        [
+          148.75,
+          0.5,
+          353.25,
+          39.25
+        ],
+        [
+          0.5,
+          43.75,
+          144.25,
+          195.25
+        ],
+        [
+          148.75,
+          40.75,
+          281.25,
+          124.25
+        ]
+      ]
+    },
+    "raw_root": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC",
+    "data_root": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\data\\processed\\detrac_yolo"
+  },
+  "env": {
+    "device": "NVIDIA GeForce RTX 3060",
+    "torch": "2.11.0+cu128",
+    "ultralytics": "8.4.201",
+    "opencv": "5.0.0",
+    "numpy": "2.5.4",
+    "python": "3.14.3",
+    "cuda": "12.8",
+    "cudnn": 91900,
+    "date": "2026-11-03 17:27:38"
+  }
+}

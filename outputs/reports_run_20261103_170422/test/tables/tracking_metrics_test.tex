@@ -1,0 +1,14 @@
+\begin{table}
+\caption{Tracking metrics (HOTA, MOTA, IDF1, IDSW) for four configurations on test}
+\label{tab:tracking_metrics_test}
+\begin{tabular}{llrrrrrrrrr}
+\toprule
+Approach & Config & HOTA (%) & DetA (%) & AssA (%) & MOTA (%) & MOTP (%) & IDF1 (%) & IDSW & MT & ML \\
+\midrule
+YOLOv8n + ByteTrack & yolov8n_bytetrack_conf0.25 & 64.51 & 61.25 & 68.25 & 69.05 & 82.65 & 78.66 & 165 & 258 & 9 \\
+YOLOv8n + BoT-SORT & yolov8n_botsort_conf0.25 & 66.18 & 62.64 & 70.26 & 69.93 & 83.76 & 79.48 & 122 & 267 & 9 \\
+YOLOv8s + ByteTrack & yolov8s_bytetrack_conf0.25 & 67.02 & 63.14 & 71.70 & 70.98 & 83.14 & 80.91 & 104 & 286 & 6 \\
+YOLOv8s + BoT-SORT & yolov8s_botsort_conf0.25 & 69.19 & 64.70 & 74.51 & 71.79 & 84.48 & 82.26 & 76 & 292 & 5 \\
+\bottomrule
+\end{tabular}
+\end{table}

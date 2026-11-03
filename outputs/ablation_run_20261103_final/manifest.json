@@ -1,0 +1,422 @@
+{
+  "version": 2,
+  "plan": {
+    "sequences": [
+      "MVI_20033",
+      "MVI_40141",
+      "MVI_40171",
+      "MVI_40773",
+      "MVI_63553"
+    ],
+    "confidences": [
+      0.1,
+      0.25,
+      0.4,
+      0.6
+    ],
+    "jobs": [
+      {
+        "confidence": 0.1,
+        "model": "yolov8n.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8n_bytetrack_conf0.1"
+      },
+      {
+        "confidence": 0.1,
+        "model": "yolov8n.pt",
+        "tracker": "botsort",
+        "config": "yolov8n_botsort_conf0.1"
+      },
+      {
+        "confidence": 0.1,
+        "model": "yolov8s.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8s_bytetrack_conf0.1"
+      },
+      {
+        "confidence": 0.1,
+        "model": "yolov8s.pt",
+        "tracker": "botsort",
+        "config": "yolov8s_botsort_conf0.1"
+      },
+      {
+        "confidence": 0.25,
+        "model": "yolov8n.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8n_bytetrack_conf0.25"
+      },
+      {
+        "confidence": 0.25,
+        "model": "yolov8n.pt",
+        "tracker": "botsort",
+        "config": "yolov8n_botsort_conf0.25"
+      },
+      {
+        "confidence": 0.25,
+        "model": "yolov8s.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8s_bytetrack_conf0.25"
+      },
+      {
+        "confidence": 0.25,
+        "model": "yolov8s.pt",
+        "tracker": "botsort",
+        "config": "yolov8s_botsort_conf0.25"
+      },
+      {
+        "confidence": 0.4,
+        "model": "yolov8n.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8n_bytetrack_conf0.4"
+      },
+      {
+        "confidence": 0.4,
+        "model": "yolov8n.pt",
+        "tracker": "botsort",
+        "config": "yolov8n_botsort_conf0.4"
+      },
+      {
+        "confidence": 0.4,
+        "model": "yolov8s.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8s_bytetrack_conf0.4"
+      },
+      {
+        "confidence": 0.4,
+        "model": "yolov8s.pt",
+        "tracker": "botsort",
+        "config": "yolov8s_botsort_conf0.4"
+      },
+      {
+        "confidence": 0.6,
+        "model": "yolov8n.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8n_bytetrack_conf0.6"
+      },
+      {
+        "confidence": 0.6,
+        "model": "yolov8n.pt",
+        "tracker": "botsort",
+        "config": "yolov8n_botsort_conf0.6"
+      },
+      {
+        "confidence": 0.6,
+        "model": "yolov8s.pt",
+        "tracker": "bytetrack",
+        "config": "yolov8s_bytetrack_conf0.6"
+      },
+      {
+        "confidence": 0.6,
+        "model": "yolov8s.pt",
+        "tracker": "botsort",
+        "config": "yolov8s_botsort_conf0.6"
+      }
+    ],
+    "raw": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC",
+    "imgsz": 960,
+    "iou": 0.7,
+    "seed": 42,
+    "device": "0",
+    "inputs": {
+      "reports/splits.json": "1fc24fa51d675a6e55724fc3be34705ca0af252e36f2ef41f40eaebe6225fbfb",
+      "reports/ignored_regions.json": "9f2accc86b42bfe1978c21c1419cc11e936d01dff88d6a0be7faf92dbd6e9b10",
+      "reports/counting_lines.json": "4dc9bc940d80e19f7c8e441ddf91577376ba07dfe3efa765c7743e00be9a95d0",
+      "configs/bytetrack.yaml": "cedc7f542d820da80d9542a347cb0cba9c5ea9db01581f8dcb49c85486291205",
+      "configs/botsort.yaml": "2839bf874b2850e659611f2db80eea50ed89cc8e4de82357f6fa07b123590c88",
+      "src/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/config.py": "602d38e516d877b0b092a79e4fa4223bad9a2755b912c8c41bb3935132b83f45",
+      "src/counting/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/counting/line_crossing.py": "f33ed7c0c081bcd3d0637bb1ecf199777a01a3d25bbc32c85eada286d474ad73",
+      "src/counting/lines.py": "45be7c6a2557f016d5a03a9559a475f0c13215a8d217ef3bc5bb45b0acbfad60",
+      "src/counting/metrics.py": "195398d799fbf912e044862323ce8c50407ec4d091b4b58998ee98c2e78657c8",
+      "src/counting/trajectories.py": "4debbd02d8275e274c65e27475cec67b19d077b8b47079d56aa972f7b82026b6",
+      "src/data/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/data/detrac.py": "f6a39334b1243217b779d36267e54b8bbb44721f668f9e3239f2e04fb2052d39",
+      "src/data/export.py": "71029f188e5a5bfe3d88d71c38c4074183bffdf689bcf6a0a3d5ec572df83ef9",
+      "src/data/mot.py": "b04ce69e5ba9babb5e570fd44ce37c761f749655e2865e6299e8d011a7c0f860",
+      "src/data/regions.py": "3e86fc0b93078c6769717dac19d9608099d5519078fd9e768f02f9f92b9f5d79",
+      "src/data/sequences.py": "423ab8c15f9d629e7533b78e930cedd770760a8c8a948998add585ab54e82227",
+      "src/data/split.py": "e0aa7a36ac3e04ee4ce573114e7127733fd4209853cfcd9e0921e3e347f6bb33",
+      "src/eval/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/eval/detector.py": "900051bd2f006fad195cfb95ffaaa54a94a20d0298b2626d6b772f1febe01307",
+      "src/eval/tracking.py": "23b9d45c5171b394adc4a0a917f519092a3d415466bbbfb97103939bc23fbc3e",
+      "src/eval/validation.py": "8c9ecdf72eae4c12603a5aac2dafc2dbfacf4b710b81a817616b00e9c4d53eca",
+      "src/tracking/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "src/tracking/pipeline.py": "786bb1ffe7c0b3e9a8bd71c6216b6da9352d0ba44561c58ff74c2cda9525cfd3",
+      "src/tracking/viz.py": "2f20a74d6a3e9cc450624f6fc2ff48a333d91418616fd7165657e918765767bf",
+      "src/utils.py": "370f94a846b8c2415ea9449f23fe0784daa994c8389a79c7a370cf86b376c2e5",
+      "scripts/annotate_line.py": "5eb6ee8e1008959fbd921628ec967e932efe2b3d53aaa6d4402703fbbb5c03ab",
+      "scripts/count_gt.py": "80acaa3c63e219c3923a440a79851feb975f6a75c2b30b894c7225bf09d4d57a",
+      "scripts/count_tracks.py": "2aaf710e3ab29d2b9b712621151c00441ffa7071ee4f3345ef9e681b09cceb1b",
+      "scripts/evaluate_counting.py": "52ffcaf2ffe3e716db06b862eb8a97e75cb977e42e71a8c32837411c01589b6b",
+      "scripts/evaluate_detectors.py": "19d0a270d12b2864d7e38500166d894975f139e937d52a41d3005308b3fad618",
+      "scripts/evaluate_tracking.py": "a43d801a76ceaa3f6afcccf6ae5b427da20ff7976b11a17cde626598f628661e",
+      "scripts/place_lines.py": "4b003830508c34f1dc66d83873f2032c843fee75dfe923398367448aad78d6de",
+      "scripts/prepare_dataset.py": "cffa4a0bb64f0f024f5bace30bcb327dba17b2261e1e1e8e2644358e7d0f67ad",
+      "scripts/run_ablation.py": "d61f5e69f5596d6f98e852af6462391ad1c0b5fd12f7f38c2e2cebb48df9d61c",
+      "scripts/run_all.py": "5d9e512fa9e18d0c86b748bff45dbe155224624d6ba73ae45c318ad3e559caae",
+      "scripts/run_tracking.py": "51942fd2d80e62a7be6aa8e89d52988696738f9bab8102aa8cbb36327467fe67",
+      "scripts/verify_run.py": "750353fd1de405cdb8886d10a828bf902d3a42905af95df9381e99b05bd8a802"
+    },
+    "annotations": {
+      "MVI_40773": {
+        "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC\\DETRAC-Test-Annotations-XML\\DETRAC-Test-Annotations-XML\\MVI_40773.xml",
+        "sha256": "10454921ec353499ef85ff0b83f8e67b9a692809d0d5be8eaeec4db45dc5f175"
+      },
+      "MVI_20033": {
+        "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC\\DETRAC-Train-Annotations-XML\\DETRAC-Train-Annotations-XML\\MVI_20033.xml",
+        "sha256": "e980d51e4652d3a6430a14c0a7912a06cd46696b5226b081987fedb273155be4"
+      },
+      "MVI_40141": {
+        "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC\\DETRAC-Train-Annotations-XML\\DETRAC-Train-Annotations-XML\\MVI_40141.xml",
+        "sha256": "0c09dd6f39dba97bdf7bebf8d845ad3f106ee4017521e7dab9212b68d2be41f6"
+      },
+      "MVI_40171": {
+        "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC\\DETRAC-Train-Annotations-XML\\DETRAC-Train-Annotations-XML\\MVI_40171.xml",
+        "sha256": "5b3325f74f1e125d13998bc2889466810f1a26c50647dd5f6b3d3544eb18265d"
+      },
+      "MVI_63553": {
+        "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\data\\raw\\UA-DETRAC\\DETRAC-Train-Annotations-XML\\DETRAC-Train-Annotations-XML\\MVI_63553.xml",
+        "sha256": "cb8d5509db63fcd8ad6112e6def647dd49595a0f4e6486019e5a13732036691f"
+      }
+    },
+    "frame_inventory": {
+      "frames": {
+        "MVI_20033": 784,
+        "MVI_40141": 1600,
+        "MVI_40171": 1150,
+        "MVI_40773": 985,
+        "MVI_63553": 1405
+      },
+      "sha256": "7cc2f5e26d1106123d81b83e81df3cda8b4b5fb52ec578ae07fa89a0513c964b"
+    },
+    "max_frame_gap": 1,
+    "counting_protocol": 2,
+    "software": {
+      "ultralytics": "8.4.201",
+      "torch": "2.11.0+cu128",
+      "numpy": "2.5.4",
+      "opencv-python": "5.0.0.93",
+      "trackeval": "1.3.0"
+    },
+    "python": "3.14.3",
+    "inference_protocol": {
+      "detector_threshold": "min(low, high)",
+      "tracker_thresholds": "high=new=conf",
+      "agnostic_nms": false,
+      "deterministic": true
+    }
+  },
+  "stages": {
+    "inputs": {
+      "shared/data/splits.json": "1fc24fa51d675a6e55724fc3be34705ca0af252e36f2ef41f40eaebe6225fbfb",
+      "shared/data/ignored_regions.json": "9f2accc86b42bfe1978c21c1419cc11e936d01dff88d6a0be7faf92dbd6e9b10",
+      "shared/data/counting_lines.json": "4dc9bc940d80e19f7c8e441ddf91577376ba07dfe3efa765c7743e00be9a95d0"
+    },
+    "gt_counts": {
+      "shared/gt_counts.json": "8eaa7245b318a99e887bb433f857a0264ffa71e7367ea21f55003f50659bbd82",
+      "shared/gt_counts.md": "dd26754a385d25cd2a1b5f055dc66618198b9c1c1b91a972634c28796df152bb"
+    },
+    "gt_mot": {
+      "shared/gt_mot/MVI_20033.txt": "3439404f7844270bf4f35dadbf0c26d0c8a299db100df13d9f08e70e832aec9b",
+      "shared/gt_mot/MVI_40141.txt": "dc64bca09b0f762638781cbfa4ecbc8b981328f0b0f8b380cd30e7205ef748a5",
+      "shared/gt_mot/MVI_40171.txt": "71d333bd24ade50982060a47b8a8c0767b9d32bfa31e29840e665f08a1818ec9",
+      "shared/gt_mot/MVI_40773.txt": "399ac69cb062140796e539b1f1e6da46691507360e8ea93a4e8c2d078c0d1c13",
+      "shared/gt_mot/MVI_63553.txt": "594402e75adeabdf4501e498bc07e9e4873e9ac03621e387b02476c3194f203e"
+    },
+    "tracks/yolov8n_bytetrack_conf0.1": {
+      "conf0.1/tracks/dev/yolov8n_bytetrack_conf0.1/timing.json": "d89937aa0f83c8300111c02b9a04cc7823e44c3b5e8efc2fbf52c472bd3addae",
+      "conf0.1/tracks/dev/yolov8n_bytetrack_conf0.1/MVI_20033.txt": "f7e1b49b0ef5ec36e4dfb2777a950c72e5cd0f45572620164283fea2d4101ed1",
+      "conf0.1/tracks/dev/yolov8n_bytetrack_conf0.1/MVI_40141.txt": "e74c0e36a228d3f1c58af34ea88a02ee1c77151e264b52fa96d61bdc8aa3efd1",
+      "conf0.1/tracks/dev/yolov8n_bytetrack_conf0.1/MVI_40171.txt": "703ca666722e97bb308d4b09d7ded86cbba56a76e88e77969d0e61c1e335117d",
+      "conf0.1/tracks/dev/yolov8n_bytetrack_conf0.1/MVI_40773.txt": "2aa92058e9730723d70fd8a264b9e4d1e705fb7b8107eff0169008c2f43274a6",
+      "conf0.1/tracks/dev/yolov8n_bytetrack_conf0.1/MVI_63553.txt": "c4877457dc9d300096a41fcd7d8ea7e25024ffe8f58930b4cd6191e8a60d9a79"
+    },
+    "tracks/yolov8n_botsort_conf0.1": {
+      "conf0.1/tracks/dev/yolov8n_botsort_conf0.1/timing.json": "0908cf1a7846d3a211bcfa00fdce4c8135e30da44741c25e42fd4dbbb74f2180",
+      "conf0.1/tracks/dev/yolov8n_botsort_conf0.1/MVI_20033.txt": "19c07ee612856128164013c55e9f0d39e3a9f1851230b7832fec66b787b8fb52",
+      "conf0.1/tracks/dev/yolov8n_botsort_conf0.1/MVI_40141.txt": "cf51272d061336a0f6df81457eb3f4934582438448c498c40a94042495e5f3bf",
+      "conf0.1/tracks/dev/yolov8n_botsort_conf0.1/MVI_40171.txt": "d318c60e039428d86d21927d79787bc2ac0ef00b4dee600beed13d49d12076e5",
+      "conf0.1/tracks/dev/yolov8n_botsort_conf0.1/MVI_40773.txt": "6bb39d55885cfe65f7bd4529a29eccd57fe01158279b2dcb7d27e89d0490f938",
+      "conf0.1/tracks/dev/yolov8n_botsort_conf0.1/MVI_63553.txt": "c6de27d003765942d6f9db18fdf114a6d87f322c8c73cd906a658c60cbdedc39"
+    },
+    "tracks/yolov8s_bytetrack_conf0.1": {
+      "conf0.1/tracks/dev/yolov8s_bytetrack_conf0.1/timing.json": "22269328336074dd9bef3a90ab158faa8afe241a3cf474138ef9d9751b1a362b",
+      "conf0.1/tracks/dev/yolov8s_bytetrack_conf0.1/MVI_20033.txt": "6cf0d1d20e0fd7fc5002be4132170993e8499b420b0c61d27a2242bc1c04141f",
+      "conf0.1/tracks/dev/yolov8s_bytetrack_conf0.1/MVI_40141.txt": "40f23cefcb2978a79de1b2d24f4e082e5058af3695995932d0bec2fb6ea3ad2b",
+      "conf0.1/tracks/dev/yolov8s_bytetrack_conf0.1/MVI_40171.txt": "54f1156d07387d7f2359d196104b327cebe950176d92e0fb72dfc3186d29460e",
+      "conf0.1/tracks/dev/yolov8s_bytetrack_conf0.1/MVI_40773.txt": "8bd4d8174af3dba15ef51a03e9e0ec76cd25a1e8c2896741e5b022b26f53c52f",
+      "conf0.1/tracks/dev/yolov8s_bytetrack_conf0.1/MVI_63553.txt": "64469d9b00f4ed5fb07cb79b13489210b84ae1544653f1d2e9d89e37e78ccb20"
+    },
+    "tracks/yolov8s_botsort_conf0.1": {
+      "conf0.1/tracks/dev/yolov8s_botsort_conf0.1/timing.json": "38592fa79b0ee3f4a751a8688ecc32443d02428fba212b5f6a4ae314e8d7a535",
+      "conf0.1/tracks/dev/yolov8s_botsort_conf0.1/MVI_20033.txt": "49606ac35633c34717d31aea85ab773b7e40208e33021e3fcf870d051a53ed9d",
+      "conf0.1/tracks/dev/yolov8s_botsort_conf0.1/MVI_40141.txt": "76636c4c527ed0b8f00341b525b0c8a50fdd7190d095b04bb2d738b05f8b3007",
+      "conf0.1/tracks/dev/yolov8s_botsort_conf0.1/MVI_40171.txt": "300b1ff4b06fefabb2d5982029b6510a0a761b7dabb9636cf0f3aa7594cd2fbe",
+      "conf0.1/tracks/dev/yolov8s_botsort_conf0.1/MVI_40773.txt": "2fbc93b833b17e505d947784df1a6cc160ef1aa13c99e3c05e5eb9c0983d94a0",
+      "conf0.1/tracks/dev/yolov8s_botsort_conf0.1/MVI_63553.txt": "3ab5409c19b039da3f7f99b37f987261bcd2414bd947968d4aa36e6f13ee9f4a"
+    },
+    "counts/0.1": {
+      "conf0.1/reports/track_counts.json": "95952f2175482846f6de130a763d49844df5cf600681a5d6fe6dce7a087046f2"
+    },
+    "counting/0.1": {
+      "conf0.1/reports/counting_eval_dev.json": "d73e985604a7bf353335488446f9c9d1c768a31ee0564207fef69b5f418f96f2",
+      "conf0.1/reports/counting_eval_dev.md": "d50f7150e0ff08edfad32a2e1d55fa5efa8d987ea2c6562e550c67ec59d9a2f7"
+    },
+    "tracking/0.1": {
+      "conf0.1/reports/tracking_eval_dev.json": "8ecfc4bc8cd3e1beeea8d17729349a29a913f8022114b1dfe76abc65b3d2e92b",
+      "conf0.1/reports/tracking_eval_dev.md": "13df62589bec7f9809ad65c1e462f24738b602ea2edbc9f2720a65e95c46fed5"
+    },
+    "tracks/yolov8n_bytetrack_conf0.25": {
+      "conf0.25/tracks/dev/yolov8n_bytetrack_conf0.25/timing.json": "b843def7a82ba00cad1429dc0918f5c29ce3346b74f5cc0a195c41b01301eb7a",
+      "conf0.25/tracks/dev/yolov8n_bytetrack_conf0.25/MVI_20033.txt": "9981363f313f0da534c64f8a0c6a363f78a6c424b15422acc17e6e8b7a651606",
+      "conf0.25/tracks/dev/yolov8n_bytetrack_conf0.25/MVI_40141.txt": "6a600cd9cd1eb9545e16058c8031de21502cd9d1fd3654af656a1f75ab0e2928",
+      "conf0.25/tracks/dev/yolov8n_bytetrack_conf0.25/MVI_40171.txt": "a5bda2be6b44ff3bba89609648748542e4e1da41636a6291b878473aa771c74f",
+      "conf0.25/tracks/dev/yolov8n_bytetrack_conf0.25/MVI_40773.txt": "a81201a8d54a622cca448d6c1b3a716ee0bda9ee26371048bfe7bd786d65f546",
+      "conf0.25/tracks/dev/yolov8n_bytetrack_conf0.25/MVI_63553.txt": "b61461b29b5cbf32b7d34cd64d7dde0a3855f5e218f95a5982ba335bef710013"
+    },
+    "tracks/yolov8n_botsort_conf0.25": {
+      "conf0.25/tracks/dev/yolov8n_botsort_conf0.25/timing.json": "847b2b996184321994ba5fadc1ff528fc2ca694690a644e3de84845a90c4cb38",
+      "conf0.25/tracks/dev/yolov8n_botsort_conf0.25/MVI_20033.txt": "21bd7a5bc1bb72adfb613e089aa113054c6f2c31865fa638308f4c17a7cd9b5d",
+      "conf0.25/tracks/dev/yolov8n_botsort_conf0.25/MVI_40141.txt": "33f52d302943a9bf571953798dca84d9c9384e3b387d6ca9dfdc94337a866e2a",
+      "conf0.25/tracks/dev/yolov8n_botsort_conf0.25/MVI_40171.txt": "d89fbd1ead3889e40ea811467ea3a32743e05791850fb56d66cafb21de597277",
+      "conf0.25/tracks/dev/yolov8n_botsort_conf0.25/MVI_40773.txt": "5407a4ce9ebb979098c3361566678bbf0da198b6311a610e5486c4a24189af91",
+      "conf0.25/tracks/dev/yolov8n_botsort_conf0.25/MVI_63553.txt": "39e31194a3035a05e70db9d5eec90bc7c7040c1f8fddd4ed5cfa0705f2e24c4b"
+    },
+    "tracks/yolov8s_bytetrack_conf0.25": {
+      "conf0.25/tracks/dev/yolov8s_bytetrack_conf0.25/timing.json": "59d2046051781b34e88ca5c6400801ddb1d80ac435d88ea3188258e0d76a8d24",
+      "conf0.25/tracks/dev/yolov8s_bytetrack_conf0.25/MVI_20033.txt": "b7191c7f81fec2a8f6cf58d1506eab5a748365ea5bd37edcce33444a54eab0e6",
+      "conf0.25/tracks/dev/yolov8s_bytetrack_conf0.25/MVI_40141.txt": "e7cae6dbc10ea0531d19b18561f1e8b10f0c7bc8795dfb0a80d8d4c6ac6475b5",
+      "conf0.25/tracks/dev/yolov8s_bytetrack_conf0.25/MVI_40171.txt": "c5bd419e1e9b5a5dc5980cc9bcb27b4a6e9bcee8c376f78cc5eb08884cd96110",
+      "conf0.25/tracks/dev/yolov8s_bytetrack_conf0.25/MVI_40773.txt": "e16a6be9f1c2c767c7e29214207fdd295059d0205208c186cd0fddc6b63e94b2",
+      "conf0.25/tracks/dev/yolov8s_bytetrack_conf0.25/MVI_63553.txt": "3c085f8c1c664f6c893660df95dd8eabb9311f98288b1bec319277dff1c3b0b3"
+    },
+    "tracks/yolov8s_botsort_conf0.25": {
+      "conf0.25/tracks/dev/yolov8s_botsort_conf0.25/timing.json": "d7c691a8d6b3559e8e50dcc5f676c5d6b9732b062317d7f9fa1f213838ce9153",
+      "conf0.25/tracks/dev/yolov8s_botsort_conf0.25/MVI_20033.txt": "c97cea953d03cdf05a2edbbff609ff3d98576df3048240724ef5dd5528b264f6",
+      "conf0.25/tracks/dev/yolov8s_botsort_conf0.25/MVI_40141.txt": "07d6f6ad341f7fb00166230080ea6ec2537cbfe2307a68eec3836dfd433cfe38",
+      "conf0.25/tracks/dev/yolov8s_botsort_conf0.25/MVI_40171.txt": "a8ce894b05cf7140dc5db2c5d766ff00f091836e025cc6d6bd0fbd998f207bee",
+      "conf0.25/tracks/dev/yolov8s_botsort_conf0.25/MVI_40773.txt": "5a27424332767a46912012798702b6a50a3800c051d11c9afb759b0591d4a514",
+      "conf0.25/tracks/dev/yolov8s_botsort_conf0.25/MVI_63553.txt": "8c7eb4f29ea0072a66005b3c9a505f4ba33472da53fa7d135fb92213efd875e3"
+    },
+    "counts/0.25": {
+      "conf0.25/reports/track_counts.json": "765af4b1fb5fcb554b9073d1dc51316167bcabc9111adc2b6683bd8193fc6408"
+    },
+    "counting/0.25": {
+      "conf0.25/reports/counting_eval_dev.json": "0eb9a12ed22dbaf313a7089a9d4dc13fa9796f4b35dae5408ea6b489e66d620e",
+      "conf0.25/reports/counting_eval_dev.md": "bdc0978c51f83d4c5ab53ab74b1fd806cbd034360ad5447ff8c8001fdaa2c030"
+    },
+    "tracking/0.25": {
+      "conf0.25/reports/tracking_eval_dev.json": "6807de1c7f0b0612eaa6a87afe9bb84762183c5912ebc1cb94e05bc6c4b1e903",
+      "conf0.25/reports/tracking_eval_dev.md": "d7603366ad5647861379b8a84d21e489d9185f259a4c08697081e805c9eae1e2"
+    },
+    "tracks/yolov8n_bytetrack_conf0.4": {
+      "conf0.4/tracks/dev/yolov8n_bytetrack_conf0.4/timing.json": "8b35599a6eb38eff2237116764373e2dcb810691ea621ad59ea5d4eb4c0efec8",
+      "conf0.4/tracks/dev/yolov8n_bytetrack_conf0.4/MVI_20033.txt": "49b1e5d8bba6527d66d071f70f4526d64a7b6ce24d26da04a5eae443ac9eed92",
+      "conf0.4/tracks/dev/yolov8n_bytetrack_conf0.4/MVI_40141.txt": "b79a1ba2b3708d2f40187860328347210be99ca5961af3ac31b8c39582ac37d5",
+      "conf0.4/tracks/dev/yolov8n_bytetrack_conf0.4/MVI_40171.txt": "24a7bbf8ff5bf70c955b524e1b847b0fb60a56525db690b5146a481afa5e1a13",
+      "conf0.4/tracks/dev/yolov8n_bytetrack_conf0.4/MVI_40773.txt": "5092989a525b0e1f537d0e4c9473a879ca84a4c39c80b592522d971d51f642d7",
+      "conf0.4/tracks/dev/yolov8n_bytetrack_conf0.4/MVI_63553.txt": "6a3a31b8364e5366481e094a709e332ae8b21b153a597b255f918163644fb026"
+    },
+    "tracks/yolov8n_botsort_conf0.4": {
+      "conf0.4/tracks/dev/yolov8n_botsort_conf0.4/timing.json": "140b0c17cfeacb695510ea6021487e55a3d9a648f097a78910171ba288ee3c8a",
+      "conf0.4/tracks/dev/yolov8n_botsort_conf0.4/MVI_20033.txt": "46493696bea0c1997527e057a0cd1d56568a95ed14d6a97ed8166b2cf82f7335",
+      "conf0.4/tracks/dev/yolov8n_botsort_conf0.4/MVI_40141.txt": "b1e63dfe9ada53aa06afb2fc3948eb9a7cc0f79f3394fdc852a62c40b7260ec7",
+      "conf0.4/tracks/dev/yolov8n_botsort_conf0.4/MVI_40171.txt": "5165b563f6e6663a0c88f92c75efacaaa08d69ba0b27d15833df6db786dd4ac5",
+      "conf0.4/tracks/dev/yolov8n_botsort_conf0.4/MVI_40773.txt": "aeaf5811be99834a2ecd3c53c0acf8b4b412feb8b58e77a8c25004e9564b00ff",
+      "conf0.4/tracks/dev/yolov8n_botsort_conf0.4/MVI_63553.txt": "145f838f56e3aa69e1dbbc4f485e4f8ab0525a2e3cbbe535723e607afb9a03d6"
+    },
+    "tracks/yolov8s_bytetrack_conf0.4": {
+      "conf0.4/tracks/dev/yolov8s_bytetrack_conf0.4/timing.json": "7a420a1dbc390521e51644138e89d6b699e478c4f863e79b10cccc25129454d3",
+      "conf0.4/tracks/dev/yolov8s_bytetrack_conf0.4/MVI_20033.txt": "098ef4da09056ea7c79474adc12e2d8b87b055acc5184f50b7ce97ef95768c03",
+      "conf0.4/tracks/dev/yolov8s_bytetrack_conf0.4/MVI_40141.txt": "bc7e96fb537a02068072aeb88c3f8b8c82042139371e91f12afd428cd2fe88f5",
+      "conf0.4/tracks/dev/yolov8s_bytetrack_conf0.4/MVI_40171.txt": "4ff46a7f0053163de7c5005c23552b6644c8cdb66bc91976f5d9d5a4451fae95",
+      "conf0.4/tracks/dev/yolov8s_bytetrack_conf0.4/MVI_40773.txt": "aded9abb255d6868838830159206fabd41d52ab014c98cb1c757a177b56e3009",
+      "conf0.4/tracks/dev/yolov8s_bytetrack_conf0.4/MVI_63553.txt": "d90034ce5306194b9ff3ea5ff4a28685b42f6bcd7e14ab0130835b8ae7c2fa93"
+    },
+    "tracks/yolov8s_botsort_conf0.4": {
+      "conf0.4/tracks/dev/yolov8s_botsort_conf0.4/timing.json": "936dd0ecd5c99ea2bd84a834094cde68674d031364192a5f67a86caaf346dcf1",
+      "conf0.4/tracks/dev/yolov8s_botsort_conf0.4/MVI_20033.txt": "75ab328f64f7028586cdef800ed07edde9de097f4f1130f3bd963ad0b363ccfd",
+      "conf0.4/tracks/dev/yolov8s_botsort_conf0.4/MVI_40141.txt": "fafc1d905645725722c0e1592d6e8bbefd732f9f8b74161d3164c2b1750f8d52",
+      "conf0.4/tracks/dev/yolov8s_botsort_conf0.4/MVI_40171.txt": "11a2b125b4a1691c791925061f8f27564ce13034203bba32012ab0fa99a77e0c",
+      "conf0.4/tracks/dev/yolov8s_botsort_conf0.4/MVI_40773.txt": "fd9235640279ef2713862e8d01be8975c720ed173ef506d276eb588fa9cf6f56",
+      "conf0.4/tracks/dev/yolov8s_botsort_conf0.4/MVI_63553.txt": "ac9b0d76005063917cad91e6964f7e52ca3b2e26de5504e09f59f99213504ccc"
+    },
+    "counts/0.4": {
+      "conf0.4/reports/track_counts.json": "6cc26e453e9ae98c9205a17ce51055d21f1f1bb7e5685dbd95fd394aada46151"
+    },
+    "counting/0.4": {
+      "conf0.4/reports/counting_eval_dev.json": "38ed6799223384562d872baf032e11c90ee7f28895b2ee4adca7ab6bcfd504fd",
+      "conf0.4/reports/counting_eval_dev.md": "94582322e9f4c56bef5cbdac8650a86f85c6b23827097dc76621312aec300393"
+    },
+    "tracking/0.4": {
+      "conf0.4/reports/tracking_eval_dev.json": "b089bad54766ab10b56ff98d07c1306912e2c45701e4dafd9b2020e27d032ed8",
+      "conf0.4/reports/tracking_eval_dev.md": "4c8d0c18ece0abb39326fc0e5c41912f9d402679ee00f1b53d42316ce0373abf"
+    },
+    "tracks/yolov8n_bytetrack_conf0.6": {
+      "conf0.6/tracks/dev/yolov8n_bytetrack_conf0.6/timing.json": "e28e0171ae40eb366c62c369a72fb0b200ac09c80f74d4bc3bf120b6419571ae",
+      "conf0.6/tracks/dev/yolov8n_bytetrack_conf0.6/MVI_20033.txt": "ed4200b70c1161787af6e5127b28599962fc8bd3c1af64a510448fbfc105e1e8",
+      "conf0.6/tracks/dev/yolov8n_bytetrack_conf0.6/MVI_40141.txt": "bd16da59b817145d1ca15fcd7b85fbad0a67eae80a668f7142f0304065d568a9",
+      "conf0.6/tracks/dev/yolov8n_bytetrack_conf0.6/MVI_40171.txt": "dcdd0cd8bede3949b6b23daf706e40dd1ef107a53f7d9b04ac9100a57b076611",
+      "conf0.6/tracks/dev/yolov8n_bytetrack_conf0.6/MVI_40773.txt": "c96e6b61de739f32794f80e1fee6d9c4997cf101a78ede5618a46db8c381f03e",
+      "conf0.6/tracks/dev/yolov8n_bytetrack_conf0.6/MVI_63553.txt": "b96ee1bd37796bb9439bedefbd5ba1cda82356d47fa8dbf1bbb0625e7d6bbb22"
+    },
+    "tracks/yolov8n_botsort_conf0.6": {
+      "conf0.6/tracks/dev/yolov8n_botsort_conf0.6/timing.json": "17a32e8b1c524f14e340df23359a2ec3f0e6cfa8829393feec3a0560d33375fc",
+      "conf0.6/tracks/dev/yolov8n_botsort_conf0.6/MVI_20033.txt": "2d23225dbc5a623d8207d04522d85c88e4cd634ffc5715fd6515cb2a359db122",
+      "conf0.6/tracks/dev/yolov8n_botsort_conf0.6/MVI_40141.txt": "c35192824b1467f755c87b00bc9796c22c5012e46aef1b6ef0f2e2a0294a15ff",
+      "conf0.6/tracks/dev/yolov8n_botsort_conf0.6/MVI_40171.txt": "46778f4de19d3d8361c982e74e761dd3764b18532f369100e2822e05bea631bd",
+      "conf0.6/tracks/dev/yolov8n_botsort_conf0.6/MVI_40773.txt": "a6cd9f85281a5ba048bd2be923918cc44e72936336b2fda7cc2144591e9df51e",
+      "conf0.6/tracks/dev/yolov8n_botsort_conf0.6/MVI_63553.txt": "296efa705c40209583dac35790e267c998db9c9b759d5fea7b0b450f6eaacc29"
+    },
+    "tracks/yolov8s_bytetrack_conf0.6": {
+      "conf0.6/tracks/dev/yolov8s_bytetrack_conf0.6/timing.json": "9b2385874cd288e228ae9c4d732a9cd2180c9d3bd614907624855aa5ef78468d",
+      "conf0.6/tracks/dev/yolov8s_bytetrack_conf0.6/MVI_20033.txt": "52711e2ca4ab15fe3efc11f465d18c0d02db3a59668b4e9838b214c425fef4ad",
+      "conf0.6/tracks/dev/yolov8s_bytetrack_conf0.6/MVI_40141.txt": "44ccf15e8c8b36601d14951d80ac105d04bda37bd82f176b156631c274edd321",
+      "conf0.6/tracks/dev/yolov8s_bytetrack_conf0.6/MVI_40171.txt": "ed38b183e47b6bc7337e043b1b56d99fc0bc65ddfa90fbc8808a4cc1b66667ae",
+      "conf0.6/tracks/dev/yolov8s_bytetrack_conf0.6/MVI_40773.txt": "dd77ebd1d57cc8bc6bc34de3e40896eb3e59826ae62fb00a32f67f27e2567b55",
+      "conf0.6/tracks/dev/yolov8s_bytetrack_conf0.6/MVI_63553.txt": "4c24d14f76d61589cd1c47ca0e6f6df5771ad7fe7968a96ae57ec46054a9d6e0"
+    },
+    "tracks/yolov8s_botsort_conf0.6": {
+      "conf0.6/tracks/dev/yolov8s_botsort_conf0.6/timing.json": "9f99ea2587bcc7f1d8b48d31c5b4124b1e02443c7c8a33245f8f4779dec51ef2",
+      "conf0.6/tracks/dev/yolov8s_botsort_conf0.6/MVI_20033.txt": "1891cd0b5093bea5fc5b70db1816307dc633ebdd1d667c780da3e6282e59836e",
+      "conf0.6/tracks/dev/yolov8s_botsort_conf0.6/MVI_40141.txt": "187ab9f43719ebb3a35de34c6ac5dceab990ab0f6a49bf92de3a5299f445788d",
+      "conf0.6/tracks/dev/yolov8s_botsort_conf0.6/MVI_40171.txt": "981f87ef175665a3d718232216a94572c14eee4d885f594094d4125cbb7b9ef3",
+      "conf0.6/tracks/dev/yolov8s_botsort_conf0.6/MVI_40773.txt": "d7aed0da073207bfb2dafb7c0c17f8e1c90eab88b411b3751146248e4dad7a79",
+      "conf0.6/tracks/dev/yolov8s_botsort_conf0.6/MVI_63553.txt": "b7a20062e29a2910372c40299d6a868cef71fe528589d4a4d3ef54a6b3d54b31"
+    },
+    "counts/0.6": {
+      "conf0.6/reports/track_counts.json": "d0427bc2e2c1d3233d9e53948ec71ce8ac65bedff3414b98d22222fd08d1bd16"
+    },
+    "counting/0.6": {
+      "conf0.6/reports/counting_eval_dev.json": "986fb3a3bf0340437781e6704a4ce45841afa9e80c518e2c734cf61cbcfc8c0f",
+      "conf0.6/reports/counting_eval_dev.md": "d7a6dcee59e623974266bd6d34c69db82db297174fc4ae68eedaff22ba2ed67d"
+    },
+    "tracking/0.6": {
+      "conf0.6/reports/tracking_eval_dev.json": "d1136cbd1840d41fbf3776f41e8988b03a25ab4572a3635d4d010fe7588c7595",
+      "conf0.6/reports/tracking_eval_dev.md": "32ea9460ef84ff88b05c205a9ae5efc5ba1291f2898e6b720ccd8614b2ed21a7"
+    }
+  },
+  "status": "complete",
+  "weights": {
+    "yolov8n.pt": {
+      "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\models\\yolov8n.pt",
+      "sha256": "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36"
+    },
+    "yolov8s.pt": {
+      "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\models\\yolov8s.pt",
+      "sha256": "1f47a78bf100391c2a140b7ac73a1caae18c32779be7d310658112f7ac9aa78a"
+    }
+  },
+  "tracking_environment": {
+    "device": "NVIDIA GeForce RTX 3060",
+    "torch": "2.11.0+cu128",
+    "ultralytics": "8.4.201",
+    "opencv": "5.0.0",
+    "numpy": "2.5.4",
+    "python": "3.14.3",
+    "cuda": "12.8",
+    "cudnn": 91900
+  },
+  "complete": true
+}

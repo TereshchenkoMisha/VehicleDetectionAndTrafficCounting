@@ -16,15 +16,15 @@
 *.safetensors
 *.ckpt
 
-# Regenerable run results: tracks, annotated videos, tables and previews.
-/outputs/
+
+# Ignore experiments by default; expose only the selected final run below.
+/outputs/*
 
 # Keep experiment inputs versioned; regenerate all other reports.
 /reports/*
 !/reports/splits.json
 !/reports/ignored_regions.json
 !/reports/counting_lines.json
-!/reports/failure_review.json
 
 # Ultralytics output folders created by YOLO train/val/predict runs
 runs/
@@ -228,3 +228,25 @@ GEMINI.md
 # Keep portable dependency/configuration inputs versioned: pyproject.toml, requirements*.txt,
 # lock files, configs/*.yaml and the three reference reports above.
 # Source notebooks stay versioned; executed copies belong under outputs/.
+
+# Final RTX 3060 experiment imported from ../runned/.
+# Include the actual MOT/GT, metrics, timing and rebuilt charts/tables in Git.
+!/reports/README.md
+!/reports/run_20261103_170422/
+!/reports/gt_mot/
+!/outputs/README.md
+!/outputs/tracks_run_20261103_170422/
+!/outputs/reports_run_20261103_170422/
+!/outputs/ablation_run_20261103_final/
+# Keep embedded notebook outputs local; source notebooks remain versioned.
+/outputs/reports_run_20261103_170422/notebooks/
+
+# Compact import/verification evidence; exclude backups and temporary files.
+!/outputs/import_review_run_20261103_170422/
+/outputs/import_review_run_20261103_170422/*
+!/outputs/import_review_run_20261103_170422/import_manifest.json
+!/outputs/import_review_run_20261103_170422/validation.json
+!/outputs/import_review_run_20261103_170422/main_verification.log
+!/outputs/import_review_run_20261103_170422/ablation_verification.log
+!/outputs/import_review_run_20261103_170422/figures_main.log
+!/outputs/import_review_run_20261103_170422/figures_ablation.log
