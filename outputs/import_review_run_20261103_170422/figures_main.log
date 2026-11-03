@@ -1,0 +1,50 @@
+Tag: run_20261103_170422
+Repository: /Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting
+Python: /Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/../../.venv/bin/python
+
+Checking inputs of stages 9-9 (notebook .. notebook), tag run_20261103_170422
+  [OK]      stage 9  notebooks/results.ipynb  - notebook (external)
+  [OK]      stage 9  outputs/tracks_run_20261103_170422/dev  - tracks of split dev (from stage 4 'tracking' of an earlier run - pass its --tag)
+  [OK]      stage 9  reports/run_20261103_170422/detection_yolov8n_dev.json  - detector report (from stage 3 'detectors' of an earlier run - pass its --tag)
+  [OK]      stage 9  reports/run_20261103_170422/detection_yolov8s_dev.json  - detector report (from stage 3 'detectors' of an earlier run - pass its --tag)
+  [OK]      stage 9  reports/run_20261103_170422/tracking_eval_dev.json  - tracking evaluation (from stage 5 'trackeval' of an earlier run - pass its --tag)
+  [OK]      stage 9  outputs/tracks_run_20261103_170422/test  - tracks of split test (from stage 4 'tracking' of an earlier run - pass its --tag)
+  [OK]      stage 9  reports/run_20261103_170422/detection_yolov8n_test.json  - detector report (from stage 3 'detectors' of an earlier run - pass its --tag)
+  [OK]      stage 9  reports/run_20261103_170422/detection_yolov8s_test.json  - detector report (from stage 3 'detectors' of an earlier run - pass its --tag)
+  [OK]      stage 9  reports/run_20261103_170422/tracking_eval_test.json  - tracking evaluation (from stage 5 'trackeval' of an earlier run - pass its --tag)
+
+Checking input content
+  all content checks passed
+
+====================================================================================================
+>>> Environment check
+    python -c import torch, ultralytics, cv2, platform; print('python', platform.python_version()); print('torch', torch.__version__, '| cuda available:', torch.cuda.is_available(), '| device:', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'cpu'); print('ultralytics', ultralytics.__version__, '| opencv', cv2.__version__)
+====================================================================================================
+python 3.13.2
+torch 2.14.1 | cuda available: False | device: cpu
+ultralytics 8.4.190 | opencv 5.0.0
+
+====================================================================================================
+>>> 9. Tables and charts (dev)
+    python -m jupyter nbconvert --to notebook --execute notebooks/results.ipynb --output-dir outputs/reports_run_20261103_170422/notebooks --output results_dev.ipynb
+====================================================================================================
+[NbConvertApp] Converting notebook notebooks/results.ipynb to notebook
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+[NbConvertApp] Writing 389317 bytes to outputs/reports_run_20261103_170422/notebooks/results_dev.ipynb
+
+====================================================================================================
+>>> 9. Tables and charts (test)
+    python -m jupyter nbconvert --to notebook --execute notebooks/results.ipynb --output-dir outputs/reports_run_20261103_170422/notebooks --output results_test.ipynb
+====================================================================================================
+[NbConvertApp] Converting notebook notebooks/results.ipynb to notebook
+[IPKernelApp] WARNING | Kernel is running over TCP without encryption. All communication (including code and outputs) is sent in plain text and is susceptible to eavesdropping. Use IPC transport or launch with kernel manager-provisioned CurveZMQ keys to enable transport encryption.
+[NbConvertApp] Writing 393695 bytes to outputs/reports_run_20261103_170422/notebooks/results_test.ipynb
+
+====================================================================================================
+FINISHED stages 9-9. Tag: run_20261103_170422
+
+Step                                                                                              Seconds  Exit
+Environment check                                                                                     1.3     0
+9. Tables and charts (dev)                                                                            3.5     0
+9. Tables and charts (test)                                                                           3.0     0
+Results: reports/run_20261103_170422   Tracks: outputs/tracks_run_20261103_170422   Charts: outputs/reports_run_20261103_170422

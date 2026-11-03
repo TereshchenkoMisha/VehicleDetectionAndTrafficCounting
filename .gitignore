@@ -1,10 +1,252 @@
-/data/
-/models/*
+# ---------------------------------------------------------------
+# Project-specific
+# ---------------------------------------------------------------
+# Datasets (UA-DETRAC raw + converted YOLO store) - large, downloaded separately
+/data/**
+!/data/**/
+!/data/**/.gitkeep
 
-
+# Pretrained / trained weights (downloaded automatically by Ultralytics)
+/models/
 *.pt
+*.pth
+*.onnx
+*.engine
+*.torchscript
+*.safetensors
+*.ckpt
 
+
+# Ignore experiments by default; expose only the selected final run below.
+/outputs/*
+
+# Keep experiment inputs versioned; regenerate all other reports.
+/reports/*
+!/reports/splits.json
+!/reports/ignored_regions.json
+!/reports/counting_lines.json
+
+# Ultralytics output folders created by YOLO train/val/predict runs
+runs/
+
+# Videos and large media produced by checks
+*.mp4
+*.avi
+*.mov
+
+# Personal review notes
+.nocommit/
+
+# ---------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------
 __pycache__/
-.venv/
+*.py[cod]
+*$py.class
+*.so
 
-reports/sanity/
+# Virtual environments
+venv/
+.venv/
+/.venv*/
+/venv*/
+__pypackages__/
+.virtualenv/
+env/
+ENV/
+.python-version
+uv.lock
+
+# Packaging / build
+build/
+dist/
+*.egg-info/
+*.egg
+.eggs/
+pip-wheel-metadata/
+wheels/
+*.whl
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Test / coverage / type-check / lint caches
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+coverage.xml
+*.cover
+.mypy_cache/
+.dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+
+# ---------------------------------------------------------------
+# Jupyter
+# ---------------------------------------------------------------
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+.nbcache/
+*.nbconvert.ipynb
+*.executed.ipynb
+*_executed.ipynb
+/.jupyter/
+/.ipython/
+/.matplotlib/
+/kernel-*.json
+
+# ---------------------------------------------------------------
+# Experiment tracking / ML tooling
+# ---------------------------------------------------------------
+wandb/
+mlruns/
+lightning_logs/
+tensorboard/
+events.out.tfevents.*
+.dvc/cache
+.dvc/tmp
+
+# ---------------------------------------------------------------
+# Secrets and local config
+# ---------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+.envrc
+.direnv/
+*.pem
+*.key
+secrets.*
+
+# ---------------------------------------------------------------
+# Editors / IDEs
+# ---------------------------------------------------------------
+.vscode/*
+!.vscode/settings.json.example
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# ---------------------------------------------------------------
+# OS files
+# ---------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ---------------------------------------------------------------
+# Logs and temp files
+# ---------------------------------------------------------------
+*.log
+*.tmp
+*.bak
+tmp/
+temp/
+/runtime/
+/backups/
+/*.zip
+/*.rar
+/*.7z
+
+# ---------------------------------------------------------------
+# AI workspace specific files
+# ---------------------------------------------------------------
+.claude/
+CLAUDE.local.md
+
+# OpenAI Codex CLI
+.codex/
+
+# OpenCode
+.opencode/
+
+# Cursor
+.cursor/
+.cursorignore
+.cursorindexingignore
+
+# Windsurf / Codeium
+.windsurf/
+.codeium/
+.windsurfrules
+
+# Cline / Roo Code / Kilo Code
+.cline/
+.clinerules/
+.roo/
+.roomodes
+.kilocode/
+
+# Aider
+.aider*
+
+# Continue
+.continue/
+
+# Gemini CLI / Qwen Code
+.gemini/
+.qwen/
+
+# GitHub Copilot (local state only; .github/copilot-instructions.md stays versioned)
+.copilot/
+
+# Kiro, Trae, Augment, JetBrains Junie, Amp, Zed
+.kiro/
+.trae/
+.augment/
+.junie/
+.amp/
+.zed/
+
+# Agent memory / task tools
+.serena/
+.taskmaster/
+.superpowers/
+.specstory/
+
+# Private agent instruction files (remove these rules if the team chooses to version them):
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+
+# Unfinished tracking runs
+*.partial/
+
+# Keep portable dependency/configuration inputs versioned: pyproject.toml, requirements*.txt,
+# lock files, configs/*.yaml and the three reference reports above.
+# Source notebooks stay versioned; executed copies belong under outputs/.
+
+# Final RTX 3060 experiment imported from ../runned/.
+# Include the actual MOT/GT, metrics, timing and rebuilt charts/tables in Git.
+!/reports/README.md
+!/reports/run_20261103_170422/
+!/reports/gt_mot/
+!/outputs/README.md
+!/outputs/tracks_run_20261103_170422/
+!/outputs/reports_run_20261103_170422/
+!/outputs/ablation_run_20261103_final/
+# Keep embedded notebook outputs local; source notebooks remain versioned.
+/outputs/reports_run_20261103_170422/notebooks/
+
+# Compact import/verification evidence; exclude backups and temporary files.
+!/outputs/import_review_run_20261103_170422/
+/outputs/import_review_run_20261103_170422/*
+!/outputs/import_review_run_20261103_170422/import_manifest.json
+!/outputs/import_review_run_20261103_170422/validation.json
+!/outputs/import_review_run_20261103_170422/main_verification.log
+!/outputs/import_review_run_20261103_170422/ablation_verification.log
+!/outputs/import_review_run_20261103_170422/figures_main.log
+!/outputs/import_review_run_20261103_170422/figures_ablation.log

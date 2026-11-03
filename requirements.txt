@@ -1,14 +1,1 @@
-ultralytics>=8.2
-torch>=2.1
-torchmetrics[detection]
-supervision
-opencv-python
-pandas
-numpy
-trackeval
-matplotlib
-seaborn
-tabulate
-pillow
-tqdm
-jupyter
+-e .

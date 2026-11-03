@@ -1,0 +1,14 @@
+\begin{table}
+\caption{Comparison of detector quality and pipeline speed for four configurations}
+\label{tab:models_comparison_test}
+\begin{tabular}{lllrrrrrrrr}
+\toprule
+Approach & Detector & Tracker & mAP_50 (%) & mAP_50_95 (%) & mAP_75 (%) & Precision_macro (%) & Recall_macro (%) & F1_macro (%) & FPS & Latency_ms \\
+\midrule
+YOLOv8n + ByteTrack & yolov8n & bytetrack & 71.77 & 49.54 & 61.30 & 55.19 & 85.84 & 60.18 & 99.54 & 10.05 \\
+YOLOv8n + BoT-SORT & yolov8n & botsort & 71.77 & 49.54 & 61.30 & 55.19 & 85.84 & 60.18 & 60.64 & 16.49 \\
+YOLOv8s + ByteTrack & yolov8s & bytetrack & 76.70 & 55.56 & 69.83 & 58.04 & 88.99 & 64.54 & 73.08 & 13.68 \\
+YOLOv8s + BoT-SORT & yolov8s & botsort & 76.70 & 55.56 & 69.83 & 58.04 & 88.99 & 64.54 & 50.23 & 19.91 \\
+\bottomrule
+\end{tabular}
+\end{table}

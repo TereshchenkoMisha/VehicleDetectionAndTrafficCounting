@@ -1,0 +1,37 @@
+{
+  "main_run": "run_20261103_170422",
+  "ablation": "ablation_run_20261103_final",
+  "copied_files": 6020,
+  "imported_experiment_files_unchanged": true,
+  "main_mot": 48,
+  "ablation_mot": 80,
+  "notebooks": [
+    {
+      "path": "outputs/reports_run_20261103_170422/notebooks/results_test.ipynb",
+      "code_cells": 9,
+      "executed": 9,
+      "errors": []
+    },
+    {
+      "path": "outputs/reports_run_20261103_170422/notebooks/results_dev.ipynb",
+      "code_cells": 9,
+      "executed": 9,
+      "errors": []
+    },
+    {
+      "path": "outputs/ablation_run_20261103_final/analysis/ablation_executed.ipynb",
+      "code_cells": 5,
+      "executed": 5,
+      "errors": []
+    }
+  ],
+  "charts": 20,
+  "tables": 28,
+  "ablation_exports_hashes_match": true,
+  "git_visibility_checks_pass": true,
+  "shared_raw_used_for_verification": "/Users/mikhail/Documents/Innopolis/CV/raw/UA-DETRAC",
+  "source_notebook_sha256": {
+    "results.ipynb": "7b04177c2e54013f1b07d25f3d03f5ea611942425aaf7209bea4be4f76812273",
+    "ablation.ipynb": "6a8d99927d21363448f41bede9a309180490f7bd96e1bac10068bd72da2aaef5"
+  }
+}

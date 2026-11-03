@@ -1,0 +1,70 @@
+
+===== dev =====
+[PASS] detector yolov8n/dev mAP in range  (mAP@0.5=0.6123, frames=1184)
+[PASS] detector yolov8s/dev mAP in range  (mAP@0.5=0.6445, frames=1184)
+[PASS] dev: 4 tracking configurations finished  (['yolov8n_botsort_conf0.25', 'yolov8n_bytetrack_conf0.25', 'yolov8s_botsort_conf0.25', 'yolov8s_bytetrack_conf0.25'])
+[PASS] dev/yolov8n_botsort_conf0.25 complete and consistent  (5924 frames, 63.5 FPS (det 9.5 ms, trk 6.2 ms))
+[PASS] yolov8n_botsort_conf0.25 detector preserves low-score observations
+[PASS] yolov8n_botsort_conf0.25 tracker decision thresholds match CLI
+[PASS] yolov8n_botsort_conf0.25 deterministic inference
+[PASS] yolov8n_botsort_conf0.25 selected NMS policy
+[PASS] dev/yolov8n_bytetrack_conf0.25 complete and consistent  (5924 frames, 78.6 FPS (det 11.5 ms, trk 1.2 ms))
+[PASS] yolov8n_bytetrack_conf0.25 detector preserves low-score observations
+[PASS] yolov8n_bytetrack_conf0.25 tracker decision thresholds match CLI
+[PASS] yolov8n_bytetrack_conf0.25 deterministic inference
+[PASS] yolov8n_bytetrack_conf0.25 selected NMS policy
+[PASS] dev/yolov8s_botsort_conf0.25 complete and consistent  (5924 frames, 53.6 FPS (det 12.6 ms, trk 6.1 ms))
+[PASS] yolov8s_botsort_conf0.25 detector preserves low-score observations
+[PASS] yolov8s_botsort_conf0.25 tracker decision thresholds match CLI
+[PASS] yolov8s_botsort_conf0.25 deterministic inference
+[PASS] yolov8s_botsort_conf0.25 selected NMS policy
+[PASS] dev/yolov8s_bytetrack_conf0.25 complete and consistent  (5924 frames, 75.0 FPS (det 12.5 ms, trk 0.9 ms))
+[PASS] yolov8s_bytetrack_conf0.25 detector preserves low-score observations
+[PASS] yolov8s_bytetrack_conf0.25 tracker decision thresholds match CLI
+[PASS] yolov8s_bytetrack_conf0.25 deterministic inference
+[PASS] yolov8s_bytetrack_conf0.25 selected NMS policy
+[info] GT total dev: 251
+[PASS] tracking metrics dev/yolov8n_botsort_conf0.25 in range  (HOTA=65.02 IDF1=78.43 MOTA=64.75 IDSW=68)
+[PASS] tracking metrics dev/yolov8n_bytetrack_conf0.25 in range  (HOTA=61.10 IDF1=74.80 MOTA=60.65 IDSW=104)
+[PASS] tracking metrics dev/yolov8s_botsort_conf0.25 in range  (HOTA=68.21 IDF1=81.39 MOTA=67.84 IDSW=56)
+[PASS] tracking metrics dev/yolov8s_bytetrack_conf0.25 in range  (HOTA=64.38 IDF1=78.79 MOTA=62.78 IDSW=71)
+[PASS] counting metrics dev/yolov8n_botsort_conf0.25  (MAE=6.80 WAPE=13.55% meanSCE=-6.80)
+[PASS] counting metrics dev/yolov8n_bytetrack_conf0.25  (MAE=6.40 WAPE=12.75% meanSCE=-6.40)
+[PASS] counting metrics dev/yolov8s_botsort_conf0.25  (MAE=4.20 WAPE=8.37% meanSCE=-3.00)
+[PASS] counting metrics dev/yolov8s_bytetrack_conf0.25  (MAE=4.20 WAPE=8.37% meanSCE=-3.00)
+
+===== test =====
+[PASS] detector yolov8n/test mAP in range  (mAP@0.5=0.7177, frames=1718)
+[PASS] detector yolov8s/test mAP in range  (mAP@0.5=0.767, frames=1718)
+[PASS] test: 4 tracking configurations finished  (['yolov8n_botsort_conf0.25', 'yolov8n_bytetrack_conf0.25', 'yolov8s_botsort_conf0.25', 'yolov8s_bytetrack_conf0.25'])
+[PASS] test/yolov8n_botsort_conf0.25 complete and consistent  (8590 frames, 60.6 FPS (det 9.9 ms, trk 6.6 ms))
+[PASS] yolov8n_botsort_conf0.25 detector preserves low-score observations
+[PASS] yolov8n_botsort_conf0.25 tracker decision thresholds match CLI
+[PASS] yolov8n_botsort_conf0.25 deterministic inference
+[PASS] yolov8n_botsort_conf0.25 selected NMS policy
+[PASS] test/yolov8n_bytetrack_conf0.25 complete and consistent  (8590 frames, 99.5 FPS (det 9.1 ms, trk 0.9 ms))
+[PASS] yolov8n_bytetrack_conf0.25 detector preserves low-score observations
+[PASS] yolov8n_bytetrack_conf0.25 tracker decision thresholds match CLI
+[PASS] yolov8n_bytetrack_conf0.25 deterministic inference
+[PASS] yolov8n_bytetrack_conf0.25 selected NMS policy
+[PASS] test/yolov8s_botsort_conf0.25 complete and consistent  (8590 frames, 50.2 FPS (det 13.2 ms, trk 6.7 ms))
+[PASS] yolov8s_botsort_conf0.25 detector preserves low-score observations
+[PASS] yolov8s_botsort_conf0.25 tracker decision thresholds match CLI
+[PASS] yolov8s_botsort_conf0.25 deterministic inference
+[PASS] yolov8s_botsort_conf0.25 selected NMS policy
+[PASS] test/yolov8s_bytetrack_conf0.25 complete and consistent  (8590 frames, 73.1 FPS (det 12.7 ms, trk 0.9 ms))
+[PASS] yolov8s_bytetrack_conf0.25 detector preserves low-score observations
+[PASS] yolov8s_bytetrack_conf0.25 tracker decision thresholds match CLI
+[PASS] yolov8s_bytetrack_conf0.25 deterministic inference
+[PASS] yolov8s_bytetrack_conf0.25 selected NMS policy
+[info] GT total test: 250
+[PASS] tracking metrics test/yolov8n_botsort_conf0.25 in range  (HOTA=66.18 IDF1=79.48 MOTA=69.93 IDSW=122)
+[PASS] tracking metrics test/yolov8n_bytetrack_conf0.25 in range  (HOTA=64.51 IDF1=78.66 MOTA=69.05 IDSW=165)
+[PASS] tracking metrics test/yolov8s_botsort_conf0.25 in range  (HOTA=69.19 IDF1=82.26 MOTA=71.79 IDSW=76)
+[PASS] tracking metrics test/yolov8s_bytetrack_conf0.25 in range  (HOTA=67.02 IDF1=80.91 MOTA=70.98 IDSW=104)
+[PASS] counting metrics test/yolov8n_botsort_conf0.25  (MAE=2.43 WAPE=6.80% meanSCE=+1.57)
+[PASS] counting metrics test/yolov8n_bytetrack_conf0.25  (MAE=1.71 WAPE=4.80% meanSCE=+0.86)
+[PASS] counting metrics test/yolov8s_botsort_conf0.25  (MAE=1.86 WAPE=5.20% meanSCE=+1.00)
+[PASS] counting metrics test/yolov8s_bytetrack_conf0.25  (MAE=2.00 WAPE=5.60% meanSCE=+0.57)
+
+0 check(s) failed.

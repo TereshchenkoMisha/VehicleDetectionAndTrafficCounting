@@ -1,0 +1,167 @@
+"""Tracking quality (HOTA, MOTA, IDF1, IDSW) of every tracking run against GT, via TrackEval.
+
+    python scripts/evaluate_tracking.py --splits dev test
+
+For each configuration of a split, every sequence's tracker output is compared with the GT of the same
+sequence. Boxes whose centre is in an ignored region are dropped from both sides first. The script
+writes per-sequence metrics, their macro average (every sequence weighs the same) and the
+dataset-level metrics TrackEval computes by merging all sequences.
+
+Needs:
+    outputs/tracks/<split>/<configuration>/    complete runs (run_tracking)
+    data/raw/UA-DETRAC/                        frame lists, and GT for the conversion below
+    reports/splits.json, reports/ignored_regions.json (--ignored)
+    reports/gt_mot/<sequence>.txt              GT in MOT format; created from the XML annotations if missing
+Produces:
+    <out-prefix>_<split>.json                  per sequence, macro average and dataset-level combination
+    <out-prefix>_<split>.md                    the same as tables (default prefix reports/tracking_eval)
+"""
+
+import argparse
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+from tqdm import tqdm
+
+from src.config import CLASSES, RAW_ROOT, REPORTS_DIR, TRACKS_DIR
+from src.data.export import convert_all
+from src.data.sequences import list_frames
+from src.eval.tracking import combine_sequence_metrics, evaluate_sequence
+from src.eval.validation import run_dirs, validate_tracking_run
+from src.utils import file_info, read_json, write_json
+
+# Metrics added up over sequences (counters), and metrics averaged over sequences (rates)
+SUMS: tuple[str, ...] = ("IDSW", "MT", "ML", "Frag", "CLR_TP", "CLR_FN", "CLR_FP", "GT_dets", "TRK_dets")
+MEANS: tuple[str, ...] = ("HOTA", "DetA", "AssA", "LocA", "MOTA", "MOTP", "IDF1", "IDP", "IDR", "HOTA_50")
+
+
+def aggregate(per_seq: dict[str, dict[str, Any]], sequences: list[str]) -> dict[str, Any]:
+    """Combine per-sequence metrics: macro average of the rates, sum of the counters.
+
+    Requires results for exactly the expected sequences, so a missing sequence cannot make a
+    configuration look better.
+    """
+    if not sequences or set(per_seq) != set(sequences):
+        raise ValueError("Cannot aggregate incomplete tracking results: "
+                         f"missing={sorted(set(sequences) - set(per_seq))}, "
+                         f"unexpected={sorted(set(per_seq) - set(sequences))}")
+    return {"aggregation": "macro average with equal sequence weights",
+            "mean": {k: float(np.mean([m["all"][k] for m in per_seq.values()])) for k in MEANS},
+            "sum": {k: sum(m["all"][k] for m in per_seq.values()) for k in SUMS},
+            "n_seq": len(per_seq)}
+
+
+def write_markdown(path: Path, split: str, results: dict[str, Any], seqs: list[str]) -> None:
+    """Write three tables: macro average per configuration, dataset-level metrics, and every sequence."""
+    cfgs = list(results)
+    lines = [f"# Tracking evaluation - {split} split", "",
+             "Metrics: **HOTA** (geometric mean of DetA & AssA, averaged over IoU 0.05-0.95), "
+             "**MOTA** (1 - (FN+FP+IDSW)/GT), **IDSW** (identity switches), **IDF1** (F1 of identity matching).", "",
+             f"Number of configs: {len(cfgs)}, number of sequences: {len(seqs)}.",
+             "GT and tracker boxes with the centre inside an ignored region are excluded.", "",
+             "## Macro average across sequences", "",
+             "| Config | HOTA (%) | DetA (%) | AssA (%) | MOTA (%) | MOTP (%) | IDF1 (%) | IDSW |",
+             "|---|---|---|---|---|---|---|---|"]
+    for cfg in cfgs:
+        a, s = results[cfg]["aggregate"]["mean"], results[cfg]["aggregate"]["sum"]
+        lines.append(f"| {cfg} | {a['HOTA']:.2f} | {a['DetA']:.2f} | {a['AssA']:.2f} | "
+                     f"{a['MOTA']:.2f} | {a['MOTP']:.2f} | {a['IDF1']:.2f} | {s['IDSW']} |")
+
+    lines += ["", "## Combined dataset metrics (TrackEval combination of all sequences)", "",
+              "| Config | HOTA (%) | MOTA (%) | IDF1 (%) |", "|---|---|---|---|"]
+    for cfg in cfgs:
+        c = results[cfg]["aggregate"]["combined"]
+        lines.append(f"| {cfg} | {c['HOTA']:.2f} | {c['MOTA']:.2f} | {c['IDF1']:.2f} |")
+
+    lines += ["", "## Per-sequence (HOTA / MOTA / IDF1 / IDSW)", "",
+              "| Config | Sequence | HOTA (%) | MOTA (%) | IDF1 (%) | IDSW |", "|---|---|---|---|---|---|"]
+    for cfg in cfgs:
+        for seq in seqs:
+            m = results[cfg]["per_seq"][seq]["all"]
+            lines.append(f"| {cfg} | {seq} | {m['HOTA']:.2f} | {m['MOTA']:.2f} | {m['IDF1']:.2f} | {m['IDSW']} |")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def parse_args() -> argparse.Namespace:
+    """Command-line options; see the module docstring for what the script reads and writes."""
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--splits", nargs="+", choices=["dev", "test"], default=["dev", "test"])
+    ap.add_argument("--gt-mot-dir", default=str(REPORTS_DIR / "gt_mot"))
+    ap.add_argument("--tracks-dir", default=str(TRACKS_DIR))
+    ap.add_argument("--out-prefix", default=str(REPORTS_DIR / "tracking_eval"))
+    ap.add_argument("--prepare-gt-only", action="store_true", help="export selected GT MOT files and exit")
+    ap.add_argument("--classes-aware", action="store_true", help="also compute car/bus/truck tracking metrics")
+    ap.add_argument("--raw", default=str(RAW_ROOT))
+    ap.add_argument("--ignored", default=str(REPORTS_DIR / "ignored_regions.json"))
+    return ap.parse_args()
+
+
+def main() -> None:
+    """For each split: check the inputs, evaluate every configuration and sequence, write the reports."""
+    args = parse_args()
+    all_splits = read_json(REPORTS_DIR / "splits.json")
+    if args.prepare_gt_only:
+        sequences = [seq for split in args.splits for seq in all_splits[split]]
+        convert_all(sequences, args.gt_mot_dir, raw_root=args.raw, ignored_path=args.ignored)
+        return
+    gt_dir = Path(args.gt_mot_dir)
+    ignored = read_json(args.ignored)
+
+    for split in args.splits:
+        # Inputs: finished runs, GT for every sequence (converted from the XML when missing), and
+        # a consistency check of each run against the raw dataset
+        seqs: list[str] = list(all_splits[split])
+        if set(seqs) - set(ignored):
+            raise SystemExit(f"Missing ignored region entries for {sorted(set(seqs) - set(ignored))}")
+        split_dir = Path(args.tracks_dir) / split
+        if not split_dir.is_dir():
+            raise SystemExit(f"Tracking directory does not exist: {split_dir}")
+        cfg_dirs = run_dirs(split_dir)
+        if not cfg_dirs:
+            raise SystemExit(f"No tracking configurations found in {split_dir}")
+        if any(not (gt_dir / f"{seq}.txt").is_file() for seq in seqs):
+            convert_all(seqs, gt_dir, raw_root=args.raw, ignored_path=args.ignored)
+        for cfg_dir in cfg_dirs:
+            try:
+                validate_tracking_run(cfg_dir, seqs, raw_root=Path(args.raw), split=split, ignored=ignored)
+            except (ValueError, OSError) as exc:
+                raise SystemExit(str(exc)) from exc
+
+        # Metrics per configuration and sequence. The full frame list of each sequence is passed so
+        # frames where the tracker output nothing still count as frames.
+        frame_ids = {seq: [fid for fid, _ in list_frames(seq, args.raw)] for seq in seqs}
+        results: dict[str, Any] = {}
+        for cfg_dir in cfg_dirs:
+            raw_results: dict[str, Any] = {}  # TrackEval's raw output per sequence, for the dataset-level merge
+            result = {"per_seq": {}, "protocol": {"ignored_rule": "box centre inside region"},
+                      "sources": {"timing": file_info(cfg_dir / "timing.json"), "ignored": file_info(args.ignored),
+                                  "tracks": {}, "gt": {}}}
+            for seq in tqdm(seqs, desc=f"{split}/{cfg_dir.name}", unit="seq"):
+                raw_results[seq] = {}
+                result["per_seq"][seq] = evaluate_sequence(
+                    gt_dir / f"{seq}.txt",
+                    cfg_dir / f"{seq}.txt",
+                    frame_ids=frame_ids[seq],
+                    raw_results=raw_results[seq],
+                    ignored_regions=ignored[seq],
+                    classes=CLASSES if args.classes_aware else None,
+                )
+                result["sources"]["tracks"][seq] = file_info(cfg_dir / f"{seq}.txt")
+                result["sources"]["gt"][seq] = file_info(gt_dir / f"{seq}.txt")
+            result["aggregate"] = aggregate(result["per_seq"], seqs)
+            result["aggregate"]["combined"] = combine_sequence_metrics(raw_results)
+            results[cfg_dir.name] = result
+
+        out_json, out_md = Path(f"{args.out_prefix}_{split}.json"), Path(f"{args.out_prefix}_{split}.md")
+        write_json(out_json, results)
+        write_markdown(out_md, split, results, seqs)
+        print(f"[done] {split}: {out_md} + {out_json}")
+        print(f"{'Config':<35} {'HOTA%':>7} {'MOTA%':>7} {'IDF1%':>7} {'IDSW':>6}")
+        for cfg, r in results.items():
+            a, s = r["aggregate"]["mean"], r["aggregate"]["sum"]
+            print(f"{cfg:<35} {a['HOTA']:>7.2f} {a['MOTA']:>7.2f} {a['IDF1']:>7.2f} {s['IDSW']:>6}")
+
+
+if __name__ == "__main__":
+    main()

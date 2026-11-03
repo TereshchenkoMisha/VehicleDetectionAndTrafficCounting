@@ -1,0 +1,922 @@
+{
+  "yolov8n_botsort_conf0.1": {
+    "per_seq": {
+      "MVI_20033": {
+        "all": {
+          "HOTA": 76.60103208792236,
+          "DetA": 73.27877597563567,
+          "AssA": 80.22715718884939,
+          "LocA": 84.71057935322757,
+          "HOTA_50": 92.85981340605338,
+          "MOTA": 89.00221729490022,
+          "MOTP": 82.75260740468869,
+          "IDSW": 0,
+          "MT": 24,
+          "ML": 0,
+          "Frag": 28,
+          "CLR_TP": 4391,
+          "CLR_FN": 119,
+          "CLR_FP": 377,
+          "IDF1": 94.65402026298771,
+          "IDP": 92.09312080536914,
+          "IDR": 97.36141906873614,
+          "GT_IDs": 25,
+          "TRK_IDs": 60,
+          "GT_dets": 4510,
+          "TRK_dets": 4768,
+          "frames": 784
+        }
+      },
+      "MVI_40141": {
+        "all": {
+          "HOTA": 59.03294403261088,
+          "DetA": 51.94732877214066,
+          "AssA": 67.35490844689272,
+          "LocA": 83.67165610684614,
+          "HOTA_50": 72.43962351037851,
+          "MOTA": 48.264223722275794,
+          "MOTP": 80.81938573047056,
+          "IDSW": 18,
+          "MT": 31,
+          "ML": 0,
+          "Frag": 41,
+          "CLR_TP": 6021,
+          "CLR_FN": 201,
+          "CLR_FP": 3000,
+          "IDF1": 73.66004067440792,
+          "IDP": 62.2325684513912,
+          "IDR": 90.2282224365156,
+          "GT_IDs": 33,
+          "TRK_IDs": 99,
+          "GT_dets": 6222,
+          "TRK_dets": 9021,
+          "frames": 1600
+        }
+      },
+      "MVI_40171": {
+        "all": {
+          "HOTA": 55.21821487538844,
+          "DetA": 45.726541063419766,
+          "AssA": 66.83009486172634,
+          "LocA": 87.8523421306301,
+          "HOTA_50": 62.29358636042205,
+          "MOTA": 47.97451069640419,
+          "MOTP": 86.64299074873996,
+          "IDSW": 34,
+          "MT": 31,
+          "ML": 3,
+          "Frag": 94,
+          "CLR_TP": 4943,
+          "CLR_FN": 3845,
+          "CLR_FP": 693,
+          "IDF1": 59.45646145313367,
+          "IDP": 76.08232789212207,
+          "IDR": 48.793809740555304,
+          "GT_IDs": 44,
+          "TRK_IDs": 111,
+          "GT_dets": 8788,
+          "TRK_dets": 5636,
+          "frames": 1150
+        }
+      },
+      "MVI_40773": {
+        "all": {
+          "HOTA": 73.31332403689058,
+          "DetA": 69.76521245983278,
+          "AssA": 77.30634381025635,
+          "LocA": 88.51971135226474,
+          "HOTA_50": 82.99898584129339,
+          "MOTA": 78.5156766768091,
+          "MOTP": 87.42163395408411,
+          "IDSW": 14,
+          "MT": 23,
+          "ML": 1,
+          "Frag": 139,
+          "CLR_TP": 6476,
+          "CLR_FN": 1083,
+          "CLR_FP": 527,
+          "IDF1": 86.19695096827358,
+          "IDP": 89.6187348279309,
+          "IDR": 83.02685540415399,
+          "GT_IDs": 29,
+          "TRK_IDs": 135,
+          "GT_dets": 7559,
+          "TRK_dets": 7003,
+          "frames": 985
+        }
+      },
+      "MVI_63553": {
+        "all": {
+          "HOTA": 62.43536322077181,
+          "DetA": 56.01293695027384,
+          "AssA": 70.10743596585583,
+          "LocA": 83.2698855934779,
+          "HOTA_50": 75.3816643138461,
+          "MOTA": 67.13923575251151,
+          "MOTP": 80.96173598378742,
+          "IDSW": 53,
+          "MT": 111,
+          "ML": 32,
+          "Frag": 176,
+          "CLR_TP": 7738,
+          "CLR_FN": 2913,
+          "CLR_FP": 534,
+          "IDF1": 78.57105110183375,
+          "IDP": 89.86943907156673,
+          "IDR": 69.79626326166557,
+          "GT_IDs": 190,
+          "TRK_IDs": 248,
+          "GT_dets": 10651,
+          "TRK_dets": 8272,
+          "frames": 1405
+        }
+      }
+    },
+    "protocol": {
+      "ignored_rule": "box centre inside region"
+    },
+    "sources": {
+      "timing": {
+        "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8n_botsort_conf0.1\\timing.json",
+        "sha256": "0908cf1a7846d3a211bcfa00fdce4c8135e30da44741c25e42fd4dbbb74f2180"
+      },
+      "ignored": {
+        "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\data\\ignored_regions.json",
+        "sha256": "9f2accc86b42bfe1978c21c1419cc11e936d01dff88d6a0be7faf92dbd6e9b10"
+      },
+      "tracks": {
+        "MVI_20033": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8n_botsort_conf0.1\\MVI_20033.txt",
+          "sha256": "19c07ee612856128164013c55e9f0d39e3a9f1851230b7832fec66b787b8fb52"
+        },
+        "MVI_40141": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8n_botsort_conf0.1\\MVI_40141.txt",
+          "sha256": "cf51272d061336a0f6df81457eb3f4934582438448c498c40a94042495e5f3bf"
+        },
+        "MVI_40171": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8n_botsort_conf0.1\\MVI_40171.txt",
+          "sha256": "d318c60e039428d86d21927d79787bc2ac0ef00b4dee600beed13d49d12076e5"
+        },
+        "MVI_40773": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8n_botsort_conf0.1\\MVI_40773.txt",
+          "sha256": "6bb39d55885cfe65f7bd4529a29eccd57fe01158279b2dcb7d27e89d0490f938"
+        },
+        "MVI_63553": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8n_botsort_conf0.1\\MVI_63553.txt",
+          "sha256": "c6de27d003765942d6f9db18fdf114a6d87f322c8c73cd906a658c60cbdedc39"
+        }
+      },
+      "gt": {
+        "MVI_20033": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_20033.txt",
+          "sha256": "3439404f7844270bf4f35dadbf0c26d0c8a299db100df13d9f08e70e832aec9b"
+        },
+        "MVI_40141": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_40141.txt",
+          "sha256": "dc64bca09b0f762638781cbfa4ecbc8b981328f0b0f8b380cd30e7205ef748a5"
+        },
+        "MVI_40171": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_40171.txt",
+          "sha256": "71d333bd24ade50982060a47b8a8c0767b9d32bfa31e29840e665f08a1818ec9"
+        },
+        "MVI_40773": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_40773.txt",
+          "sha256": "399ac69cb062140796e539b1f1e6da46691507360e8ea93a4e8c2d078c0d1c13"
+        },
+        "MVI_63553": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_63553.txt",
+          "sha256": "594402e75adeabdf4501e498bc07e9e4873e9ac03621e387b02476c3194f203e"
+        }
+      }
+    },
+    "aggregate": {
+      "aggregation": "macro average with equal sequence weights",
+      "mean": {
+        "HOTA": 65.32017565071682,
+        "DetA": 59.346159044260546,
+        "AssA": 72.36518805471613,
+        "LocA": 85.6048349072893,
+        "MOTA": 66.17917282858016,
+        "MOTP": 83.71967076435415,
+        "IDF1": 78.50770489212734,
+        "IDP": 81.97923820967601,
+        "IDR": 77.84131398232532,
+        "HOTA_50": 77.19473468639868
+      },
+      "sum": {
+        "IDSW": 119,
+        "MT": 220,
+        "ML": 36,
+        "Frag": 478,
+        "CLR_TP": 29569,
+        "CLR_FN": 8161,
+        "CLR_FP": 5131,
+        "GT_dets": 37730,
+        "TRK_dets": 34700
+      },
+      "n_seq": 5,
+      "combined": {
+        "HOTA": 64.35485261664033,
+        "DetA": 57.31036060186728,
+        "AssA": 72.6586931205473,
+        "LocA": 85.51222943718194,
+        "HOTA_50": 75.8486685455099,
+        "MOTA": 64.45534057778956,
+        "MOTP": 83.56322291580267,
+        "IDF1": 77.32431312991854,
+        "IDP": 80.70028818443804,
+        "IDR": 74.21945401537239
+      }
+    }
+  },
+  "yolov8n_bytetrack_conf0.1": {
+    "per_seq": {
+      "MVI_20033": {
+        "all": {
+          "HOTA": 75.26344817635587,
+          "DetA": 72.30784646412985,
+          "AssA": 78.51189823573004,
+          "LocA": 83.96714216696962,
+          "HOTA_50": 92.60924689724905,
+          "MOTA": 89.04656319290466,
+          "MOTP": 81.77980234103467,
+          "IDSW": 4,
+          "MT": 24,
+          "ML": 0,
+          "Frag": 27,
+          "CLR_TP": 4389,
+          "CLR_FN": 121,
+          "CLR_FP": 369,
+          "IDF1": 94.36771687526975,
+          "IDP": 91.90836485918453,
+          "IDR": 96.96230598669622,
+          "GT_IDs": 25,
+          "TRK_IDs": 57,
+          "GT_dets": 4510,
+          "TRK_dets": 4758,
+          "frames": 784
+        }
+      },
+      "MVI_40141": {
+        "all": {
+          "HOTA": 58.50175689040632,
+          "DetA": 50.79896879168746,
+          "AssA": 67.63358307199456,
+          "LocA": 82.56066521644352,
+          "HOTA_50": 73.01436496571417,
+          "MOTA": 46.882031501125034,
+          "MOTP": 79.49759387096519,
+          "IDSW": 19,
+          "MT": 30,
+          "ML": 0,
+          "Frag": 49,
+          "CLR_TP": 5971,
+          "CLR_FN": 251,
+          "CLR_FP": 3035,
+          "IDF1": 73.44365642237982,
+          "IDP": 62.091938707528314,
+          "IDR": 89.87463837994214,
+          "GT_IDs": 33,
+          "TRK_IDs": 99,
+          "GT_dets": 6222,
+          "TRK_dets": 9006,
+          "frames": 1600
+        }
+      },
+      "MVI_40171": {
+        "all": {
+          "HOTA": 50.86397690383885,
+          "DetA": 42.41010475190459,
+          "AssA": 61.06804987732218,
+          "LocA": 85.48272072758984,
+          "HOTA_50": 58.83841708519182,
+          "MOTA": 43.923532089212564,
+          "MOTP": 83.77201419575302,
+          "IDSW": 40,
+          "MT": 25,
+          "ML": 3,
+          "Frag": 122,
+          "CLR_TP": 4747,
+          "CLR_FN": 4041,
+          "CLR_FP": 847,
+          "IDF1": 57.01571408705326,
+          "IDP": 73.29281372899536,
+          "IDR": 46.654528903049616,
+          "GT_IDs": 44,
+          "TRK_IDs": 129,
+          "GT_dets": 8788,
+          "TRK_dets": 5594,
+          "frames": 1150
+        }
+      },
+      "MVI_40773": {
+        "all": {
+          "HOTA": 71.3258629267675,
+          "DetA": 68.09641702366032,
+          "AssA": 74.96687972131907,
+          "LocA": 87.55488103999977,
+          "HOTA_50": 82.12101893646184,
+          "MOTA": 77.77483794152666,
+          "MOTP": 86.15924801520886,
+          "IDSW": 26,
+          "MT": 23,
+          "ML": 1,
+          "Frag": 151,
+          "CLR_TP": 6425,
+          "CLR_FN": 1134,
+          "CLR_FP": 520,
+          "IDF1": 85.70049641478212,
+          "IDP": 89.48884089272859,
+          "IDR": 82.21987035322132,
+          "GT_IDs": 29,
+          "TRK_IDs": 140,
+          "GT_dets": 7559,
+          "TRK_dets": 6945,
+          "frames": 985
+        }
+      },
+      "MVI_63553": {
+        "all": {
+          "HOTA": 55.22250478106025,
+          "DetA": 49.63993190386796,
+          "AssA": 61.80937082730845,
+          "LocA": 79.36289937401243,
+          "HOTA_50": 67.67402604719736,
+          "MOTA": 57.09323068256502,
+          "MOTP": 76.39470822430513,
+          "IDSW": 47,
+          "MT": 88,
+          "ML": 33,
+          "Frag": 227,
+          "CLR_TP": 7164,
+          "CLR_FN": 3487,
+          "CLR_FP": 1036,
+          "IDF1": 73.35419871624848,
+          "IDP": 84.3170731707317,
+          "IDR": 64.91409257346727,
+          "GT_IDs": 190,
+          "TRK_IDs": 258,
+          "GT_dets": 10651,
+          "TRK_dets": 8200,
+          "frames": 1405
+        }
+      }
+    },
+    "protocol": {
+      "ignored_rule": "box centre inside region"
+    },
+    "sources": {
+      "timing": {
+        "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8n_bytetrack_conf0.1\\timing.json",
+        "sha256": "d89937aa0f83c8300111c02b9a04cc7823e44c3b5e8efc2fbf52c472bd3addae"
+      },
+      "ignored": {
+        "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\data\\ignored_regions.json",
+        "sha256": "9f2accc86b42bfe1978c21c1419cc11e936d01dff88d6a0be7faf92dbd6e9b10"
+      },
+      "tracks": {
+        "MVI_20033": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8n_bytetrack_conf0.1\\MVI_20033.txt",
+          "sha256": "f7e1b49b0ef5ec36e4dfb2777a950c72e5cd0f45572620164283fea2d4101ed1"
+        },
+        "MVI_40141": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8n_bytetrack_conf0.1\\MVI_40141.txt",
+          "sha256": "e74c0e36a228d3f1c58af34ea88a02ee1c77151e264b52fa96d61bdc8aa3efd1"
+        },
+        "MVI_40171": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8n_bytetrack_conf0.1\\MVI_40171.txt",
+          "sha256": "703ca666722e97bb308d4b09d7ded86cbba56a76e88e77969d0e61c1e335117d"
+        },
+        "MVI_40773": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8n_bytetrack_conf0.1\\MVI_40773.txt",
+          "sha256": "2aa92058e9730723d70fd8a264b9e4d1e705fb7b8107eff0169008c2f43274a6"
+        },
+        "MVI_63553": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8n_bytetrack_conf0.1\\MVI_63553.txt",
+          "sha256": "c4877457dc9d300096a41fcd7d8ea7e25024ffe8f58930b4cd6191e8a60d9a79"
+        }
+      },
+      "gt": {
+        "MVI_20033": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_20033.txt",
+          "sha256": "3439404f7844270bf4f35dadbf0c26d0c8a299db100df13d9f08e70e832aec9b"
+        },
+        "MVI_40141": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_40141.txt",
+          "sha256": "dc64bca09b0f762638781cbfa4ecbc8b981328f0b0f8b380cd30e7205ef748a5"
+        },
+        "MVI_40171": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_40171.txt",
+          "sha256": "71d333bd24ade50982060a47b8a8c0767b9d32bfa31e29840e665f08a1818ec9"
+        },
+        "MVI_40773": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_40773.txt",
+          "sha256": "399ac69cb062140796e539b1f1e6da46691507360e8ea93a4e8c2d078c0d1c13"
+        },
+        "MVI_63553": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_63553.txt",
+          "sha256": "594402e75adeabdf4501e498bc07e9e4873e9ac03621e387b02476c3194f203e"
+        }
+      }
+    },
+    "aggregate": {
+      "aggregation": "macro average with equal sequence weights",
+      "mean": {
+        "HOTA": 62.235509935685755,
+        "DetA": 56.65065378705003,
+        "AssA": 68.79795634673486,
+        "LocA": 83.78566170500304,
+        "MOTA": 62.94403908146679,
+        "MOTP": 81.52067332945337,
+        "IDF1": 76.77635650314669,
+        "IDP": 80.21980627183369,
+        "IDR": 76.12508723927532,
+        "HOTA_50": 74.85141478636285
+      },
+      "sum": {
+        "IDSW": 136,
+        "MT": 190,
+        "ML": 37,
+        "Frag": 576,
+        "CLR_TP": 28696,
+        "CLR_FN": 9034,
+        "CLR_FP": 5807,
+        "GT_dets": 37730,
+        "TRK_dets": 34503
+      },
+      "n_seq": 5,
+      "combined": {
+        "HOTA": 61.04600233552849,
+        "DetA": 54.124466350166955,
+        "AssA": 69.26020208404177,
+        "LocA": 83.59158600028363,
+        "HOTA_50": 73.08517340244835,
+        "MOTA": 60.30479724357275,
+        "MOTP": 81.27064033601245,
+        "IDF1": 75.29522517408941,
+        "IDP": 78.81633481146567,
+        "IDR": 72.0752716671084
+      }
+    }
+  },
+  "yolov8s_botsort_conf0.1": {
+    "per_seq": {
+      "MVI_20033": {
+        "all": {
+          "HOTA": 78.36463139945621,
+          "DetA": 75.84128801809713,
+          "AssA": 81.18850085739243,
+          "LocA": 84.85013592818596,
+          "HOTA_50": 94.8382260192921,
+          "MOTA": 92.46119733924611,
+          "MOTP": 82.91218764373531,
+          "IDSW": 0,
+          "MT": 25,
+          "ML": 0,
+          "Frag": 19,
+          "CLR_TP": 4442,
+          "CLR_FN": 68,
+          "CLR_FP": 272,
+          "IDF1": 96.31396357328708,
+          "IDP": 94.22995333050488,
+          "IDR": 98.49223946784922,
+          "GT_IDs": 25,
+          "TRK_IDs": 60,
+          "GT_dets": 4510,
+          "TRK_dets": 4714,
+          "frames": 784
+        }
+      },
+      "MVI_40141": {
+        "all": {
+          "HOTA": 62.793854281182995,
+          "DetA": 53.784259113403465,
+          "AssA": 73.44054123346062,
+          "LocA": 84.94725667717631,
+          "HOTA_50": 75.24599481649946,
+          "MOTA": 48.44101575056252,
+          "MOTP": 82.79618709327032,
+          "IDSW": 24,
+          "MT": 32,
+          "ML": 0,
+          "Frag": 45,
+          "CLR_TP": 6091,
+          "CLR_FN": 131,
+          "CLR_FP": 3053,
+          "IDF1": 78.38084081738904,
+          "IDP": 65.85739282589677,
+          "IDR": 96.78559948569591,
+          "GT_IDs": 33,
+          "TRK_IDs": 157,
+          "GT_dets": 6222,
+          "TRK_dets": 9144,
+          "frames": 1600
+        }
+      },
+      "MVI_40171": {
+        "all": {
+          "HOTA": 58.82135042915513,
+          "DetA": 49.370719523692216,
+          "AssA": 70.75610999678128,
+          "LocA": 86.22685695011701,
+          "HOTA_50": 65.90597844188099,
+          "MOTA": 48.099681383705054,
+          "MOTP": 85.14520017861145,
+          "IDSW": 14,
+          "MT": 40,
+          "ML": 1,
+          "Frag": 102,
+          "CLR_TP": 5749,
+          "CLR_FN": 3039,
+          "CLR_FP": 1508,
+          "IDF1": 63.25958242443128,
+          "IDP": 69.93247898580681,
+          "IDR": 57.74920345926263,
+          "GT_IDs": 44,
+          "TRK_IDs": 116,
+          "GT_dets": 8788,
+          "TRK_dets": 7257,
+          "frames": 1150
+        }
+      },
+      "MVI_40773": {
+        "all": {
+          "HOTA": 80.51852837882527,
+          "DetA": 77.16037804548533,
+          "AssA": 84.4398689294444,
+          "LocA": 89.1704080243415,
+          "HOTA_50": 90.20448261830455,
+          "MOTA": 86.90302950125678,
+          "MOTP": 88.27994432652278,
+          "IDSW": 7,
+          "MT": 26,
+          "ML": 0,
+          "Frag": 32,
+          "CLR_TP": 6914,
+          "CLR_FN": 645,
+          "CLR_FP": 338,
+          "IDF1": 93.28202012018095,
+          "IDP": 95.25648097076669,
+          "IDR": 91.38774970234158,
+          "GT_IDs": 29,
+          "TRK_IDs": 53,
+          "GT_dets": 7559,
+          "TRK_dets": 7252,
+          "frames": 985
+        }
+      },
+      "MVI_63553": {
+        "all": {
+          "HOTA": 66.88300465020538,
+          "DetA": 61.61549255434766,
+          "AssA": 73.15524691640927,
+          "LocA": 83.48733043890127,
+          "HOTA_50": 81.10701889573194,
+          "MOTA": 74.90376490470379,
+          "MOTP": 81.0989022481953,
+          "IDSW": 29,
+          "MT": 130,
+          "ML": 18,
+          "Frag": 129,
+          "CLR_TP": 8725,
+          "CLR_FN": 1926,
+          "CLR_FP": 718,
+          "IDF1": 84.68199462526127,
+          "IDP": 90.09848565074658,
+          "IDR": 79.87982349075205,
+          "GT_IDs": 190,
+          "TRK_IDs": 264,
+          "GT_dets": 10651,
+          "TRK_dets": 9443,
+          "frames": 1405
+        }
+      }
+    },
+    "protocol": {
+      "ignored_rule": "box centre inside region"
+    },
+    "sources": {
+      "timing": {
+        "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8s_botsort_conf0.1\\timing.json",
+        "sha256": "38592fa79b0ee3f4a751a8688ecc32443d02428fba212b5f6a4ae314e8d7a535"
+      },
+      "ignored": {
+        "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\data\\ignored_regions.json",
+        "sha256": "9f2accc86b42bfe1978c21c1419cc11e936d01dff88d6a0be7faf92dbd6e9b10"
+      },
+      "tracks": {
+        "MVI_20033": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8s_botsort_conf0.1\\MVI_20033.txt",
+          "sha256": "49606ac35633c34717d31aea85ab773b7e40208e33021e3fcf870d051a53ed9d"
+        },
+        "MVI_40141": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8s_botsort_conf0.1\\MVI_40141.txt",
+          "sha256": "76636c4c527ed0b8f00341b525b0c8a50fdd7190d095b04bb2d738b05f8b3007"
+        },
+        "MVI_40171": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8s_botsort_conf0.1\\MVI_40171.txt",
+          "sha256": "300b1ff4b06fefabb2d5982029b6510a0a761b7dabb9636cf0f3aa7594cd2fbe"
+        },
+        "MVI_40773": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8s_botsort_conf0.1\\MVI_40773.txt",
+          "sha256": "2fbc93b833b17e505d947784df1a6cc160ef1aa13c99e3c05e5eb9c0983d94a0"
+        },
+        "MVI_63553": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8s_botsort_conf0.1\\MVI_63553.txt",
+          "sha256": "3ab5409c19b039da3f7f99b37f987261bcd2414bd947968d4aa36e6f13ee9f4a"
+        }
+      },
+      "gt": {
+        "MVI_20033": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_20033.txt",
+          "sha256": "3439404f7844270bf4f35dadbf0c26d0c8a299db100df13d9f08e70e832aec9b"
+        },
+        "MVI_40141": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_40141.txt",
+          "sha256": "dc64bca09b0f762638781cbfa4ecbc8b981328f0b0f8b380cd30e7205ef748a5"
+        },
+        "MVI_40171": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_40171.txt",
+          "sha256": "71d333bd24ade50982060a47b8a8c0767b9d32bfa31e29840e665f08a1818ec9"
+        },
+        "MVI_40773": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_40773.txt",
+          "sha256": "399ac69cb062140796e539b1f1e6da46691507360e8ea93a4e8c2d078c0d1c13"
+        },
+        "MVI_63553": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_63553.txt",
+          "sha256": "594402e75adeabdf4501e498bc07e9e4873e9ac03621e387b02476c3194f203e"
+        }
+      }
+    },
+    "aggregate": {
+      "aggregation": "macro average with equal sequence weights",
+      "mean": {
+        "HOTA": 69.476273827765,
+        "DetA": 63.55442745100517,
+        "AssA": 76.5960535866976,
+        "LocA": 85.73639760374441,
+        "MOTA": 70.16173777589485,
+        "MOTP": 84.04648429806704,
+        "IDF1": 83.18368031210993,
+        "IDP": 83.07495835274435,
+        "IDR": 84.85892312118028,
+        "HOTA_50": 81.4603401583418
+      },
+      "sum": {
+        "IDSW": 74,
+        "MT": 253,
+        "ML": 19,
+        "Frag": 327,
+        "CLR_TP": 31921,
+        "CLR_FN": 5809,
+        "CLR_FP": 5889,
+        "GT_dets": 37730,
+        "TRK_dets": 37810
+      },
+      "n_seq": 5,
+      "combined": {
+        "HOTA": 68.49517297242504,
+        "DetA": 61.32720455844666,
+        "AssA": 77.05095576989748,
+        "LocA": 85.70674105795024,
+        "HOTA_50": 80.01312356031633,
+        "MOTA": 68.79936390140472,
+        "MOTP": 83.95923455137688,
+        "IDF1": 81.95657929573736,
+        "IDP": 81.86987569426077,
+        "IDR": 82.04346673734429
+      }
+    }
+  },
+  "yolov8s_bytetrack_conf0.1": {
+    "per_seq": {
+      "MVI_20033": {
+        "all": {
+          "HOTA": 76.05930748607656,
+          "DetA": 73.57184806110499,
+          "AssA": 78.89617813578144,
+          "LocA": 83.72201085584024,
+          "HOTA_50": 92.94596081739,
+          "MOTA": 90.28824833702882,
+          "MOTP": 81.5768381682181,
+          "IDSW": 1,
+          "MT": 24,
+          "ML": 0,
+          "Frag": 22,
+          "CLR_TP": 4395,
+          "CLR_FN": 115,
+          "CLR_FP": 322,
+          "IDF1": 95.17719735558686,
+          "IDP": 93.08882764468942,
+          "IDR": 97.36141906873614,
+          "GT_IDs": 25,
+          "TRK_IDs": 60,
+          "GT_dets": 4510,
+          "TRK_dets": 4717,
+          "frames": 784
+        }
+      },
+      "MVI_40141": {
+        "all": {
+          "HOTA": 58.710409800101814,
+          "DetA": 52.42786210362929,
+          "AssA": 65.96496669097512,
+          "LocA": 83.59318390735075,
+          "HOTA_50": 71.01464042332267,
+          "MOTA": 46.51237544198007,
+          "MOTP": 81.2790354200917,
+          "IDSW": 32,
+          "MT": 31,
+          "ML": 0,
+          "Frag": 48,
+          "CLR_TP": 6031,
+          "CLR_FN": 191,
+          "CLR_FP": 3105,
+          "IDF1": 73.31683812996484,
+          "IDP": 61.62434325744308,
+          "IDR": 90.48537447765992,
+          "GT_IDs": 33,
+          "TRK_IDs": 149,
+          "GT_dets": 6222,
+          "TRK_dets": 9136,
+          "frames": 1600
+        }
+      },
+      "MVI_40171": {
+        "all": {
+          "HOTA": 54.27350114634408,
+          "DetA": 46.24273345963865,
+          "AssA": 64.22248012691439,
+          "LocA": 84.0403117813485,
+          "HOTA_50": 60.70883472457198,
+          "MOTA": 42.72872098315885,
+          "MOTP": 82.66660258125708,
+          "IDSW": 15,
+          "MT": 32,
+          "ML": 1,
+          "Frag": 131,
+          "CLR_TP": 5484,
+          "CLR_FN": 3304,
+          "CLR_FP": 1714,
+          "IDF1": 61.3161516326786,
+          "IDP": 68.08835787718812,
+          "IDR": 55.769230769230774,
+          "GT_IDs": 44,
+          "TRK_IDs": 116,
+          "GT_dets": 8788,
+          "TRK_dets": 7198,
+          "frames": 1150
+        }
+      },
+      "MVI_40773": {
+        "all": {
+          "HOTA": 78.1205116419095,
+          "DetA": 75.28509340475482,
+          "AssA": 81.41412385235066,
+          "LocA": 88.18232932828059,
+          "HOTA_50": 89.49668121929115,
+          "MOTA": 86.78396613308638,
+          "MOTP": 86.87286935525549,
+          "IDSW": 8,
+          "MT": 26,
+          "ML": 0,
+          "Frag": 42,
+          "CLR_TP": 6895,
+          "CLR_FN": 664,
+          "CLR_FP": 327,
+          "IDF1": 92.4024084973953,
+          "IDP": 94.55829410135696,
+          "IDR": 90.34263791506814,
+          "GT_IDs": 29,
+          "TRK_IDs": 57,
+          "GT_dets": 7559,
+          "TRK_dets": 7222,
+          "frames": 985
+        }
+      },
+      "MVI_63553": {
+        "all": {
+          "HOTA": 58.910577535761355,
+          "DetA": 54.215257176523664,
+          "AssA": 64.4349347678299,
+          "LocA": 79.30511629896745,
+          "HOTA_50": 70.85812461191259,
+          "MOTA": 61.25246455731856,
+          "MOTP": 76.61163879519283,
+          "IDSW": 33,
+          "MT": 110,
+          "ML": 19,
+          "Frag": 174,
+          "CLR_TP": 7978,
+          "CLR_FN": 2673,
+          "CLR_FP": 1421,
+          "IDF1": 77.9850374064838,
+          "IDP": 83.17906160229812,
+          "IDR": 73.4015585391043,
+          "GT_IDs": 190,
+          "TRK_IDs": 273,
+          "GT_dets": 10651,
+          "TRK_dets": 9399,
+          "frames": 1405
+        }
+      }
+    },
+    "protocol": {
+      "ignored_rule": "box centre inside region"
+    },
+    "sources": {
+      "timing": {
+        "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8s_bytetrack_conf0.1\\timing.json",
+        "sha256": "22269328336074dd9bef3a90ab158faa8afe241a3cf474138ef9d9751b1a362b"
+      },
+      "ignored": {
+        "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\data\\ignored_regions.json",
+        "sha256": "9f2accc86b42bfe1978c21c1419cc11e936d01dff88d6a0be7faf92dbd6e9b10"
+      },
+      "tracks": {
+        "MVI_20033": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8s_bytetrack_conf0.1\\MVI_20033.txt",
+          "sha256": "6cf0d1d20e0fd7fc5002be4132170993e8499b420b0c61d27a2242bc1c04141f"
+        },
+        "MVI_40141": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8s_bytetrack_conf0.1\\MVI_40141.txt",
+          "sha256": "40f23cefcb2978a79de1b2d24f4e082e5058af3695995932d0bec2fb6ea3ad2b"
+        },
+        "MVI_40171": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8s_bytetrack_conf0.1\\MVI_40171.txt",
+          "sha256": "54f1156d07387d7f2359d196104b327cebe950176d92e0fb72dfc3186d29460e"
+        },
+        "MVI_40773": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8s_bytetrack_conf0.1\\MVI_40773.txt",
+          "sha256": "8bd4d8174af3dba15ef51a03e9e0ec76cd25a1e8c2896741e5b022b26f53c52f"
+        },
+        "MVI_63553": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\conf0.1\\tracks\\dev\\yolov8s_bytetrack_conf0.1\\MVI_63553.txt",
+          "sha256": "64469d9b00f4ed5fb07cb79b13489210b84ae1544653f1d2e9d89e37e78ccb20"
+        }
+      },
+      "gt": {
+        "MVI_20033": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_20033.txt",
+          "sha256": "3439404f7844270bf4f35dadbf0c26d0c8a299db100df13d9f08e70e832aec9b"
+        },
+        "MVI_40141": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_40141.txt",
+          "sha256": "dc64bca09b0f762638781cbfa4ecbc8b981328f0b0f8b380cd30e7205ef748a5"
+        },
+        "MVI_40171": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_40171.txt",
+          "sha256": "71d333bd24ade50982060a47b8a8c0767b9d32bfa31e29840e665f08a1818ec9"
+        },
+        "MVI_40773": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_40773.txt",
+          "sha256": "399ac69cb062140796e539b1f1e6da46691507360e8ea93a4e8c2d078c0d1c13"
+        },
+        "MVI_63553": {
+          "path": "C:\\Projects\\VehicleDetectionAndTrafficCounting\\outputs\\ablation_run_20261103_final\\shared\\gt_mot\\MVI_63553.txt",
+          "sha256": "594402e75adeabdf4501e498bc07e9e4873e9ac03621e387b02476c3194f203e"
+        }
+      }
+    },
+    "aggregate": {
+      "aggregation": "macro average with equal sequence weights",
+      "mean": {
+        "HOTA": 65.21486152203866,
+        "DetA": 60.348558841130284,
+        "AssA": 70.9865367147703,
+        "LocA": 83.7685904343575,
+        "MOTA": 65.51315509051453,
+        "MOTP": 81.80139686400304,
+        "IDF1": 80.03952660442188,
+        "IDP": 80.10777689659514,
+        "IDR": 81.47204415395984,
+        "HOTA_50": 77.00484835929767
+      },
+      "sum": {
+        "IDSW": 89,
+        "MT": 223,
+        "ML": 20,
+        "Frag": 417,
+        "CLR_TP": 30783,
+        "CLR_FN": 6947,
+        "CLR_FP": 6889,
+        "GT_dets": 37730,
+        "TRK_dets": 37672
+      },
+      "n_seq": 5,
+      "combined": {
+        "HOTA": 63.99521937696853,
+        "DetA": 57.65082816470443,
+        "AssA": 71.67560988504317,
+        "LocA": 83.60845060257137,
+        "HOTA_50": 75.03529253973966,
+        "MOTA": 63.09302941956003,
+        "MOTP": 81.61205221830363,
+        "IDF1": 78.43028036391607,
+        "IDP": 78.49065619027394,
+        "IDR": 78.36999734958918
+      }
+    }
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "experiment_manifest": {
+    "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/manifest.json",
+    "sha256": "c55c0d2f461c90b278643f6db0d10d91dfb212284ca59c4b568a40f1a5330ec1"
+  },
+  "notebook": {
+    "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/notebooks/ablation.ipynb",
+    "sha256": "6a8d99927d21363448f41bede9a309180490f7bd96e1bac10068bd72da2aaef5"
+  },
+  "tracking_aggregation": "combined",
+  "inference_protocol": [
+    "tracker-threshold"
+  ],
+  "recorded_nms": [
+    "class-aware"
+  ],
+  "outputs": [
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/charts/counting_sensitivity_dev.pdf",
+      "sha256": "23e11ae163c7d986f7c321ba013994e729583b9b4c5f1733d4cf2d58e9e55e09"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/charts/counting_sensitivity_dev.png",
+      "sha256": "3c4c074ec826243bec058fcb93c5c0c0618352e6b7b91ee63d7715474b10f948"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/charts/latency_sensitivity_dev.pdf",
+      "sha256": "68e9fedfe4fa461e41711cfa63ee7d8550d883d3475b92ac5804179315ed2966"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/charts/latency_sensitivity_dev.png",
+      "sha256": "edb12bfe47cab7135e941e393e7232a935c4bf50df1bcad9420ab2795b7fe907"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/charts/sequence_errors_dev.pdf",
+      "sha256": "b958924f37a47022e4b4434494ef43fb0f7ee7ea5c8d2abc3b49f30ee8d32193"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/charts/sequence_errors_dev.png",
+      "sha256": "81157a36828a6bc8e784a39096a8e5cca8b283f1a3ed2a4d4b32dbb3e4d8cc59"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/charts/signed_counting_error_dev.pdf",
+      "sha256": "833b23debe057d50688249c38cc921c51e47ec403a3cce6be554cf814852743b"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/charts/signed_counting_error_dev.png",
+      "sha256": "d3e12f66d5884b463bf5139ca6616b67c85abc6f17faa74b1bb4fd644a0fd707"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/charts/tracking_sensitivity_dev.pdf",
+      "sha256": "9937880c9cd0f31bea28c83e7f6dca04f625cb9cffcd25800022baac4d11d5f0"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/charts/tracking_sensitivity_dev.png",
+      "sha256": "85e240f9e3319d7f914359c623ff6c13fd09eb485df49573e0a6a6d4aa4e6d5f"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/tables/ablation_per_class_dev.csv",
+      "sha256": "5cc28b0fc349b4d4ea0f6c90804eea0bc687216869e836701a9c6d2d9ddb4247"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/tables/ablation_per_class_dev.md",
+      "sha256": "2d8f5ffc8607c0096d955ecbf1e5a5b5229bcdfa49d85837ae90b914da441063"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/tables/ablation_per_class_dev.tex",
+      "sha256": "939e36e0055b5f8c77035fe4f5aab65bb5274278c54b8c4457f74fa4bc9fbc8f"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/tables/ablation_per_sequence_dev.csv",
+      "sha256": "a88214692df1ab91e703b4fbe0772435b84cabed01b9f64897344b82b0467df1"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/tables/ablation_per_sequence_dev.md",
+      "sha256": "08cfed9ab9e735496dfd38e2f4863a33dec84e475b6a9300fdeb88a10dc190c1"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/tables/ablation_per_sequence_dev.tex",
+      "sha256": "83ca210a1c35a4aaa74342e81c1c0c04d0bd433ffcfc4aa34693ce143aa2646b"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/tables/ablation_report_dev.csv",
+      "sha256": "64b97366d4f31bb80293ab2a79fbe470a2146aaaf1ec1ca68cf476096307f028"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/tables/ablation_report_dev.md",
+      "sha256": "d3e8ce955a94795b066cf0907d67bd7ec9b8f9de9a1d8ff3f27778cdd1e5a29c"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/tables/ablation_report_dev.tex",
+      "sha256": "1c4f3341dc1b7278b42e299d3ae3db011af8a273031f217b26c740faa2d27d16"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/tables/ablation_summary_dev.csv",
+      "sha256": "f3705c958f88d144ad458ea92025054ee2ba278e7411a1fe1cd3d6624b53cc6d"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/tables/ablation_summary_dev.md",
+      "sha256": "8b2c6e1bfd6212233082bbb4a8286ddf9161934de09649c34d3223e262fca7d4"
+    },
+    {
+      "path": "/Users/mikhail/Documents/Innopolis/CV/fix/VehicleDetectionAndTrafficCounting/outputs/ablation_run_20261103_final/analysis/tables/ablation_summary_dev.tex",
+      "sha256": "e4a5f7e7adb88e7aa44e42fe9a7da860aca21ff7212116e183b742b76cd8d3bb"
+    }
+  ]
+}
