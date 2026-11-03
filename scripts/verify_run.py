@@ -109,7 +109,11 @@ def check_gt_counts(new_dir: Path, split: str) -> None:
     if not new_path.is_file():
         check(False, "gt_counts.json exists", str(new_path))
         return
-    new = read_json(new_path)[split]
+    saved = read_json(new_path)
+    if split not in saved:
+        check(False, f"GT counts include {split}", f"{new_path}; available splits: {sorted(saved)}")
+        return
+    new = saved[split]
     old = read_json(old_path).get(split, {}) if old_path.is_file() else {}
     for seq, res in new.items():
         if seq in old:

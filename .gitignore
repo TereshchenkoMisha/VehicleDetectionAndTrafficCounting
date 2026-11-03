@@ -47,6 +47,10 @@ __pycache__/
 # Virtual environments
 venv/
 .venv/
+/.venv*/
+/venv*/
+__pypackages__/
+.virtualenv/
 env/
 ENV/
 .python-version
@@ -84,6 +88,14 @@ coverage.xml
 # ---------------------------------------------------------------
 .ipynb_checkpoints/
 */.ipynb_checkpoints/
+.nbcache/
+*.nbconvert.ipynb
+*.executed.ipynb
+*_executed.ipynb
+/.jupyter/
+/.ipython/
+/.matplotlib/
+/kernel-*.json
 
 # ---------------------------------------------------------------
 # Experiment tracking / ML tooling
@@ -102,6 +114,10 @@ events.out.tfevents.*
 .env
 .env.*
 !.env.example
+!.env.sample
+!.env.template
+.envrc
+.direnv/
 *.pem
 *.key
 secrets.*
@@ -109,7 +125,7 @@ secrets.*
 # ---------------------------------------------------------------
 # Editors / IDEs
 # ---------------------------------------------------------------
-.vscode/
+.vscode/*
 !.vscode/settings.json.example
 .idea/
 *.sublime-project
@@ -137,6 +153,11 @@ $RECYCLE.BIN/
 *.bak
 tmp/
 temp/
+/runtime/
+/backups/
+/*.zip
+/*.rar
+/*.7z
 
 # ---------------------------------------------------------------
 # AI workspace specific files
@@ -194,10 +215,14 @@ CLAUDE.local.md
 .superpowers/
 .specstory/
 
-# Shared agent instruction files are NOT ignored on purpose (AGENTS.md, CLAUDE.md, GEMINI.md, .cursor/rules). If your team keeps them private, uncomment:
+# Private agent instruction files (remove these rules if the team chooses to version them):
 AGENTS.md
 CLAUDE.md
 GEMINI.md
 
 # Unfinished tracking runs
 *.partial/
+
+# Keep portable dependency/configuration inputs versioned: pyproject.toml, requirements*.txt,
+# lock files, configs/*.yaml and the three reference reports above.
+# Source notebooks stay versioned; executed copies belong under outputs/.

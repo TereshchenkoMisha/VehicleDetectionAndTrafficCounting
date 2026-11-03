@@ -126,5 +126,25 @@ class SplitTests(unittest.TestCase):
         self.assertFalse(set(first["dev"]) & set(first["test"]))
 
 
+
+
+class VerificationInputTests(unittest.TestCase):
+    def test_missing_gt_split_is_a_failed_check_instead_of_a_traceback(self):
+        import contextlib
+        import io
+        import json
+        import tempfile
+        from pathlib import Path
+        from unittest.mock import patch
+        from scripts import verify_run
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "gt_counts.json").write_text(json.dumps({"test": {}}), encoding="utf-8")
+            with patch.object(verify_run, "failures", []), contextlib.redirect_stdout(io.StringIO()) as output:
+                verify_run.check_gt_counts(root, "dev")
+                self.assertIn("GT counts include dev", verify_run.failures)
+                self.assertIn("available splits", output.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()

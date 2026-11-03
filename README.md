@@ -1,442 +1,181 @@
 # Vehicle Detection and Traffic Counting
 
-Controlled 2x2 comparison of two detectors (YOLOv8n, YOLOv8s) and two trackers (ByteTrack, BoT-SORT)
-on UA-DETRAC, with line-based vehicle counting (classes: car, bus, truck). All models are COCO-pretrained,
-no fine-tuning. Question: which component (detector or tracker) has the larger effect on counting accuracy,
-and at what computational cost?
+Controlled 2×2 comparison of COCO-pretrained YOLOv8n/YOLOv8s and ByteTrack/BoT-SORT on UA-DETRAC. The task is to detect car/bus/truck and count line crossings. No training or fine-tuning is performed. The question is which component changes counting accuracy more, and at what computational cost.
 
 Team: Mikhail Tereshchenko, Kamil Gainutdinov, Artem Salakhutdinov, Danis Abdulov.
 
-## Status
+## Verified run: 3 November 2026
 
-| Stage | State |
+The local pipeline results are complete and checked under run_20261103_final for **both dev and test**. The expensive detection/tracking stages had already finished. To complete the result set, the compatible dev outputs were collected under this tag and the GT/counting, charts and verification stages were rerun. Test counting values did not change. No model inference was repeated during this completion.
+
+| Stage | Verified state |
 |---|---|
-| Data pipeline (parse, YOLO conversion, split) | done |
-| Detector evaluation (mAP, P/R) on dev | done |
-| Detection + tracking, 4 configurations, timing, on dev | done on dev (run `run_20261102_agnostic`); **test must be re-run** with class-agnostic NMS |
-| Results table and plot (`notebooks/results.ipynb` -> `outputs/reports/<split>/`) | done (dev) |
-| Ground-truth counts, counting line, line counter | done |
-| Counting metrics tables (MAE, WAPE, SCE) | done on dev (run `run_20261102_agnostic`); test numbers are from the earlier run |
-| Tracking metrics (TrackEval: HOTA, IDF1, IDSW) | done on dev (run `run_20261102_agnostic`); test must be re-run |
-| Code review fixes and migration to `src/` + `scripts/` | implemented |
-| Confidence-threshold ablation | code done (`run_ablation`, `notebooks/ablation.ipynb`); not run yet |
-| Failure analysis | todo |
+| Fixed split and YOLO conversion | 12 videos, 5 dev / 7 test; 1184 / 1718 prepared images with matching labels |
+| Detector evaluation | Both detectors, dev and test |
+| Tracking | Four configurations on each split; 5924 dev / 8590 test frames per configuration |
+| Tracking evaluation | Class-agnostic TrackEval, HOTA/IDF1/IDSW, both splits |
+| GT and predicted line-crossing counts | Both splits, identical counting protocol |
+| Counting metrics | MAE/WAPE/SCE for each class and all vehicles, both splits |
+| Main results notebooks | Executed dev/test copies and exported tables/charts |
+| Verification | Both splits pass --protocol current; 0 failed checks |
+| Confidence ablation | Complete 16-condition dev sweep; hashes and saved sources verified |
+| Failure analysis | Three reviewed examples in the separate [failure_analysis folder](../failure_analysis/REPORT.md) |
 
-## 1. Setup
+Additional checks: 54 project tests and 17 failure-analysis tests passed; all three source notebooks executed successfully. The failure analysis is intentionally outside this Git repository. Package it separately when submitting the whole project.
 
-Python 3.12+ (reference runs on 3.13). All paths are resolved from the repository root, so commands
-work from any directory, but `pip install -e .` is needed once so that `scripts/*.py` can import `src`.
+Generated datasets, weights, run outputs, execution notebooks and personal environment settings are not stored in Git. This README preserves the compact numerical result; the detailed artifacts listed below are local and reproducible from the code.
 
-```bash
-python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
-pip install -e .            # add ".[notebook]" for Jupyter, ".[dev]" for pytest, ruff, mypy
-```
+## Current protocol
 
-`pip install` may pull a CPU-only PyTorch build. With an NVIDIA GPU, reinstall the CUDA build and check it:
+- COCO-pretrained YOLOv8n/s, imgsz=960, NMS IoU=0.7. One tracking NMS implementation: **class-aware**.
+- --conf=0.25 sets both tracker high-score and new-track thresholds. The detector keeps scores down to min(track_low_thresh, track_high_thresh), normally 0.1, so low-score association remains available.
+- Shared tracker settings: low=0.1, buffer=30, match=0.8, fuse_score=true. BoT-SORT uses sparseOptFlow camera-motion compensation; ReID is disabled.
+- Seed=42, deterministic algorithms enabled, cuDNN benchmark and TF32 disabled. Repeatability is checked in a fixed hardware/software environment; wall-clock timing is not deterministic.
+- Classes: car→car, van→car, bus→bus, others→truck. others is heterogeneous, which limits interpretation of truck metrics. Motorcycles have no separate quantitative evaluation.
+- Ignored-region filtering uses observation centres for GT and predictions. Counting uses the first crossing per ID, maximum frame gap=1 and the most frequent class over the complete saved track. This class rule is offline.
+- Split and counting lines are fixed before final test evaluation. Detector evaluation uses every fifth frame; tracking uses all original frames. Splits are by video, never by individual frames.
 
-```bash
-pip uninstall torch torchvision -y
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu126
-python -c "import torch; print(torch.cuda.is_available())"   # must print True
-```
+The original plan described a detector-confidence sweep with fixed tracker thresholds. The implemented ablation instead changes tracker high/new thresholds together while preserving low-score detector input. The notebook labels the recorded protocol explicitly; these two experiments must not be described as the same experiment.
 
-Reference environment of the reported runs: Ultralytics 8.4.175, torch 2.14.1+cu126, Python 3.13.14,
-NVIDIA GTX 1070 Ti (OpenCV 5.0.0 was installed, but older `timing.json` files do not record it).
-Re-running on Ultralytics 8.4.176 / CUDA 13.2 / RTX 2080 Super reproduced the metrics and tracks up to GPU
-numerical noise (see "Reproducibility" below); timings differ strongly between machines. Pretrained weights (`yolov8n.pt`, `yolov8s.pt`) are downloaded automatically on first
-use into `models/` (git-ignored), so the repository root stays clean.
+## Current results
 
-Environment of the dev results in sections 5-8 (2026-11-02): Python 3.13.16, torch 2.14.1+cu126,
-ultralytics 8.4.197, OpenCV 5.0.0, NVIDIA GTX 1070 Ti. An earlier setup (2026-10-19) used Python 3.13.15,
-torch 2.11.0+cu128, ultralytics 8.4.182, NVIDIA RTX 5060 Ti. Two GPU notes from that setup:
+Detection metrics are reported once per detector. Counting/tracking metrics are reported for all four configurations. Percentages below are multiplied by 100.
 
-- RTX 50xx (Blackwell, sm_120) requires a cu128+ torch build; the `cu126` index above does not support it.
-- Windows, fresh venv: if `import torch` fails with `OSError: [WinError 1114] ... c10.dll`, the system
-  `msvcp140.dll` is too old. Update the Microsoft Visual C++ Redistributable, or copy a newer
-  `msvcp140.dll` (e.g. from `.venv\Lib\site-packages\numpy.libs\`) into
-  `.venv\Lib\site-packages\torch\lib\`.
+### Detection
 
-## 2. Dataset
+| Detector | Dev mAP@0.5, % | Dev mAP@0.5:0.95, % | Test mAP@0.5, % | Test mAP@0.5:0.95, % |
+|---|---:|---:|---:|---:|
+| yolov8n | 61.23 | 45.16 | 71.77 | 49.54 |
+| yolov8s | 64.45 | 49.56 | 76.70 | 55.56 |
 
-UA-DETRAC is not stored in git (`/data/` is ignored). The official site is no longer available, so we use a
-Kaggle mirror (version 2, ~9.5 GB): https://www.kaggle.com/datasets/bratjay/ua-detrac-orig .
+### Counting and tracking: dev
 
-Download **DETRAC-Images, DETRAC-Train-Annotations-XML, DETRAC-Test-Annotations-XML, DETRAC-MOT-toolkit**
-and unpack them so that the layout is exactly (note the double `DETRAC-Images`, specific to this mirror):
+| Configuration | MAE | WAPE, % | Mean SCE | IDF1, % | HOTA, % | IDSW |
+|---|---:|---:|---:|---:|---:|---:|
+| YOLOv8n + ByteTrack | 6.40 | 12.75 | -6.40 | 74.80 | 61.10 | 104 |
+| YOLOv8n + BoT-SORT | 6.80 | 13.55 | -6.80 | 78.43 | 65.02 | 68 |
+| YOLOv8s + ByteTrack | 4.20 | 8.37 | -3.00 | 78.79 | 64.38 | 71 |
+| YOLOv8s + BoT-SORT | 4.20 | 8.37 | -3.00 | 81.39 | 68.21 | 56 |
 
-```
+### Counting and tracking: test
+
+| Configuration | MAE | WAPE, % | Mean SCE | IDF1, % | HOTA, % | IDSW |
+|---|---:|---:|---:|---:|---:|---:|
+| YOLOv8n + ByteTrack | 1.71 | 4.80 | 0.86 | 78.66 | 64.51 | 165 |
+| YOLOv8n + BoT-SORT | 2.43 | 6.80 | 1.57 | 79.48 | 66.18 | 122 |
+| YOLOv8s + ByteTrack | 2.00 | 5.60 | 0.57 | 80.91 | 67.02 | 104 |
+| YOLOv8s + BoT-SORT | 1.86 | 5.20 | 1.00 | 82.26 | 69.19 | 76 |
+
+MAE is the mean absolute count error per video. WAPE is sum(|Pred−GT|)/sum(GT); an absent class denominator yields null rather than an invented percentage. Mean SCE is signed Pred−GT: positive indicates overcounting. IDF1/HOTA use TrackEval's dataset-level aggregation; IDSW is summed over videos.
+
+On this test subset, the baseline YOLOv8n + ByteTrack has the lowest counting MAE/WAPE. YOLOv8s + BoT-SORT has the best IDF1/HOTA. The larger detector improves detection mAP but does not uniformly improve counting. A better tracking score also does not guarantee a better count. These results do not establish the original hypothesis of a consistently larger detector benefit across test videos.
+
+### Component timing: test
+
+| Configuration | Detector ms/frame | Tracker ms/frame | Pipeline FPS |
+|---|---:|---:|---:|
+| YOLOv8n + ByteTrack | 7.25 | 0.87 | 123.1 |
+| YOLOv8n + BoT-SORT | 8.92 | 5.36 | 70.0 |
+| YOLOv8s + ByteTrack | 10.18 | 0.79 | 91.1 |
+| YOLOv8s + BoT-SORT | 10.19 | 5.40 | 64.2 |
+
+Measured on RTX 4060 with Python 3.12.5, torch 2.14.1+cu126, torchvision 0.29.1+cu126, Ultralytics 8.4.198, NumPy 2.5.4 and OpenCV 5.0.0. timing.json records the environment of each actual run. Component times exclude image reading and warm-up. Detector time includes preprocessing, inference, NMS and GPU→CPU; tracker time includes ignored-region filtering and update. These are single-run measurements, not an isolated repeated speed benchmark.
+
+## Setup and data
+
+Run the examples from this repository's root in PowerShell. Python 3.12+ is required. The tested environment is described above; an NVIDIA CUDA build of torch is needed for --device 0.
+
+~~~powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e '.[dev,notebook]'
+.\.venv\Scripts\python.exe -m pip check
+.\.venv\Scripts\python.exe -c "import torch; print(torch.__version__, torch.cuda.is_available())"
+~~~
+
+For CPU execution use --device cpu. Installing the editable package is required so scripts can import src even when invoked by absolute path from another folder. Default data/output paths are rooted at the repository; manually supplied relative CLI paths are relative to the caller's current directory.
+
+UA-DETRAC is downloaded separately, for example from the [dataset mirror used by this project](https://www.kaggle.com/datasets/bratjay/ua-detrac-orig). The expected layout accepts the mirror's nested folders:
+
+~~~text
 data/raw/UA-DETRAC/
-  DETRAC-Images/DETRAC-Images/MVI_20011/img00001.jpg ...
-  DETRAC-Train-Annotations-XML/MVI_*.xml
-  DETRAC-Test-Annotations-XML/MVI_*.xml
-  DETRAC-MOT-toolkit/
-```
+  DETRAC-Images/DETRAC-Images/MVI_*/img*.jpg
+  DETRAC-Train-Annotations-XML/[DETRAC-Train-Annotations-XML/]MVI_*.xml
+  DETRAC-Test-Annotations-XML/[DETRAC-Test-Annotations-XML/]MVI_*.xml
+~~~
 
-The mirror has no `DETRAC-MetaData` (weather attributes). The weather stratification therefore uses a
-brightness proxy: mean brightness of 3 frames per sequence, `< 90/255` means night, else day. So the strata
-are **day/night only**, not cloudy/sunny/rainy/night as originally planned.
+The bracketed annotation folder is optional nesting, not a literal folder name. Keep the committed reports/splits.json, reports/ignored_regions.json and reports/counting_lines.json. The reference selection uses a fixed seed and a day/night brightness proxy; it is not the originally proposed four-weather stratification.
 
-## 3. Data preparation
+Dev: MVI_20033, MVI_40141, MVI_40171, MVI_40773, MVI_63553.
 
-```bash
-python scripts/prepare_dataset.py --frame-step 5 --copy
-```
+Test: MVI_20064, MVI_39031, MVI_39051, MVI_39311, MVI_39821, MVI_40792, MVI_40902.
 
-- `--frame-step 5` keeps every 5th frame for the **detector evaluation** store (25 fps, neighbouring
-  frames are near-duplicates). Tracking does not use it, see section 5.
-- `--copy` copies images instead of symlinking (symlinks need Developer Mode on Windows).
-- Never pass `--force` after the split is fixed: it re-draws the sequences. The committed
-  `reports/splits.json` is the reference split.
+~~~powershell
+.\.venv\Scripts\python.exe scripts/prepare_dataset.py --frame-step 5 --copy --split-file reports/splits.json
+~~~
 
-Output in `data/processed/detrac_yolo/`: `images/{dev,test}`, `labels/{dev,test}` (YOLO format),
-`detrac.yaml`, `splits.json`, `ignored_regions.json` (absolute xyxy pixels), `stats.json`.
-Copies of `splits.json` and `ignored_regions.json` are kept in `reports/`. The split is deterministic
-(seed 42), so a fresh `prepare_dataset` run reproduces `reports/splits.json` exactly (checked). `run_tracking`
-falls back to the copies in `reports/`; `evaluate_detectors` needs `ignored_regions.json` in
-`data/processed/detrac_yolo/` (`prepare_dataset` writes it; copy it there if it is missing):
+Prepared data appears in data/processed/detrac_yolo/. Do not redraw the split after experiments. detrac.yaml is written as UTF-8 so paths containing Cyrillic characters remain readable. Bare weight names are resolved inside models/ and downloaded there when missing.
 
-```bash
-cp reports/ignored_regions.json data/processed/detrac_yolo/       # PowerShell: same command (cp is an alias)
-```
+## Reproduce the complete pipeline
 
+Use a **new tag** for a new code/protocol version:
 
-### Split (fixed, seed 42)
+~~~powershell
+$runTag = 'run_' + (Get-Date -Format 'yyyyMMdd_HHmmss')
+.\.venv\Scripts\python.exe scripts/run_all.py --tag $runTag --splits dev test --device 0 --to ablation
+~~~
 
-| Split | Sequences |
+The runner executes tests, data preparation, detector evaluation, tracking, TrackEval, GT counting, predicted counting, counting evaluation, both main notebooks and verification. Stage 11 adds the independent dev confidence sweep and its notebook. Prepared data is reused when present. Without --to ablation, the default range ends at verification.
+
+To continue finished tracking without running models again:
+
+~~~powershell
+.\.venv\Scripts\python.exe scripts/run_all.py --tag $runTag --from trackeval --to verify --splits dev test --device 0
+~~~
+
+If TrackEval is also complete, continue from gtcounts. A resumed sweep requires the same inputs, weights, code, environment and recorded protocol. Changing them requires a new output directory. Avoid --clean for an ordinary new run: it deletes the selected tag's generated products and can also delete shared prepared data if prepare is selected.
+
+### Check the current saved results
+
+~~~powershell
+.\.venv\Scripts\python.exe scripts/verify_run.py --tag run_20261103_final --splits dev test --protocol current
+.\.venv\Scripts\python.exe scripts/verify_run.py --ablation-dir outputs/ablation_run_20261103_final
+~~~
+
+Both commands must exit with code 0. Missing or incomplete inputs are reported; the verifier does not silently substitute another run. Existing finished experiments can be inspected even after non-inference code changes, but cannot be resumed under changed input/code fingerprints.
+
+## Where the current artifacts are
+
+| Path | Contents |
 |---|---|
-| dev (5) | MVI_20033, MVI_40141, MVI_40171, MVI_40773 (night), MVI_63553 |
-| test (7) | MVI_20064, MVI_39031, MVI_39051, MVI_39311, MVI_39821, MVI_40792 (night), MVI_40902 |
+| reports/run_20261103_final/ | Detector, tracking and counting JSON/Markdown for dev and test |
+| outputs/tracks_run_20261103_final/<split>/<config>/ | Complete MOT and timing.json for all four configurations |
+| outputs/reports_run_20261103_final/<split>/ | Exported tables and charts |
+| outputs/reports_run_20261103_final/notebooks/ | Executed results_dev.ipynb and results_test.ipynb |
+| outputs/ablation_run_20261103_final/ | Complete dev experiment: manifest, frozen inputs, GT, tracks and reports |
+| outputs/ablation_run_20261103_final/analysis/ | Confidence tables, charts and executed ablation notebook |
+| outputs/pipeline_review_20261103/ | Completion log, source provenance, before/after checks and executed-source notebook backups |
+| ../failure_analysis/outputs/current_dev_paths_checked/ | Three reviewed cases, PNG/MP4, probes, event tables and verification |
 
-The split is by sequence, never by frame. Dev is used for debugging and tuning (confidence, counting line);
-test is used only for the final evaluation.
+The earlier standard dev reports/tracks remain in reports/ and outputs/tracks/dev/. They are identical inputs copied into the complete tagged result; do not mix unrelated tags when assembling comparisons.
 
-### Class mapping and ignored regions
+## Notebooks and failure analysis
 
-- `car` -> car, `van` -> car (COCO has no van), `bus` -> bus, `others` -> truck (heterogeneous, a known
-  limitation). No motorcycle class exists in UA-DETRAC and it is out of scope.
-- COCO ids used by the detectors: `{2: car, 5: bus, 7: truck}` mapped to local ids `{0, 1, 2}`.
-- Detections whose **centre** lies in an UA-DETRAC ignored region are dropped, both in the detector
-  evaluation and in tracking, so that all stages are evaluated under the same conditions.
+Source notebooks are notebooks/results.ipynb and notebooks/ablation.ipynb. They are kept in Git without executed outputs or personal kernel settings. Run through run_all.py to save executed copies under outputs/. When executing a source notebook interactively, clear outputs before committing.
 
-Annotation counts (boxes, from `stats.json`):
+Both notebooks find the project from its root, notebooks/, or the parent refactor workspace. Relative environment paths are resolved against the project root; absolute paths and ~ work. For an explicit main-run selection, set these before the setup cell:
 
-| | frames | car | bus | truck |
-|---|---|---|---|---|
-| dev | 1184 | 7199 | 521 | 47 |
-| test | 1718 | 13784 | 1139 | 100 |
+~~~python
+import os
+os.environ.update(SPLIT="test", REPORTS_DIR="reports/run_20261103_final",
+                  TRACKS_ROOT="outputs/tracks_run_20261103_final")
+~~~
 
-The `truck` class is rare (test: two sequences, MVI_40792 and MVI_40902), so per-class truck numbers are noisy.
+Optional variables: DETECTOR_REPORTS_DIR, RESULT_OUTPUT_ROOT and RUN_CONF. For the sweep, use ABLATION_DIR="outputs/ablation_run_20261103_final". Automatic selection requires a unique complete matching set and prints the selected paths and saved NMS. An explicit invalid path is never replaced by an archive.
 
-## 4. Detector evaluation (mAP)
+The separate [failure analysis](../failure_analysis/README.md) compares all four configurations on the same dev frames. Its three reviewed mechanisms are a tracker-dependent gap at the line, van-class ambiguity combined with track-level voting, and concurrent duplicate tracks producing a double count. Automatic missing/extra/class-error candidates are diagnostic outcomes, not population frequencies of causes. Its notebook resolves FAILURE_ANALYSIS_DIR relative to the failure_analysis folder.
 
-```bash
-python scripts/evaluate_detectors.py --models yolov8n.pt yolov8s.pt --split dev --device 0
-```
+## Git policy
 
-Writes `reports/detection_<model>_<split>.json`. Settings: `imgsz=960`, `conf=0.001` for mAP, P/R at
-`conf=0.25`, IoU 0.5. Dev results:
+Version code, source notebooks, configs/*.yaml, dependency specifications and the three fixed reference JSON files. Ignore virtual environments, personal .env/IDE/Jupyter/agent settings, caches, weights, datasets, generated GT MOT/reports, execution notebooks, logs, videos and root-level backup archives. Portable examples and dependency files remain versioned; .gitignore is not a substitute for checking notebook outputs before a commit.
 
-| | YOLOv8n | YOLOv8s |
-|---|---|---|
-| mAP@0.5 | 0.6123 | 0.6445 |
-| mAP@0.5:0.95 | 0.4516 | 0.4956 |
-| car P / R @0.25 | 0.825 / 0.763 | 0.827 / 0.825 |
-| bus P / R @0.25 | 0.738 / 0.963 | 0.748 / 0.971 |
-| truck P / R @0.25 | 0.065 / 0.342 | 0.082 / 0.553 |
-
-(Run `run_20261102_134333`.) mAP is the mean over car, bus and truck, and `truck` is the heterogeneous
-`others` class (47 dev boxes; AP@0.5:0.95 0.08 on dev against 0.33 on test), so it is noisy and drags the
-mean. Read the car and bus rows separately. Vans are labelled `car`, but COCO detectors often call them
-`truck`, which is the main source of truck false positives (precision 0.07).
-Detector mAP and the current tracking protocol both use per-class NMS.
-
-The test split is reserved for the final run (`--split test`).
-
-The `ms_per_frame` field in these reports includes image loading and has no warm-up; do not use it as a speed
-measure (it varied 2-3x between runs). Speed comes only from `run_tracking`.
-
-## 5. Detection + tracking (4 configurations)
-
-```bash
-python scripts/run_tracking.py --split dev            # all 4 configs on the dev sequences
-python scripts/run_tracking.py --split dev --seqs MVI_20033 --max-frames 100 --vis-dir outputs/vis   # quick check
-```
-
-Runs YOLOv8n/s x ByteTrack/BoT-SORT with a progress bar. Key options: `--conf` (default 0.25), `--imgsz`
-(960), `--device`, `--models`, `--trackers`, `--seqs`, `--max-frames`, `--vis-dir` (annotated mp4).
-
-How it works:
-
-- Tracking runs on the **full-rate** frames in `data/raw/.../DETRAC-Images` (not on the every-5th-frame store).
-- The detector (`model.predict`) and the tracker (`tracker.update`) are called separately, which gives separate
-  ms/frame for each, and lets ignored-region filtering happen before the tracker.
-- Tracker settings are in `configs/bytetrack.yaml` and `configs/botsort.yaml`. The association thresholds
-  (`track_high_thresh`, `track_low_thresh`, `new_track_thresh`, `track_buffer`, `match_thresh`) are
-  identical. BoT-SORT keeps its default camera motion compensation, ReID is off, so both trackers are purely
-  motion-based. Input size, confidence and counting rules are the same for all four configurations.
-  **Camera motion compensation is not the only difference between the two:** in Ultralytics ByteTrack uses a
-  Kalman filter over (x, y, aspect, h) and BoT-SORT over (x, y, w, h). A BoT-SORT gain in ID switches or AssA
-  therefore cannot be credited to camera motion compensation alone; that needs a run with
-  `gmc_method: none` (not done yet).
-- NMS before the tracker is per-class, matching the original ablation branch.
-- --conf controls tracker high/new thresholds. Detector input preserves low-score observations.
-- Seeds and deterministic inference are always configured, matching the ablation branch.
-- A run is written to `<config>.partial/` and renamed when finished, so a crash does not block the next run.
-- Timing excludes image reading, a warm-up is run first. Detector time = preprocess + inference + NMS +
-  GPU->CPU copy; tracker time = ignored-region mask + `tracker.update`. Compare timings only between runs on
-  the same machine.
-
-Output, per configuration, in `outputs/tracks/<split>/<det>_<trk>_conf<conf>/`:
-
-- `<seq>.txt`: MOTChallenge rows `frame,id,x,y,w,h,conf,cls,-1,-1` (frame is 1-based, `cls`: 0 car, 1 bus,
-  2 truck, local ids);
-- `timing.json`: ms/frame for the detector and the tracker, FPS, per-sequence stats, environment.
-
-**The dev numbers in sections 5, 7 and 8 come from run `run_20261102_agnostic`** (2026-11-02, Ultralytics
-8.4.197, GTX 1070 Ti, not deterministic mode; `reports/run_20261102_agnostic/`, tracks in
-`outputs/tracks_run_20261102_agnostic/`, git-ignored). That run has the low-score step active and
-class-agnostic NMS. **Test numbers have not been re-generated** with class-agnostic NMS; the test tables below
-come from the earlier run `run_20261102_134333` and are marked as such. Old runs in `outputs/tracks/` have
-the same directory names, so use a new `--out` or delete them.
-
-Speed (single runs on the reference machine, GTX 1070 Ti; dev = 5924 frames; latency =
-detector + tracker, ms/frame; FPS = 1000 / latency; image reading and drawing excluded, no repeats, so
-differences of a few percent are within run-to-run noise):
-
-| Config | FPS | Total (det / trk) ms |
-|---|---|---|
-| YOLOv8n + ByteTrack | 109.6 | 9.13 (8.27 / 0.86) |
-| YOLOv8n + BoT-SORT | 66.7 | 14.98 (8.66 / 6.32) |
-| YOLOv8s + ByteTrack | 68.7 | 14.56 (13.71 / 0.85) |
-| YOLOv8s + BoT-SORT | 49.7 | 20.10 (13.80 / 6.31) |
-
-BoT-SORT's tracker step costs about 6.3 ms against 0.9 ms for ByteTrack. Camera motion compensation (sparse
-optical flow) is the likely cause, but it has not been isolated (no run with `gmc_method: none`).
-
-### Tracking evaluation (HOTA, MOTA, IDF1, IDSW)
-
-```bash
-python scripts/evaluate_tracking.py --splits dev     # then test; writes reports/tracking_eval_<split>.md/json
-```
-
-Dev results (TrackEval combination over the 5 dev sequences, run `run_20261102_agnostic`):
-
-| Config | HOTA | DetA | AssA | MOTA | IDF1 | IDSW |
-|---|---|---|---|---|---|---|
-| yolov8n_bytetrack | 61.48 | 54.88 | 69.29 | 61.65 | 75.46 | 91 |
-| yolov8n_botsort | 65.41 | 58.07 | 74.06 | 65.72 | 79.08 | 66 |
-| yolov8s_bytetrack | 64.91 | 58.19 | 73.05 | 64.25 | 79.68 | 56 |
-| yolov8s_botsort | 68.74 | 61.67 | 77.16 | 69.32 | 82.09 | 48 |
-
-Class-agnostic NMS raised HOTA by 0.4-0.6 and IDF1 by 0.7-0.9 points and removed 5-9% of the false positives
-compared with the previous run (one run per configuration, so treat the size of the gain with care).
-BoT-SORT is ahead of ByteTrack by 3.9 HOTA points for both detectors, and YOLOv8s ahead of YOLOv8n by
-3.3-3.4; see the note on the Kalman filter above before attributing the BoT-SORT gain to camera motion compensation.
-
-GT in MOT format (`reports/gt_mot/<seq>.txt`) is created on the first run and needs the raw dataset.
-Metrics are class-agnostic (TrackEval HOTA, CLEAR, Identity), reported as a macro average over sequences and as
-a TrackEval combination over the whole split. GT and tracker boxes whose centre is in an ignored region are dropped
-before scoring (`--ignored`, default `reports/ignored_regions.json`); a run made with other regions is rejected.
-
-Run `--split test` only after the configurations, `conf` and the counting line are frozen on dev.
-
-## 6. Results table and plot
-
-`notebooks/results.ipynb` builds the comparison table and the plot from `reports/detection_<det>_<SPLIT>.json`
-and `outputs/tracks/<SPLIT>/*/timing.json`. It finds the repository root by itself, so it can be run from the
-repository root in one command (with the virtual environment activated, so that the `python` kernel is the
-project one):
-
-```bash
-jupyter nbconvert --to notebook --execute --inplace notebooks/results.ipynb             # dev (default)
-SPLIT=test jupyter nbconvert --to notebook --execute --inplace notebooks/results.ipynb  # test
-```
-
-On Windows PowerShell set the split with `$env:SPLIT = "test"` first. Outputs go to `outputs/reports/<split>/` and carry
-the split in the name: `metrics_table_<split>.md`, `metrics_table_<split>.tex`,
-`models_comparison_charts_<split>.png`. mAP is a detector property, so it is identical for both trackers of one
-detector; "Latency_ms" is detector + tracker time from `run_tracking`.
-
-## 7. Counting line and ground-truth counts
-
-The counting line is placed per sequence to count vehicles crossing it. Lines are stored in
-`reports/counting_lines.json` (auto-placed from the GT flow field, then manually corrected).
-Each target is counted once, at its first crossing of the line (`src/counting/line_crossing.py`).
-
-### Placing the line
-
-Auto-placement (`scripts/place_lines.py`, default split `dev`) uses the GT trajectories to find the dominant traffic stream
-and builds a line perpendicular to it. The resulting preview is in `reports/line_previews/<seq>.png`.
-Manual correction is done with `scripts/annotate_line.py`:
-
-```bash
-# interactive mode
-python scripts/annotate_line.py --sequence MVI_20033
-
-# headless mode (already placed)
-python scripts/annotate_line.py --sequence MVI_20033 --p1 140,300 --p2 950,300
-```
-
-**Caveat:** lines of the test sequences were also placed and corrected using test GT trajectories, so the
-test split is not blind for the counting protocol and absolute test counting errors are optimistic. This does
-not affect the comparison of detectors and trackers (they never see the lines), but state it next to any test
-number.
-
-All 12 sequences of the reference split have lines now: 10 of them achieve 100% coverage of
-potential crossings, 39311 — 97%, 63553 — 84%. Coverage = the share of moving GT trajectories whose
-endpoints lie on opposite sides of the line and that are actually counted; measured against the GT
-trajectories during placement (scripts/place_lines.py + the coverage check in the session log).
-
-### Ground-truth counts
-
-GT counts (with ignored regions excluded) are computed from the raw XML annotations:
-
-```bash
-python scripts/count_gt.py --vis-dir outputs/vis
-```
-
-Output:
-- `reports/gt_counts.json` — per-sequence counts per class and direction.
-- `reports/gt_counts.md` — human-readable tables.
-- `outputs/vis/gt_line_*.mp4` — check videos with the counting line, GT boxes, and running counters.
-
-GT totals (exclude_ignored):
-- dev: 251 (245 car, 5 bus, 1 truck)
-- test: 250 (226 car, 22 bus, 2 truck)
-- total: 501
-
-### Counting from tracks
-
-Counts from the saved MOT tracks (same line, same crossing rule):
-
-```bash
-python scripts/count_tracks.py --splits dev
-python scripts/count_tracks.py --splits test
-```
-
-Output: `reports/track_counts.json`.
-
-Example dev results (yolov8s_bytetrack_conf0.25, run `run_20261102_agnostic`; GT in brackets):
-- MVI_20033: car=18 bus=0 truck=1 (all=19, GT 19)
-- MVI_40171: car=34 bus=3 truck=0 (all=37, GT 38)
-- MVI_63553: car=128 bus=5 truck=0 (all=133, GT 152)
-
-## 8. Counting evaluation (MAE, WAPE, SCE)
-
-Compares the four detector x tracker configurations against GT using
-`src/counting/metrics.py`. The GT variant `exclude_ignored` is used (targets with centres in ignored
-regions are dropped before tracking, so this is the comparable protocol).
-
-```bash
-python scripts/evaluate_counting.py --splits dev
-python scripts/evaluate_counting.py --splits test
-```
-
-Output:
-- `reports/counting_eval_<split>.md` — MAE / WAPE per class, SCE per sequence, and summary.
-- `reports/counting_eval_<split>.json` — full numerical results.
-
-Dev results (all classes, run `run_20261102_agnostic`, GT total 251):
-
-| Config | MAE | WAPE | meanSCE |
-|---|---|---|---|
-| yolov8n_botsort_conf0.25 | 7.00 | 13.94% | -7.00 |
-| yolov8n_bytetrack_conf0.25 | 6.80 | 13.55% | -6.80 |
-| yolov8s_botsort_conf0.25 | 4.20 | 8.37% | -3.80 |
-| yolov8s_bytetrack_conf0.25 | 4.20 | 8.37% | -3.80 |
-
-Test results (all classes, GT total 250). **Run `run_20261102_134333`, before class-agnostic NMS;
-re-run `--split test` once the configuration is frozen:**
-
-| Config | MAE | WAPE | meanSCE |
-|---|---|---|---|
-| yolov8n_botsort_conf0.25 | 2.43 | 6.80% | +1.57 |
-| yolov8n_bytetrack_conf0.25 | 1.71 | 4.80% | +0.86 |
-| yolov8s_botsort_conf0.25 | 1.86 | 5.20% | +1.00 |
-| yolov8s_bytetrack_conf0.25 | 2.00 | 5.60% | +0.57 |
-
-On dev the counting error did not improve with class-agnostic NMS (previous run: MAE 6.8 / 6.4 / 4.2 / 4.2).
-The duplicates it removes rarely cross the counting line, and for YOLOv8s they had been masking part of the
-undercount (mean SCE -3.0 before, -3.8 now).
-
-Test MAE is lower than dev MAE mainly because dev contains MVI_63553 (152 of the 251 GT crossings, dense
-traffic), which gives most of the dev error. It is not explained by night sequences: dev has 1 of 5, test 1 of 7.
-
-How far these numbers can be trusted:
-
-- With 5 dev and 7 test sequences, the per-sequence differences between configurations are mostly 0 or +-1
-  vehicle, and their bootstrap intervals include 0. The four configurations cannot be ranked by counting
-  error; do not conclude "detector matters more than tracker" from MAE alone. Tracking metrics (HOTA, IDF1,
-  IDSW) separate them much more clearly.
-- The error is measured on per-sequence totals, so a double count and a miss in one sequence cancel. On test
-  (2026-11-02 run) the sum of |SCE| over 7 sequences is about 12, while matching crossing events in time and
-  position gives 14-20 false and 9-10 missed events per configuration. Report event precision/recall next to MAE.
-- A crossing is counted per track ID and only if the track has points on both sides of the line, so an ID
-  switch next to the line loses the count, and GT has no such gaps. On MVI_63553 most missed crossings (15 of
-  19 for YOLOv8s + ByteTrack) have a tracker box on the vehicle but no counted event.
-- Per-class rows have 1-5 GT vehicles on dev (truck: 1); their WAPE (hundreds of percent) is noise.
-
-## 9. Reproducibility
-
-Re-run on another machine (RTX 2080 Super, Ultralytics 8.4.176, torch 2.14.1+cu132) from `main`:
-
-- split, ignored regions and all box counts: identical;
-- detector mAP/P/R: identical on dev;
-- dev tracks (141 858 rows): same frames, rows, classes and track IDs, boxes within 0.27 px (files are not
-  byte-identical: GPU numerics; tracking sets seeds but only `--deterministic` makes the GPU path bit-repeatable);
-- timings: **not** reproducible across machines (2-3x lower FPS on the laptop GPU, same ordering of the four
-  configurations). Compare timings only on one machine.
-
-## Tests and checks
-
-```bash
-pytest                                        # or: PYTHONPATH=. python -m unittest discover -s tests
-ruff check . && ruff format --check .         # needs ".[dev]"
-```
-
-Tests cover line crossing, MOT parsing and validation, ignored-region rule, split quotas, count and detector
-metrics, TrackEval combination, and the tracker loop with a stub model (no GPU or dataset needed).
-
-## Confidence ablation
-
-The same four detector + tracker pairs at several confidences on the dev split; confidence is the only factor
-that changes. GT counts are made once, then each confidence gets its own tracking runs and evaluations.
-
-Confidence sweeps change track_high_thresh and new_track_thresh together. Detector inference preserves
-low-score observations at min(track_low_thresh, track_high_thresh). This is a sweep of the tracker decision
-threshold, not an isolated detector confidence experiment.
-
-```bash
-python scripts/run_ablation.py --device 0 --dry-run    # check the inputs, print the plan
-python scripts/run_ablation.py --device 0              # default 0.1 0.25 0.4 0.6, into outputs/ablation/confidence_dev
-python scripts/run_ablation.py --device 0 --resume     # continue after an interruption
-```
-
-`manifest.json` in the output folder holds the input hashes and the hashes of every finished stage. A resumed
-sweep refuses changed inputs, code or outputs. When it is complete, `notebooks/ablation.ipynb` builds the tables
-and charts (`ABLATION_DIR` selects another sweep).
-
-## Repository layout
-
-```
-pyproject.toml     package (src), dependencies, ruff and pytest settings
-configs/           tracker configs (shared thresholds)
-src/          library: config, utils, data/, tracking/, counting/, eval/
-scripts/           command-line entry points (thin wrappers around src/):
-                   prepare_dataset, evaluate_detectors, run_tracking, evaluate_tracking,
-                   place_lines, annotate_line, count_gt, count_tracks, evaluate_counting, run_ablation
-tests/             unit tests (pytest, or PYTHONPATH=. python -m unittest discover -s tests)
-notebooks/         results.ipynb: comparison tables and plots; ablation.ipynb: confidence sweep
-reports/           fixed inputs (split, ignored regions, counting lines); generated results per run tag
-data/ models/      dataset and weights (git-ignored)
-outputs/           tracks, videos, notebook output (git-ignored)
-```
-
-## Known pitfalls
-
-- Install the package first (`pip install -e .`) so that `scripts/*.py` can import `src`.
-- `data/` and `*.pt` are not in git; a fresh clone needs sections 1-3 first.
-- `--iou 0.7` (detector NMS) is fixed for all configurations and recorded in `timing.json`.
-- Detector mAP uses the COCO protocol with at most 100 detections per frame (measured effect on mAP@0.5/0.75
-  versus a limit of 300: none).
+Generated GT MOT files remain on disk but are removed from Git tracking. Old experiment manifests and numerical reports are not rewritten to hide changes. No commit or push is performed by the verification workflow.

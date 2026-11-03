@@ -269,6 +269,8 @@ class AblationTests(unittest.TestCase):
         self.assertTrue(read_json(self.out / "manifest.json")["complete"])
 
     def test_notebook_builds_tables_and_rejects_changed_outputs(self):
+        import matplotlib
+        matplotlib.use("Agg", force=True)  # Plot tests must not depend on a local Tk installation
         self.main()
         cells = [c for c in json.loads((ROOT / "notebooks/ablation.ipynb").read_text(encoding="utf-8"))["cells"]
                  if c["cell_type"] == "code"]
