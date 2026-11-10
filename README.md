@@ -86,6 +86,7 @@ Automated stages use a run tag, `TAG`, to keep files from different runs separat
 | `outputs/reports_TAG/` | Exported tables, figures, and executed copies of the main notebook |
 | `outputs/ablation_TAG/` | Independent threshold experiment: input snapshots, trajectories, and stage records |
 | `outputs/failures_TAG/` | Frames and video clips for visual failure review |
+| `outputs/videos_TAG/<split>/`, `outputs/videos_TAG/gt/` | Annotated tracking videos per configuration and sequence, and GT check videos with the counting line; `run_all.py --no-video` skips them |
 
 Source notebooks stay in `notebooks/`; automated execution writes executed copies to `outputs/`.
 The dataset, weights, and newly generated files normally remain local under `.gitignore`;

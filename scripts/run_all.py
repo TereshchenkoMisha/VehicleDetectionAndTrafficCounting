@@ -33,6 +33,8 @@ Produces, per tag:
     outputs/reports_<tag>/                 notebook tables and charts
     outputs/ablation_<tag>/                confidence sweep (stage 11); an existing one is continued, not redone
     outputs/failures_<tag>/                pictures and clips of the reviewed failure cases (stage 12)
+    outputs/videos_<tag>/<split>/          annotated tracking mp4 per configuration and sequence (stage 4)
+    outputs/videos_<tag>/gt/               GT check videos with the counting line (stage 6); --no-video skips both
 --clean first deletes what the selected stages produce for this tag (and the prepared dataset when stage 2
 is selected), after a confirmation. Normally each invocation has a unique tag. Repeating an explicit tag
 recomputes selected stages; completed tracking directories are archived before replacement.
@@ -109,6 +111,7 @@ class Run:
         self.charts = f"outputs/reports_{args.tag}"
         self.ablation = f"outputs/ablation_{args.tag}"
         self.failures = f"outputs/failures_{args.tag}"
+        self.videos = f"outputs/videos_{args.tag}"
         self.device: list[str] = ["--device", args.device] if args.device else []
         self.timings: list[tuple[str, float, int]] = []
 
@@ -264,6 +267,18 @@ class Run:
                       else color(f"{problems} problem(s)", RED)))
         return problems
 
+    # ------------------------------------------------------------ videos
+
+    def video_args(self, directory: str, once: bool = False) -> list[str]:
+        """`--vis-dir <directory>` for a stage that can write videos, or nothing with --no-video.
+
+        `once` is for count_gt, which refuses to overwrite a video: when the folder already exists
+        (a repeat of the stage with the same tag), no videos are written instead of failing the stage.
+        """
+        if self.args.no_video or (once and (ROOT / directory).exists()):
+            return []
+        return ["--vis-dir", directory]
+
     # ------------------------------------------------------------ clean
 
     def clean_targets(self) -> list[str]:
@@ -288,6 +303,9 @@ class Run:
                     targets += [str(p.relative_to(ROOT)) for p in ROOT.glob(pattern)]
         if self.will_run(4):
             targets.append(self.tracks)
+            targets += [f"{self.videos}/{split}" for split in self.args.splits]
+        if self.will_run(6):
+            targets.append(f"{self.videos}/gt")
         if self.will_run(9):
             targets.append(self.charts)
         if self.will_run(11):
@@ -381,7 +399,8 @@ class Run:
         if self.will_run(4):
             for split in s:
                 self.step(f"4. Detection + tracking, 4 configurations ({split})",
-                          ["scripts/run_tracking.py", "--split", split, "--out", self.tracks, *self.device])
+                          ["scripts/run_tracking.py", "--split", split, "--out", self.tracks, *self.device,
+                           *self.video_args(f"{self.videos}/{split}")])
 
         # Stage 5: tracking metrics against GT, computed from the stage 4 tracks
         if self.will_run(5):
@@ -393,7 +412,7 @@ class Run:
         if self.will_run(6):
             self.step("6. Ground-truth line-crossing counts",
                       ["scripts/count_gt.py", "--splits", *s, "--out", f"{self.reports}/gt_counts.json",
-                       "--md", f"{self.reports}/gt_counts.md"])
+                       "--md", f"{self.reports}/gt_counts.md", *self.video_args(f"{self.videos}/gt", once=True)])
 
         if self.will_run(7):
             self.step("7. Line-crossing counts from tracks",
@@ -483,6 +502,7 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--splits", nargs="+", choices=["dev", "test"], default=["dev", "test"])
     ap.add_argument("--skip-tests", action="store_true", help="skip stage 1 even if it is in range")
     ap.add_argument("--skip-notebook", action="store_true", help="skip the notebooks of stages 9 and 11")
+    ap.add_argument("--no-video", action="store_true", help="do not write the annotated videos of stages 4 and 6")
     ap.add_argument("--clean", action="store_true",
                     help="delete what the selected stages produce for this tag before running (asks first)")
     ap.add_argument("--yes", action="store_true", help="do not ask for confirmation with --clean")
