@@ -13,9 +13,11 @@ import numpy as np
 from numpy.typing import NDArray
 from tqdm import tqdm
 
-from ..config import DETRAC_TO_ID, FPS, RAW_ROOT
-from ..counting.line_crossing import validate_line
+from ..config import CLASSES, DETRAC_TO_ID, FPS, RAW_ROOT
+from ..counting.line_crossing import CrossingEvent, count_events, tally, validate_line
+from ..counting.trajectories import build_trajectories, mot_rows
 from ..data.detrac import SequenceAnn
+from ..data.mot import MotRow, load_mot
 from ..data.regions import Region
 from ..data.sequences import list_frames, read_frame, resolve_naming
 
@@ -26,7 +28,8 @@ Point = tuple[float, float]
 LINE_COLOR: Color = (0, 255, 255)
 TEXT_COLOR: Color = (255, 255, 255)
 CLASS_COLORS: dict[int, Color] = {0: (80, 200, 80), 1: (40, 140, 255), 2: (80, 80, 255)}  # car, bus, truck
-TRAIL_FRAMES: int = 12  # how long a crossing marker stays visible in GT videos, in frames
+TRAIL_FRAMES: int = 12  # how long a crossing marker stays visible, in frames
+PANEL_SIZE: tuple[int, int] = (460, 52)  # width, height in pixels of the info box in tracking videos
 
 
 @contextmanager
@@ -50,11 +53,10 @@ def video_writer(path: str | Path, size: tuple[int, int], fps: int = FPS) -> Ite
         writer.release()
 
 
-def draw_tracks(img: Image, tracks: Sequence[Sequence[float]], regions: list[Region], fid: int) -> Image:
-    """Return a copy of `img` showing the tracker output.
+def draw_tracks(img: Image, rows: Sequence[MotRow], regions: list[Region]) -> Image:
+    """Return a copy of `img` showing the tracker output of one frame.
 
-    Ignored regions are darkened, each track gets a box and its id in a colour taken from its id,
-    and the frame number is printed in the corner. A track row starts with x1, y1, x2, y2, track id.
+    Ignored regions are darkened. Each track gets a box in the colour of its class and a "class #id" label.
     """
     # Darken the ignored regions: paint them black on a copy, then blend that copy over the
     # original at 35% so the area stays visible but clearly marked
@@ -63,13 +65,29 @@ def draw_tracks(img: Image, tracks: Sequence[Sequence[float]], regions: list[Reg
         cv2.rectangle(shade, (int(x1), int(y1)), (int(x2), int(y2)), (0, 0, 0), -1)
     out = cv2.addWeighted(shade, 0.35, img, 0.65, 0)
 
-    for x1, y1, x2, y2, tid, *_ in tracks:
-        colour = tuple(int(v) for v in np.random.RandomState(int(tid) * 7919 % 2**31).randint(60, 255, 3))
-        cv2.rectangle(out, (int(x1), int(y1)), (int(x2), int(y2)), colour, 2)
-        cv2.putText(out, f"{int(tid)}", (int(x1), max(12, int(y1) - 4)),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, colour, 1, cv2.LINE_AA)
-    cv2.putText(out, f"frame {fid}", (8, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, TEXT_COLOR, 2, cv2.LINE_AA)
+    for tid, (x1, y1, x2, y2), cid, _ in rows:
+        cv2.rectangle(out, (int(x1), int(y1)), (int(x2), int(y2)), CLASS_COLORS[cid], 2)
+        cv2.putText(out, f"{CLASSES[cid]} #{tid}", (int(x1), max(12, int(y1) - 4)),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, CLASS_COLORS[cid], 1, cv2.LINE_AA)
     return out
+
+
+def crossing_points(events: Sequence[CrossingEvent]) -> dict[int, list[list[float]]]:
+    """Crossing points grouped by the frame of the crossing, for quick lookup while drawing."""
+    points: dict[int, list[list[float]]] = {}
+    for event in events:
+        points.setdefault(event["frame"], []).append(event["point"])
+    return points
+
+
+def draw_crossing_marks(img: Image, crossings: dict[int, list[list[float]]], fid: int) -> None:
+    """Circle the crossings of frame `fid` and the previous TRAIL_FRAMES frames on `img`, in place.
+
+    The circle is yellow in the crossing frame and grey afterwards.
+    """
+    for back in range(TRAIL_FRAMES + 1):
+        for x, y in crossings.get(fid - back, []):
+            cv2.circle(img, (int(x), int(y)), 18, LINE_COLOR if back == 0 else (120, 120, 120), 2, cv2.LINE_AA)
 
 
 def draw_line(img: Image, p1: Point | None, p2: Point | None = None, cursor: Point | None = None) -> Image:
@@ -127,11 +145,7 @@ def write_gt_video(ann: SequenceAnn, line: dict[str, list[int]], seq: str, event
     height, width = read_frame(frames[0][1]).shape[:2]
     validate_line(line["p1"], line["p2"], (width, height))
 
-    # Crossing points grouped by frame, for quick lookup while drawing
-    crosses: dict[int, list[list[float]]] = {}
-    for event in events:
-        crosses.setdefault(event["frame"], []).append(event["point"])
-
+    crossings = crossing_points(events)
     p1, p2 = (tuple(map(int, line[key])) for key in ("p1", "p2"))
     running_total = 0
     with video_writer(out_path, (width, height)) as writer:
@@ -150,15 +164,50 @@ def write_gt_video(ann: SequenceAnn, line: dict[str, list[int]], seq: str, event
 
             # The line, and markers for crossings from this frame and the previous TRAIL_FRAMES
             cv2.line(image, p1, p2, LINE_COLOR, 2, cv2.LINE_AA)
-            for back in range(TRAIL_FRAMES + 1):
-                for x, y in crosses.get(fid - back, []):
-                    cv2.circle(image, (int(x), int(y)), 18, LINE_COLOR if back == 0 else (120, 120, 120),
-                               2, cv2.LINE_AA)
+            draw_crossing_marks(image, crossings, fid)
 
-            running_total += len(crosses.get(fid, []))
+            running_total += len(crossings.get(fid, []))
             cv2.rectangle(image, (0, 0), (400, 30), (0, 0, 0), -1)
             cv2.putText(image, f"{seq} f{fid} crossed: {running_total}", (8, 21),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, TEXT_COLOR, 1, cv2.LINE_AA)
+            writer.write(image)
+
+
+def write_tracking_video(frames: list[tuple[int, Path]], mot_path: str | Path, regions: list[Region],
+                         line: dict[str, list[int]] | None, label: str, out_path: str | Path) -> None:
+    """Write the tracking video of one sequence from its saved MOT file.
+
+    Each frame shows the tracked boxes, the counting line, the crossings, the running count per class
+    and `label` (detector + tracker). Crossings are found in the same file by the same rules as
+    `count_tracks`, so the counts at the end of the video are the evaluated counts. Without a `line`
+    the video shows boxes and label only.
+    """
+    tracks = load_mot(mot_path)
+    height, width = read_frame(frames[0][1]).shape[:2]
+
+    events: list[CrossingEvent] = []
+    if line is not None:
+        validate_line(line["p1"], line["p2"], (width, height))
+        events = count_events(build_trajectories(mot_rows(tracks), regions), line["p1"], line["p2"])
+    crossings = crossing_points(events)
+
+    with video_writer(out_path, (width, height)) as writer:
+        for fid, path in tqdm(frames, desc=f"video {Path(out_path).stem}", unit="frame", leave=False):
+            image = draw_tracks(read_frame(path), tracks.get(fid, []), regions)
+
+            # Line, crossing marks and the count of all crossings up to this frame
+            if line is None:
+                status = "no counting line"
+            else:
+                image = draw_line(image, line["p1"], line["p2"])
+                draw_crossing_marks(image, crossings, fid)
+                counts = tally(event for event in events if event["frame"] <= fid)
+                status = "  ".join(f"{name} {counts[name]['total']}" for name in (*CLASSES, "all"))
+
+            cv2.rectangle(image, (0, 0), PANEL_SIZE, (0, 0, 0), -1)
+            cv2.putText(image, f"{label}  frame {fid}", (8, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.6, TEXT_COLOR, 1,
+                        cv2.LINE_AA)
+            cv2.putText(image, status, (8, 42), cv2.FONT_HERSHEY_SIMPLEX, 0.6, TEXT_COLOR, 1, cv2.LINE_AA)
             writer.write(image)
 
 

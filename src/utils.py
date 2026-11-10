@@ -7,6 +7,7 @@ import json
 import os
 import platform
 import random
+import sys
 import tempfile
 import time
 import uuid
@@ -14,6 +15,16 @@ from pathlib import Path
 from typing import Any
 
 from .config import SEED
+
+# ---------------------------------------------------------------- console
+
+GREEN, RED, YELLOW, CYAN, RESET = "\033[32m", "\033[31m", "\033[33m", "\033[36m", "\033[0m"
+
+
+def color(text: str, code: str) -> str:
+    """Wrap text in an ANSI color code, but only when writing to a terminal, so redirected logs stay clean."""
+    return f"{code}{text}{RESET}" if sys.stdout.isatty() else text
+
 
 # ---------------------------------------------------------------- reproducibility
 

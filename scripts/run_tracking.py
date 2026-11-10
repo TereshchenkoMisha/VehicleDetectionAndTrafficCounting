@@ -11,12 +11,15 @@ Needs:
     data/raw/UA-DETRAC/                    frames
     reports/splits.json                    sequences of the split (data/processed/detrac_yolo/ is preferred)
     reports/ignored_regions.json           ignored regions (same lookup)
+    reports/counting_lines.json            counting lines, used only to draw the videos
     configs/{bytetrack,botsort}.yaml       tracker settings
     models/<weights>.pt                    downloaded on first use
 Produces, per configuration, in <out>/<split>/<detector>_<tracker>_conf<conf>/:
     <sequence>.txt                         MOT rows: frame,id,x,y,w,h,score,class,-1,-1
     timing.json                            ms per frame, FPS, settings, hashes of inputs, environment
-    <vis-dir>/<configuration>_<sequence>.mp4   with --vis-dir
+    <vis-dir>/<configuration>_<sequence>.mp4   with --vis-dir: boxes with class and id, counting line,
+                                           crossings, running counts per class, detector + tracker label
+    <vis-dir>/videos_without_line.json     with --vis-dir, when a sequence has no line (drawn without one)
 A configuration is written to a `.partial` folder and renamed when finished. Seeds are always set;
 deterministic inference is enabled for every run.
 """
@@ -34,6 +37,8 @@ from src.config import CONF, CONFIG_DIR, IMGSZ, NMS_IOU, OUT_DIR, RAW_ROOT, REPO
 from src.data.sequences import list_frames
 from src.tracking.pipeline import track_config
 from src.utils import (
+    YELLOW,
+    color,
     env_info,
     file_info,
     fraction,
@@ -59,6 +64,22 @@ def find_metadata(name: str, data_dir: Path) -> Path:
                             "or copy it from reports/ (see README, section 3)")
 
 
+def report_missing_lines(seqs: list[str], lines: dict[str, Any], lines_path: str, vis_dir: Path,
+                         out_dirs: list[Path]) -> None:
+    """Warn about sequences without a counting line and list their videos in `videos_without_line.json`.
+
+    Such videos are still written, but without the line, the crossings and the counts.
+    """
+    missing = [seq for seq in seqs if seq not in lines]
+    if not missing:
+        return
+    videos = [f"{out_dir.name}_{seq}.mp4" for out_dir in out_dirs for seq in missing]
+    write_json(vis_dir / "videos_without_line.json", {"lines": lines_path, "sequences": missing, "videos": videos})
+    print(color(f"[warn] no counting line for {', '.join(missing)} in {lines_path}: "
+                f"their videos are drawn without line and counts (list: {vis_dir / 'videos_without_line.json'})",
+                YELLOW))
+
+
 def device_name(device: str | int) -> str:
     """Human-readable name of the compute device, for the timing report."""
     if torch.cuda.is_available() and str(device) != "cpu":
@@ -76,6 +97,7 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--split", choices=["dev", "test"], default="dev")
     ap.add_argument("--seqs", nargs="+", default=None, help="subset of sequences (default: whole split)")
     ap.add_argument("--data", default=str(OUT_DIR), help="processed-data folder (fallback: reports/)")
+    ap.add_argument("--lines", default=str(REPORTS_DIR / "counting_lines.json"), help="counting lines for the videos")
     ap.add_argument(
         "--conf",
         type=fraction,
@@ -121,6 +143,9 @@ def main() -> None:
     if len(set(out_dirs)) != len(out_dirs):
         raise SystemExit("Some configurations have the same output folder. Check duplicated model/tracker arguments.")
     vis_dir = Path(args.vis_dir) if args.vis_dir else None
+    lines = read_json(args.lines) if Path(args.lines).exists() else {}
+    if vis_dir:
+        report_missing_lines(seqs, lines, args.lines, vis_dir, out_dirs)
     total = sum(len(f) for f in seq_frames.values()) * len(configs)
     print(f"[run] {len(configs)} configs x {len(seqs)} seqs, {total} frames, device={device}, "
           f"conf={args.conf}, imgsz={args.imgsz}")
@@ -144,7 +169,7 @@ def main() -> None:
             timing: dict[str, Any] = track_config(
                 weights, tracker, seq_frames, ignored, partial, conf=args.conf, imgsz=args.imgsz, iou=args.iou,
                 device=device, seed=args.seed, on_frame=on_frame,
-                vis_dir=partial / "videos" if vis_dir else None)
+                vis_dir=partial / "videos" if vis_dir else None, lines=lines)
 
             # Record which inputs and software produced these tracks, so the result can be traced and
             # a changed input detected later

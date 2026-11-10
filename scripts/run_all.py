@@ -57,7 +57,7 @@ sys.path.insert(0, str(ROOT))
 from src.config import RAW_ROOT, REPORTS_DIR  # noqa: E402
 from src.counting.line_crossing import validate_line  # noqa: E402
 from src.data.sequences import find_sequence_dir  # noqa: E402
-from src.utils import read_json  # noqa: E402
+from src.utils import CYAN, GREEN, RED, YELLOW, color, read_json  # noqa: E402
 
 STAGES: list[str] = ["tests", "prepare", "detectors", "tracking", "trackeval", "gtcounts", "trackcounts",
                      "countingeval", "notebook", "verify", "ablation", "failures"]
@@ -70,8 +70,6 @@ IGNORED_JSON = "reports/ignored_regions.json"
 LINES_JSON = "reports/counting_lines.json"
 REVIEW_JSON = "reports/failure_review.json"
 
-GREEN, RED, YELLOW, CYAN, RESET = "\033[32m", "\033[31m", "\033[33m", "\033[36m", "\033[0m"
-
 
 class Requirement(NamedTuple):
     """One input of one stage: what it is, and which stage (if any) creates it."""
@@ -80,11 +78,6 @@ class Requirement(NamedTuple):
     kind: str       # "dir" or "file"
     by: int         # stage that produces it, 0 when no stage does
     why: str
-
-
-def color(text: str, code: str) -> str:
-    """Wrap text in an ANSI color code, but only when writing to a terminal, so redirected logs stay clean."""
-    return f"{code}{text}{RESET}" if sys.stdout.isatty() else text
 
 
 def stage_number(value: str) -> int:

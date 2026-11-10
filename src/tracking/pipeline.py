@@ -31,7 +31,7 @@ from ..data.mot import MotOutRow, write_mot
 from ..data.regions import Region, inside_any
 from ..data.sequences import read_frame
 from ..utils import file_info, set_seed
-from .viz import draw_tracks, video_writer
+from .viz import write_tracking_video
 
 TRACKER_CLASSES: dict[str, type] = {"bytetrack": BYTETracker, "botsort": BOTSORT}
 
@@ -106,13 +106,12 @@ def warmup(model: YOLO, frame: NDArray[np.uint8], imgsz: int, device: str | int 
 
 
 def run_sequence(model: YOLO, tracker: Any, frames: list[tuple[int, Path]], regions: list[Region], conf: float,
-                 imgsz: int, iou: float, device: str | int | None, on_frame: FrameCallback | None = None,
-                 writer: Any = None) -> tuple[list[MotOutRow], float, float]:
+                 imgsz: int, iou: float, device: str | int | None,
+                 on_frame: FrameCallback | None = None) -> tuple[list[MotOutRow], float, float]:
     """Detect and track one sequence, frame by frame.
 
     `frames` is [(frame number, image path), ...] in order, `conf` the detector confidence, `iou`
-    the NMS threshold. Reading images and drawing are outside the timers. If `writer` is given, each
-    annotated frame is written to it. Returns (rows, detector seconds, tracker seconds); a row is
+    the NMS threshold. Reading images is outside the timers. Returns (rows, detector seconds, tracker seconds); a row is
     (frame, id, x, y, w, h, score, project class id).
     """
     rows: list[MotOutRow] = []
@@ -149,8 +148,6 @@ def run_sequence(model: YOLO, tracker: Any, frames: list[tuple[int, Path]], regi
         # Collect. Boxes go from x1 y1 x2 y2 to x y w h, COCO class ids to project class ids.
         for x1, y1, x2, y2, tid, score, cls, _ in tracks:
             rows.append((fid, int(tid), x1, y1, x2 - x1, y2 - y1, score, COCO_TO_LOCAL[int(cls)]))
-        if writer is not None:
-            writer.write(draw_tracks(img, tracks, regions, fid))
         if on_frame:
             on_frame(index, det_s, trk_s)
     return rows, det_s, trk_s
@@ -160,10 +157,11 @@ def track_config(weights: str, tracker_name: str, seq_frames: dict[str, list[tup
                  ignored: dict[str, list[Region]], out_dir: Path, *, imgsz: int, iou: float,
                  device: str | int | None, seed: int, conf: float = CONF,
                  on_frame: Callable[[str, int, float, float], None] | None = None,
-                 vis_dir: Path | None = None) -> dict[str, Any]:
+                 vis_dir: Path | None = None, lines: dict[str, dict[str, list[int]]] | None = None) -> dict[str, Any]:
     """Run one detector + tracker configuration over several sequences.
 
-    Writes `<out_dir>/<sequence>.txt` per sequence, and an mp4 per sequence into `vis_dir` if given.
+    Writes `<out_dir>/<sequence>.txt` per sequence, and an mp4 per sequence into `vis_dir` if given. The
+    video shows the counting line of the sequence from `lines`; a sequence without a line gets no line.
     `on_frame(sequence, frame index, detector s, tracker s)` is called after every frame.
     Returns the timing report (ms per frame, FPS, tracker settings, MOT file hashes); the caller
     adds provenance and environment.
@@ -189,18 +187,18 @@ def track_config(weights: str, tracker_name: str, seq_frames: dict[str, list[tup
         tick = None if on_frame is None else (lambda i, d, t, seq=seq: on_frame(seq, i, d, t))
         tracker = build_tracker(settings, device)
 
-        if vis_dir is None:
-            rows, det_s, trk_s = run_sequence(model, tracker, frames, ignored[seq], det_conf, imgsz, iou, device,
-                                              on_frame=tick)
-        else:
-            # The video name uses the final folder name, even while the run is in its .partial folder
-            height, width = read_frame(frames[0][1]).shape[:2]
-            video = vis_dir / f"{out_dir.name.removesuffix('.partial')}_{seq}.mp4"
-            with video_writer(video, (width, height)) as writer:
-                rows, det_s, trk_s = run_sequence(model, tracker, frames, ignored[seq], det_conf, imgsz, iou,
-                                                  device, on_frame=tick, writer=writer)
+        rows, det_s, trk_s = run_sequence(model, tracker, frames, ignored[seq], det_conf, imgsz, iou, device,
+                                          on_frame=tick)
 
         write_mot(rows, out_dir / f"{seq}.txt")
+
+        # The video is drawn from the saved file, after the timed loop. Its name uses the final folder
+        # name, even while the run is in its .partial folder.
+        if vis_dir is not None:
+            video = vis_dir / f"{out_dir.name.removesuffix('.partial')}_{seq}.mp4"
+            write_tracking_video(frames, out_dir / f"{seq}.txt", ignored[seq], (lines or {}).get(seq),
+                                 f"{Path(weights).stem} + {tracker_name}", video)
+
         n = len(frames)
         per_seq[seq] = {"frames": n, "det_ms": 1000 * det_s / n, "trk_ms": 1000 * trk_s / n,
                         "tracks": len({r[1] for r in rows}), "rows": len(rows),
