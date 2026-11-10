@@ -9,6 +9,7 @@ import platform
 import random
 import tempfile
 import time
+import uuid
 from pathlib import Path
 from typing import Any
 
@@ -24,7 +25,8 @@ def set_seed(seed: int = SEED) -> None:
     import torch
 
     set_deterministic()
-    cv2.setNumThreads(1)
+    # OpenCV's GCD backend may ignore positive thread counts; zero disables its parallel regions.
+    cv2.setNumThreads(0)
     random.seed(seed)
     np.random.seed(seed)
     cv2.setRNGSeed(seed)
@@ -70,6 +72,47 @@ def file_info(path: str | Path) -> dict[str, str]:
 def read_json(path: str | Path) -> Any:
     """Parse a UTF-8 JSON file."""
     return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def matches_file_hash(path: str | Path, expected: str) -> bool:
+    """Match recorded bytes, allowing only LF/CRLF conversion of known UTF-8 text files.
+
+    Git can convert Windows text on checkout. Keep the original provenance hashes and still reject
+    changes to values, whitespace other than CRLF, and all binary files.
+    """
+    path = Path(path)
+    if file_info(path)["sha256"] == expected:
+        return True
+    if path.suffix.lower() not in {".txt", ".json", ".csv", ".md", ".yaml", ".yml"}:
+        return False
+    content = path.read_bytes()
+    try:
+        content.decode("utf-8")
+    except UnicodeDecodeError:
+        return False
+    lf = content.replace(b"\r\n", b"\n")
+    return any(hashlib.sha256(value).hexdigest() == expected for value in (lf, lf.replace(b"\n", b"\r\n")))
+
+
+def publish_directory(staged: str | Path, destination: str | Path, archive_root: Path | None = None) -> None:
+    """Publish a completed directory, keeping the previous version outside consumers' search paths.
+
+    A failed computation never touches the old directory. Restore it if publishing itself fails.
+    The caller supplies an archive outside a split directory when its children are configurations.
+    """
+    staged, destination = Path(staged), Path(destination)
+    backup = None
+    if destination.exists():
+        archive_root = archive_root or destination.parent / ".previous"
+        archive_root.mkdir(parents=True, exist_ok=True)
+        backup = archive_root / f"{destination.name}_{time.strftime('%Y%m%d_%H%M%S')}_{uuid.uuid4().hex[:8]}"
+        destination.rename(backup)
+    try:
+        staged.rename(destination)
+    except OSError:
+        if backup is not None:
+            backup.rename(destination)
+        raise
 
 
 def write_json(path: str | Path, value: Any) -> None:

@@ -30,11 +30,20 @@ from typing import Any
 import torch
 from tqdm import tqdm
 
-from src.config import (CONF, CONFIG_DIR, IMGSZ, NMS_IOU, OUT_DIR, RAW_ROOT, REPORTS_DIR, SEED, TRACKS_DIR,
-                        weights_path)
+from src.config import CONF, CONFIG_DIR, IMGSZ, NMS_IOU, OUT_DIR, RAW_ROOT, REPORTS_DIR, SEED, TRACKS_DIR, weights_path
 from src.data.sequences import list_frames
 from src.tracking.pipeline import track_config
-from src.utils import env_info, file_info, fraction, positive_int, read_json, seed_value, set_seed, write_json
+from src.utils import (
+    env_info,
+    file_info,
+    fraction,
+    positive_int,
+    publish_directory,
+    read_json,
+    seed_value,
+    set_seed,
+    write_json,
+)
 
 
 def find_metadata(name: str, data_dir: Path) -> Path:
@@ -106,19 +115,12 @@ def main() -> None:
         print("TEST split: configs, conf and counting protocol must be frozen on dev before this run")
     seq_frames = {seq: list_frames(seq, args.raw)[:args.max_frames] for seq in seqs}
 
-    # Output folders. Everything is checked before the first frame is processed, so a clash does not
-    # cost a long run: results are never overwritten.
+    # A repeat computes a fresh configuration in staging; the previous one stays usable until publication.
     configs = [(m, t) for m in args.models for t in args.trackers]
     out_dirs = [Path(args.out) / args.split / f"{Path(w).stem}_{t}_conf{args.conf:g}" for w, t in configs]
     if len(set(out_dirs)) != len(out_dirs):
         raise SystemExit("Some configurations have the same output folder. Check duplicated model/tracker arguments.")
     vis_dir = Path(args.vis_dir) if args.vis_dir else None
-    existing = [d for d in out_dirs if d.exists()]
-    if vis_dir:
-        existing += [v for d in out_dirs for seq in seqs if (v := vis_dir / f"{d.name}_{seq}.mp4").exists()]
-    if existing:
-        raise SystemExit("Output already exists, choose a new --out / --vis-dir:\n" + "\n".join(f"  {p}" for p in existing))
-
     total = sum(len(f) for f in seq_frames.values()) * len(configs)
     print(f"[run] {len(configs)} configs x {len(seqs)} seqs, {total} frames, device={device}, "
           f"conf={args.conf}, imgsz={args.imgsz}")
@@ -141,7 +143,8 @@ def main() -> None:
 
             timing: dict[str, Any] = track_config(
                 weights, tracker, seq_frames, ignored, partial, conf=args.conf, imgsz=args.imgsz, iou=args.iou,
-                device=device, seed=args.seed, on_frame=on_frame, vis_dir=vis_dir)
+                device=device, seed=args.seed, on_frame=on_frame,
+                vis_dir=partial / "videos" if vis_dir else None)
 
             # Record which inputs and software produced these tracks, so the result can be traced and
             # a changed input detected later
@@ -161,7 +164,12 @@ def main() -> None:
                 env=env_info(device_name(device)),
             )
             write_json(partial / "timing.json", timing)
-            partial.rename(out_dir)
+            publish_directory(partial, out_dir, Path(args.out) / ".previous" / args.split)
+            if vis_dir:
+                vis_dir.mkdir(parents=True, exist_ok=True)
+                for video in (out_dir / "videos").glob("*.mp4"):
+                    video.replace(vis_dir / video.name)
+                (out_dir / "videos").rmdir()
             tqdm.write(f"[done] {out_dir.name}: det {timing['det_ms_per_frame']:.1f} ms, "
                        f"trk {timing['trk_ms_per_frame']:.1f} ms, {timing['fps']:.1f} FPS -> {out_dir}")
 

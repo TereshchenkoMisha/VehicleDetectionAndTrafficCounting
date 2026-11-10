@@ -9,6 +9,7 @@ Two exports live here:
     whose centre is in an ignored region.
 """
 import shutil
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -16,10 +17,10 @@ from PIL import Image
 from tqdm import tqdm
 
 from ..config import CLASSES, DETRAC_TO_ID, OUT_DIR, RAW_ROOT, REPORTS_DIR
-from ..utils import read_json, write_json
+from ..utils import file_info, publish_directory, read_json, write_json
 from .detrac import Box, SequenceAnn, load_all
 from .regions import Region, inside_any
-from .sequences import find_sequence_dir, frame_paths, resolve_naming
+from .sequences import JPG_SUFFIXES, find_sequence_dir, frame_paths, resolve_naming
 
 # ---------------------------------------------------------------- YOLO labels
 
@@ -80,24 +81,96 @@ def _place_image(src: Path, dst: Path, copy: bool) -> None:
         shutil.copy2(src, dst)
 
 
+def _label_lines(ann: SequenceAnn, fid: int, img_path: Path) -> list[str]:
+    """Derive labels from the current annotations and actual image dimensions."""
+    with Image.open(img_path) as image:
+        width, height = image.size
+    frame = ann.frames.get(fid)
+    lines = []
+    for target in frame.targets if frame is not None else []:
+        cid = DETRAC_TO_ID.get(target.cls)
+        line = None if cid is None else _yolo_line(cid, target.box, width, height)
+        if line:
+            lines.append(line)
+    return lines
+
+
+def _prepared_is_current(out_dir: Path, plans: dict, anns: dict[str, SequenceAnn], split: dict) -> bool:
+    """Reuse only a complete export with the same frames, labels and metadata; repair partial exports."""
+    try:
+        if read_json(out_dir / "splits.json") != split:
+            return False
+        stats, ignored = read_json(out_dir / "stats.json"), read_json(out_dir / "ignored_regions.json")
+        for name in ("dev", "test"):
+            expected = {f"{seq}_f{fid:06d}" for (s, seq), frames in plans.items() if s == name for fid, _ in frames}
+            images = {p.name for p in (out_dir / "images" / name).glob("*")
+                      if p.is_file() and p.suffix.lower() in JPG_SUFFIXES}
+            if images != {f"{stem}.jpg" for stem in expected}:
+                return False
+            if {p.stem for p in (out_dir / "labels" / name).glob("*.txt")} != expected:
+                return False
+            if set(stats[name]) != set(split[name]):
+                return False
+        for (name, seq), frames in plans.items():
+            if ignored[seq] != [list(r.as_xyxy()) for r in anns[seq].ignored_regions]:
+                return False
+            per_class = {c: 0 for c in CLASSES}
+            for fid, source in frames:
+                stem = f"{seq}_f{fid:06d}"
+                image, label = out_dir / "images" / name / f"{stem}.jpg", out_dir / "labels" / name / f"{stem}.txt"
+                if file_info(image)["sha256"] != file_info(source)["sha256"]:
+                    return False
+                lines = _label_lines(anns[seq], fid, source)
+                if label.read_text(encoding="utf-8") != "\n".join(lines):
+                    return False
+                for line in lines:
+                    per_class[CLASSES[int(line.split()[0])]] += 1
+            if stats[name][seq] != {"weather": split["weather"][seq], "frames": len(frames), "boxes": per_class}:
+                return False
+        return True
+    except (OSError, ValueError, KeyError, TypeError):
+        return False
+
+
+def _write_dataset_yaml(out_dir: Path, final_dir: Path) -> None:
+    (out_dir / "detrac.yaml").write_text(
+        f"path: {final_dir.resolve()}\n"
+        "train: images/dev   # not used (fine-tuning is not planned)\n"
+        "val: images/dev\n"
+        "test: images/test\n"
+        "names:\n  0: car\n  1: bus\n  2: truck\n", encoding="utf-8")
+
+
 def convert(anns: dict[str, SequenceAnn], split: dict[str, Any], frame_step: int = 1, copy: bool = False,
             out_dir: str | Path = OUT_DIR, frames_root: str | Path = RAW_ROOT) -> dict[str, dict[str, Any]]:
-    """Write the YOLO-format dataset for the detector evaluation into `out_dir`.
+    """Reuse an identical YOLO export, or build and publish a complete replacement.
 
-    Layout: `images/<split>/<seq>_fNNNNNN.jpg`, `labels/<split>/<seq>_fNNNNNN.txt`, `detrac.yaml`,
-    `ignored_regions.json` (xyxy pixels per sequence) and `stats.json`. Refuses to write into a
-    folder that already has images or labels. Returns the stats: weather, frame count and box
-    count per class, for each sequence.
+    Validate actual images and labels before reuse. An interrupted or incompatible previous export
+    is kept in `.previous/` only after its replacement finishes, so it never blocks another run.
     """
     out_dir, frames_root = Path(out_dir), Path(frames_root)
     if frame_step < 1:
         raise ValueError("frame_step must be a positive integer")
-    if (out_dir / "images").exists() or (out_dir / "labels").exists():
-        raise FileExistsError(f"Prepared images or labels already exist in {out_dir}. "
-                              "Choose a new output directory.")
-
-    # Plan first, so a missing sequence fails before any file is written
     plans = _plan_frames(anns, split, frames_root, frame_step)
+    if _prepared_is_current(out_dir, plans, anns, split):
+        _write_dataset_yaml(out_dir, out_dir)  # refresh a path after moving the repository
+        print(f"[data] complete matching export reused: {out_dir}")
+        return read_json(out_dir / "stats.json")
+
+    out_dir.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=f".{out_dir.name}_", dir=out_dir.parent) as temporary:
+        staged = Path(temporary) / "dataset"
+        staged.mkdir()
+        stats = _export_new(anns, split, plans, copy, staged)
+        _write_dataset_yaml(staged, out_dir)
+        write_json(staged / "splits.json", split)
+        publish_directory(staged, out_dir)
+    return stats
+
+
+def _export_new(anns: dict[str, SequenceAnn], split: dict, plans: dict, copy: bool,
+                out_dir: Path) -> dict[str, dict[str, Any]]:
+    """Write a new export in a staging directory, leaving the active dataset untouched."""
 
     stats: dict[str, dict[str, Any]] = {"dev": {}, "test": {}}
     ignored_out: dict[str, list[list[float]]] = {}
@@ -113,20 +186,10 @@ def convert(anns: dict[str, SequenceAnn], split: dict[str, Any], frame_step: int
         per_class = {c: 0 for c in CLASSES}
         for fid, img_path in frames:
             stem = f"{seq_name}_f{fid:06d}"
-            with Image.open(img_path) as image:
-                width, height = image.size      # needed to normalise the boxes; read from the file, not assumed
-
-            # Labels of this frame. The label file is written even when empty, because the
-            # evaluation treats a missing file as an error (it cannot tell "no objects" from "lost").
-            frame_ann = ann.frames.get(fid)
-            lines = []
-            for target in frame_ann.targets if frame_ann is not None else []:
-                cid = DETRAC_TO_ID.get(target.cls)
-                line = None if cid is None else _yolo_line(cid, target.box, width, height)
-                if line:
-                    lines.append(line)
-                    per_class[CLASSES[cid]] += 1
-            (lbl_out / f"{stem}.txt").write_text("\n".join(lines))
+            lines = _label_lines(ann, fid, img_path)
+            for line in lines:
+                per_class[CLASSES[int(line.split()[0])]] += 1
+            (lbl_out / f"{stem}.txt").write_text("\n".join(lines), encoding="utf-8")
             _place_image(img_path, img_out / f"{stem}.jpg", copy)
             bar.update(1)
 
@@ -135,13 +198,6 @@ def convert(anns: dict[str, SequenceAnn], split: dict[str, Any], frame_step: int
         ignored_out[seq_name] = [list(r.as_xyxy()) for r in ann.ignored_regions]
     bar.close()
 
-    # Dataset description for Ultralytics, and the metadata the later stages read
-    (out_dir / "detrac.yaml").write_text(
-        f"path: {out_dir.resolve()}\n"
-        "train: images/dev   # not used (fine-tuning is not planned)\n"
-        "val: images/dev\n"
-        "test: images/test\n"
-        "names:\n  0: car\n  1: bus\n  2: truck\n", encoding="utf-8")
     write_json(out_dir / "ignored_regions.json", ignored_out)
     write_json(out_dir / "stats.json", stats)
     return stats

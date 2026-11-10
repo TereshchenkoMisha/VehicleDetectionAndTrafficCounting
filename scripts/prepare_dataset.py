@@ -13,7 +13,7 @@ Produces (in data/processed/detrac_yolo/):
     images/{dev,test}/, labels/{dev,test}/ every --frame-step-th frame, with YOLO labels
     splits.json, ignored_regions.json      the split, and ignored regions (absolute xyxy pixels)
     stats.json, detrac.yaml                box counts per sequence, dataset description
-Refuses to run if images/ or labels/ already exist in the output folder.
+Reuses a complete matching export; safely rebuilds incomplete or changed prepared data.
 """
 
 import argparse
@@ -25,7 +25,7 @@ from src.config import N_DEV, N_SELECT, OUT_DIR, RAW_ROOT, REPORTS_DIR
 from src.data.detrac import load_all
 from src.data.export import convert
 from src.data.sequences import find_sequence_dir
-from src.data.split import build_proxy_metas, save_or_load_split, select_and_split
+from src.data.split import build_proxy_metas, select_and_split
 from src.tracking.viz import write_label_previews
 from src.utils import positive_int, read_json
 
@@ -53,8 +53,6 @@ def main() -> None:
     if args.preview_only:
         write_label_previews(out_dir, REPORTS_DIR / "sanity", args.preview or 6)
         return
-    if (out_dir / "images").exists() or (out_dir / "labels").exists():
-        raise SystemExit(f"Prepared images or labels already exist in {out_dir}. Choose a new --out directory.")
 
     # Find the usable sequences: the ones that have annotations and frames (and metadata, if the
     # dataset copy ships it). Everything else is ignored without error.
@@ -81,10 +79,10 @@ def main() -> None:
     else:
         requested = select_and_split(metas, args.n_select, args.n_dev)
 
-    # Save it, unless a different one is already saved in the output folder
-    split = save_or_load_split(out_dir, requested, force=args.force)
-    if split != requested:
-        raise SystemExit("The existing output split differs from the requested split. Choose a new --out directory.")
+    # Do not modify the active export before conversion succeeds.
+    if cached_split.is_file() and read_json(cached_split) != requested:
+        print("[split] prepared data uses another split; rebuilding from the requested split, keeping a backup")
+    split = requested
     print("[split] dev:", split["dev"])
     print("[split] test:", split["test"])
 

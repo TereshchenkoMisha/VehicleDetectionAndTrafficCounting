@@ -25,6 +25,10 @@
 !/reports/splits.json
 !/reports/ignored_regions.json
 !/reports/counting_lines.json
+!/reports/failure_review.json
+
+# Previous versions retained when completed outputs are replaced.
+**/.previous/
 
 # Ultralytics output folders created by YOLO train/val/predict runs
 runs/
@@ -55,7 +59,6 @@ __pypackages__/
 env/
 ENV/
 .python-version
-uv.lock
 
 # Packaging / build
 build/

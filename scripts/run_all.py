@@ -1,13 +1,13 @@
 """Run the pipeline, or a part of it, and check the results.
 
-    .venv\\Scripts\\python.exe scripts\\run_all.py                                   # all stages, new tag
-    .venv\\Scripts\\python.exe scripts\\run_all.py --from tracking --splits dev --device 0
-    .venv\\Scripts\\python.exe scripts\\run_all.py --from gtcounts --tag run_20261101_202443
-    .venv\\Scripts\\python.exe scripts\\run_all.py --from 5 --to 8 --tag run_20261101_202443 --clean
+    uv run --all-extras python scripts/run_all.py                                   # all stages, new tag
+    uv run --all-extras python scripts/run_all.py --from tracking --splits dev --device 0
+    uv run --all-extras python scripts/run_all.py --from gtcounts --tag run_20261101_202443
+    uv run --all-extras python scripts/run_all.py --from 5 --to 8 --tag run_20261101_202443 --clean
 
 Stages, selected with --from / --to by number or name:
      1 tests          unit tests
-     2 prepare        prepare_dataset (skipped if data/processed/detrac_yolo/images exists)
+     2 prepare        prepare_dataset (validates and reuses complete prepared data)
      3 detectors      evaluate_detectors
      4 tracking       run_tracking
      5 trackeval      evaluate_tracking
@@ -16,8 +16,8 @@ Stages, selected with --from / --to by number or name:
      8 countingeval   evaluate_counting
      9 notebook       tables and charts (needs jupyter)
     10 verify         verify_run
-    11 ablation       run_ablation (confidence sweep on dev, 16 tracking runs) and its notebook; not in the
-                      default range: pass --to ablation, or --from ablation to run it alone
+    11 ablation       run_ablation (confidence sweep on dev, 16 tracking runs) and its notebook;
+                      included by default; --from ablation runs it alone
     12 failures       failure candidates, pictures and report of the reviewed cases (dev; saved files only, no
                       inference); not in the default range: pass --to failures, or --from failures to run it alone
 
@@ -34,7 +34,8 @@ Produces, per tag:
     outputs/ablation_<tag>/                confidence sweep (stage 11); an existing one is continued, not redone
     outputs/failures_<tag>/                pictures and clips of the reviewed failure cases (stage 12)
 --clean first deletes what the selected stages produce for this tag (and the prepared dataset when stage 2
-is selected), after a confirmation. Without it, existing results are never overwritten.
+is selected), after a confirmation. Normally each invocation has a unique tag. Repeating an explicit tag
+recomputes selected stages; completed tracking directories are archived before replacement.
 Child processes write straight to the console, so progress bars look as usual.
 """
 import argparse
@@ -44,6 +45,7 @@ import shutil
 import subprocess
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 from typing import NamedTuple
 
@@ -57,7 +59,7 @@ from src.utils import read_json  # noqa: E402
 
 STAGES: list[str] = ["tests", "prepare", "detectors", "tracking", "trackeval", "gtcounts", "trackcounts",
                      "countingeval", "notebook", "verify", "ablation", "failures"]
-DEFAULT_LAST: int = 10      # the ablation is long and independent, so it runs only when asked for
+DEFAULT_LAST: int = 11      # include the sensitivity experiment required by the course
 DETECTORS: list[str] = ["yolov8n", "yolov8s"]
 RAW = "data/raw/UA-DETRAC"
 PROCESSED = "data/processed/detrac_yolo"
@@ -152,7 +154,6 @@ class Run:
         need(10, SPLITS_JSON, "file", 0, "split")
         need(11, SPLITS_JSON, "file", 0, "split")
         need(11, "notebooks/ablation.ipynb", "file", 0, "ablation notebook")
-        need(12, REVIEW_JSON, "file", 0, "reviewed failure cases")
         need(12, SPLITS_JSON, "file", 0, "split")
 
         # Results of earlier stages
@@ -224,6 +225,11 @@ class Run:
             print("  " + color("[MISSING]", RED) + f" splits.json is not readable JSON: {exc}")
             return 1
         check(all(splits.get(s) for s in a.splits), f"splits.json lists sequences for {', '.join(a.splits)}")
+        dev, test = splits.get("dev", []), splits.get("test", [])
+        check(not set(dev) & set(test), "dev and test sequences must be disjoint")
+        check(len(dev) == len(set(dev)) and len(test) == len(set(test)), "split sequences must be unique")
+        if self.will_run(12):
+            check(bool(dev), "failure analysis needs a nonempty dev split")
         sequences = [seq for s in a.splits for seq in splits.get(s, [])]
 
         # Counting lines: present and valid for each sequence
@@ -341,7 +347,7 @@ class Run:
         """Run the selected stages in order, each as one or more child processes.
 
         Stages that work per split (detectors, tracking) run once per split; the others take all
-        splits in one call. All outputs go to tag-specific folders, so nothing existing is overwritten.
+        splits in one call. New invocations use unique tags; explicit tag repeats recompute selected stages.
         """
         a, s = self.args, self.args.splits
 
@@ -356,14 +362,10 @@ class Run:
         if self.will_run(1):
             self.step("1. Unit tests", ["-m", "unittest", "discover", "-s", "tests", "-v"])
 
-        # Stage 2: build the YOLO copy of the dataset once; an existing copy is kept unless --clean removed it
+        # Stage 2 validates actual frames/labels before reuse and repairs interrupted exports.
         if self.will_run(2):
-            if (ROOT / PROCESSED / "images").exists():
-                print(color(f"\n2. Prepared dataset already exists in {PROCESSED} - skipping prepare_dataset "
-                            "(use --clean to rebuild it).", YELLOW))
-            else:
-                self.step("2. Prepare dataset (reference split, every 5th frame)",
-                          ["scripts/prepare_dataset.py", "--frame-step", "5", "--copy", "--split-file", SPLITS_JSON])
+            self.step("2. Prepare dataset (reference split, every 5th frame)",
+                      ["scripts/prepare_dataset.py", "--frame-step", "5", "--copy", "--split-file", SPLITS_JSON])
 
         # Stage 3: detector mAP and precision/recall, one report per model and split
         if self.will_run(3):
@@ -408,7 +410,7 @@ class Run:
         if self.will_run(9):
             if importlib.util.find_spec("nbconvert") is None:
                 print(color("\n9. Skipping notebook: jupyter/nbconvert is not installed in this environment "
-                            "(uv pip install jupyter --python .venv).", YELLOW))
+                            "(uv sync --all-extras).", YELLOW))
             else:
                 # The notebook reads its input and output folders from these variables
                 os.environ.update(REPORTS_DIR=str(ROOT / self.reports), TRACKS_ROOT=str(ROOT / self.tracks),
@@ -446,23 +448,34 @@ class Run:
                       ["scripts/analyze_failures.py", "--splits", "dev", "--gt", f"{self.reports}/gt_counts.json",
                        "--tracks", f"{self.reports}/track_counts.json", "--tracks-dir", self.tracks,
                        "--out-prefix", f"{self.reports}/failure_analysis"])
-            self.step("12. Pictures of the reviewed failure cases",
-                      ["scripts/render_failure_cases.py", "--analysis", analysis, "--tracks-dir", self.tracks,
-                       "--out-dir", self.failures, "--video", "--replace"])
-            self.step("12. Report of the reviewed failure cases",
-                      ["scripts/report_failures.py", "--analysis", analysis,
-                       "--tracks", f"{self.reports}/track_counts.json", "--picture-dir", f"{self.failures}/dev",
-                       "--out", f"{self.reports}/failure_cases.md"])
+            if not (ROOT / REVIEW_JSON).is_file():
+                print(color(f"\nFailure candidates saved to {analysis}. Manual review is pending: inspect at least "
+                            f"three vehicles, create {REVIEW_JSON} (format: src/failure/review.py), then repeat "
+                            f"uv run --all-extras python scripts/run_all.py --tag {self.tag} --from failures. "
+                            "No reviewed report was generated.", YELLOW))
+            else:
+                self.review_failures(analysis)
 
         print(color("\n" + "=" * 100 + f"\nFINISHED stages {a.first}-{a.last}. Tag: {self.tag}", GREEN))
         self.summary()
         print(f"Results: {self.reports}   Tracks: {self.tracks}   Charts: {self.charts}")
 
+    def review_failures(self, analysis: str) -> None:
+        """Render and report an existing manual review after generating the candidates."""
+        self.step("12. Pictures of the reviewed failure cases",
+                      ["scripts/render_failure_cases.py", "--analysis", analysis, "--tracks-dir", self.tracks,
+                       "--out-dir", self.failures, "--video", "--replace"])
+        self.step("12. Report of the reviewed failure cases",
+                      ["scripts/report_failures.py", "--analysis", analysis,
+                       "--tracks", f"{self.reports}/track_counts.json", "--picture-dir", f"{self.failures}/dev",
+                       "--out", f"{self.reports}/failure_cases.md"])
+
 
 def parse_args() -> argparse.Namespace:
     """Command-line options; see the module docstring for the stages and what they need."""
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--tag", default=time.strftime("run_%Y%m%d_%H%M%S"), help="name of this run (default: timestamp)")
+    ap.add_argument("--tag", default=datetime.now().strftime("run_%Y%m%d_%H%M%S_%f"),
+                    help="name of this run (default: unique timestamp)")
     ap.add_argument("--from", dest="first", type=stage_number, default=1, help="first stage (number or name)")
     ap.add_argument("--to", dest="last", type=stage_number, default=None,
                     help=f"last stage (number or name; default {STAGES[DEFAULT_LAST - 1]}, or --from if later)")
@@ -473,10 +486,13 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--clean", action="store_true",
                     help="delete what the selected stages produce for this tag before running (asks first)")
     ap.add_argument("--yes", action="store_true", help="do not ask for confirmation with --clean")
+    ap.add_argument("--check", action="store_true", help="check inputs without running stages or deleting anything")
     args = ap.parse_args()
     args.last = args.last or max(args.first, DEFAULT_LAST)
     if args.first > args.last:
         ap.error("--from is after --to")
+    if not args.tag or any(not c.isascii() or not (c.isalnum() or c in "_-") for c in args.tag):
+        ap.error("--tag may contain only letters, digits, underscores and hyphens")
     return args
 
 
@@ -486,7 +502,8 @@ def main() -> None:
     run = Run(args)
     print(f"Tag: {args.tag}\nRepository: {ROOT}\nPython: {sys.executable}")
     if ".venv" not in Path(sys.executable).parts and ".venv" not in str(Path(sys.prefix)):
-        print(color("Warning: not running inside the repository's .venv.", YELLOW))
+        print(color("Warning: project environment is not active. "
+                    "Use uv run --all-extras python scripts/run_all.py.", YELLOW))
 
     # Check everything first: a missing input must not cost a long run, and --clean must not delete for nothing
     missing = run.check_files()
@@ -494,6 +511,10 @@ def main() -> None:
     if missing or problems:
         print(color(f"\n{missing or problems} required input(s) missing or invalid - nothing was run.", RED))
         sys.exit(1)
+
+    if args.check:
+        print("Input checks passed; no stages were run.")
+        return
 
     if args.clean:
         run.clean()

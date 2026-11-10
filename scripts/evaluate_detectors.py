@@ -10,7 +10,7 @@ Needs:
     models/<weights>.pt                    downloaded on first use
 Produces:
     <out-dir>/detection_<model>_<split>.json   mAP, per-class TP/FP/FN, precision, recall, environment
-Refuses to overwrite existing reports.
+Reports are replaced atomically after each successful evaluation.
 """
 import argparse
 import json
@@ -38,13 +38,10 @@ def main() -> None:
     """Evaluate each model in turn and write its report."""
     args = parse_args()
 
-    # One report file per model. Checked up front: evaluation takes minutes, and a name clash or an
-    # existing report should stop the run before the first model starts.
+    # Reject ambiguous model names before starting an expensive evaluation.
     paths = [Path(args.out_dir) / f"detection_{Path(weights).stem}_{args.split}.json" for weights in args.models]
     if len(set(paths)) != len(paths):
         raise SystemExit("Model names produce duplicate report filenames")
-    if any(path.exists() for path in paths):
-        raise SystemExit("Detection reports already exist, choose a new --out-dir")
 
     for weights, out in zip(args.models, paths, strict=True):
         report = evaluate_detector(weights, args.data, split=args.split, imgsz=args.imgsz,

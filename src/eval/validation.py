@@ -13,7 +13,7 @@ from typing import Any
 from ..config import RAW_ROOT
 from ..data.mot import load_mot
 from ..data.sequences import list_frames
-from ..utils import file_info, read_json
+from ..utils import matches_file_hash, read_json
 
 
 def run_dirs(split_dir: str | Path) -> list[Path]:
@@ -70,7 +70,7 @@ def validate_tracking_run(cfg_dir: str | Path, sequences: Sequence[str], raw_roo
         if info["rows"] != sum(len(targets) for targets in mot.values()):
             raise ValueError(f"MOT row count mismatch in {mot_path}")
         # Older runs have no hash; when present it must match
-        if "mot_sha256" in info and info["mot_sha256"] != file_info(mot_path)["sha256"]:
+        if "mot_sha256" in info and not matches_file_hash(mot_path, info["mot_sha256"]):
             raise ValueError(f"MOT fingerprint mismatch in {mot_path}")
         total_frames += len(frame_ids)
 
@@ -110,7 +110,7 @@ def validate_sweep(directory: str | Path) -> dict[str, Any]:
             target = (directory / rel).resolve()
             if not target.is_relative_to(directory):
                 raise ValueError("Manifest output path points outside the experiment")
-            if file_info(target)["sha256"] != digest:
+            if not matches_file_hash(target, digest):
                 raise ValueError(f"Output changed since the sweep: {rel}")
         normalized[key] = stage
     for c in plan["confidences"]:
@@ -119,13 +119,13 @@ def validate_sweep(directory: str | Path) -> dict[str, Any]:
         tracking = read_json(reports / "tracking_eval_dev.json")
         sources = counting["_sources"]
         for key, source in (("gt", directory / "shared/gt_counts.json"), ("tracks", reports / "track_counts.json")):
-            if sources[key]["sha256"] != file_info(source)["sha256"]:
+            if not matches_file_hash(source, sources[key]["sha256"]):
                 raise ValueError(f"Counting report source changed: {source}")
         configs = {j["config"] for j in plan["jobs"] if j["confidence"] == c}
         if {k for k in counting if not k.startswith("_")} != configs or set(tracking) != configs:
             raise ValueError(f"Missing or unexpected configurations at confidence {c}")
         for cfg in configs:
             timing = directory / f"conf{c:g}/tracks/dev" / cfg / "timing.json"
-            if tracking[cfg]["sources"]["timing"]["sha256"] != file_info(timing)["sha256"]:
+            if not matches_file_hash(timing, tracking[cfg]["sources"]["timing"]["sha256"]):
                 raise ValueError(f"Tracking report source changed: {cfg}")
     return {**manifest, "complete": True, "stages": normalized}

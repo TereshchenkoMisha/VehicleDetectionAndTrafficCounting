@@ -94,7 +94,10 @@ def main() -> None:
     args = parse_args()
     analysis = read_json(args.analysis)
     split, rows = analysis["split"], analysis["rows"]
-    reviews = {case["case_id"]: case for case in read_json(args.review)["cases"]}
+    review_path = Path(args.review)
+    if not review_path.is_file() and not args.case_id:
+        raise SystemExit("No manual review found. Use --case-id from the analysis to inspect candidates first.")
+    reviews = {case["case_id"]: case for case in read_json(review_path)["cases"]} if review_path.is_file() else {}
     lines, ignored = read_json(args.lines), read_json(args.ignored)
 
     for case_id in tqdm(args.case_id or list(reviews), desc="cases", unit="case"):

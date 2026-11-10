@@ -17,9 +17,9 @@ Needs:
     data/raw/UA-DETRAC/                    only for that conversion
     reports/splits.json, reports/ignored_regions.json
 Produces:
-    <out-prefix>_<split>.json              settings, sources, one row per event (outcome, flags), summary, suggested cases
+    <out-prefix>_<split>.json              settings, sources, events, summary, suggested cases
     <out-prefix>_<split>.md                the summary as tables (default prefix reports/failure_analysis)
-Stops if the track counts were not made from the saved tracks, or with another counting protocol than the GT.
+Stops if track counts were made from different tracks or with a different counting protocol than GT.
 """
 import argparse
 from dataclasses import asdict
@@ -35,7 +35,7 @@ from src.data.mot import MotRow, load_mot
 from src.data.regions import Region, box_centres, inside_any
 from src.failure.diagnosis import FailureRow, classify_events, saved_events, suggest_cases, summarize
 from src.failure.matching import MatchSettings, match_boxes
-from src.utils import file_info, fraction, positive_int, read_json, write_json
+from src.utils import file_info, fraction, matches_file_hash, positive_int, read_json, write_json
 
 
 def drop_ignored(frames: dict[int, list[MotRow]], regions: list[Region]) -> dict[int, list[MotRow]]:
@@ -54,7 +54,7 @@ def analyze_run(sequence: str, config: str, track_file: Path, gt: dict[str, Any]
     `gt` is the GT count of the sequence and `saved` the track count of this file. A count that was
     not made from this track file, or under other counting rules than the GT, would not be comparable.
     """
-    if saved["source"]["sha256"] != file_info(track_file)["sha256"]:
+    if not matches_file_hash(track_file, saved["source"]["sha256"]):
         raise SystemExit(f"Track counts do not belong to {track_file}; run count_tracks again")
     if saved["protocol"] != gt["protocol"]:
         raise SystemExit(f"Counting protocol mismatch in {config}/{sequence}; regenerate both counts")
@@ -73,7 +73,8 @@ def render_markdown(split: str, result: dict[str, Any]) -> str:
           "not confirmed causes and not how often each cause occurs.", ""]
     for title, keep in (("All sequences", lambda row: row["sequence"] == "ALL"),
                         ("Per sequence", lambda row: row["sequence"] != "ALL")):
-        md += [f"## {title}", "", "| config | sequence | GT | pred | paired | missed | extra | class confusion | signed error |",
+        md += [f"## {title}", "",
+               "| config | sequence | GT | pred | paired | missed | extra | class confusion | signed error |",
                "|---|---|---|---|---|---|---|---|---|"]
         md += [f"| {r['config']} | {r['sequence']} | {r['gt_events']} | {r['pred_events']} | {r['paired']} | "
                f"{r['missed']} | {r['extra']} | {r['class_confusion']} | {r['signed_error']:+d} |"
