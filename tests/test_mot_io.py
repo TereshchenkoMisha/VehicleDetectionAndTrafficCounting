@@ -19,8 +19,10 @@ Tests:
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
+import cv2
 import numpy as np
 from numpy.typing import NDArray
 from PIL import Image
@@ -31,7 +33,7 @@ from src.data.mot import load_mot, write_mot
 from src.data.sequences import frame_paths, read_frame, resolve_naming
 from src.data.split import mean_brightness
 from src.eval.validation import run_dirs, validate_tracking_run
-from src.tracking.viz import LINE_COLOR, write_gt_video, write_preview, write_tracking_video
+from src.tracking.viz import LINE_COLOR, video_writer, write_gt_video, write_preview, write_tracking_video
 from src.utils import file_info, write_json
 
 TRACK_IMAGE_SIZE: tuple[int, int] = (150, 120)      # height, width of the frames in the tracking video tests
@@ -155,8 +157,15 @@ class FileTests(unittest.TestCase):
             writer = writer_class.return_value
             writer.isOpened.return_value = True
 
+            def open_writer(path: str, *_args: object) -> object:
+                Path(path).touch()
+                return writer
+
+            writer_class.side_effect = open_writer
+
             # All three frames are written, although frame 2 has no annotation entry
-            with patch("src.tracking.viz.read_frame", return_value=frame):
+            with (patch("src.tracking.viz.read_frame", return_value=frame),
+                  patch("src.tracking.viz._complete_video", side_effect=lambda path, *_: path.name.startswith("."))):
                 write_gt_video(ann, line, "MVI_1", [], self.root / "out.mp4", raw_root=self.root)
             self.assertEqual(writer.write.call_count, 3)
             writer.release.assert_called_once()
@@ -165,9 +174,106 @@ class FileTests(unittest.TestCase):
             # A frame that cannot be read stops the video, and the writer is still released
             failing = [frame, frame, RuntimeError("Unreadable image")]
             with (patch("src.tracking.viz.read_frame", side_effect=failing),
+                  patch("src.tracking.viz._complete_video", return_value=False),
                   self.assertRaisesRegex(RuntimeError, "Unreadable image")):
                 write_gt_video(ann, line, "MVI_1", [], self.root / "out.mp4", raw_root=self.root)
             writer.release.assert_called_once()
+
+    def gt_video_input(self) -> tuple[SequenceAnn, dict[str, list[int]], Path]:
+        """Three real JPEG frames for testing MP4 publication and reuse with the actual encoder."""
+        sequence = self.root / "MVI_1"
+        sequence.mkdir()
+        for fid in (1, 2, 3):
+            Image.new("RGB", (80, 60), (fid * 30, 20, 40)).save(sequence / f"img{fid:05d}.jpg")
+        ann = SequenceAnn("MVI_1", frames={fid: FrameAnn(fid, []) for fid in (1, 2, 3)})
+        return ann, {"p1": [40, 0], "p2": [40, 59]}, self.root / "gt_line_MVI_1.mp4"
+
+    def assert_complete_gt_video(self, path: Path) -> None:
+        """Decode the complete output rather than trusting the MP4 header alone."""
+        capture = cv2.VideoCapture(str(path))
+        decoded = 0
+        try:
+            while True:
+                ok, frame = capture.read()
+                if not ok:
+                    break
+                self.assertEqual(frame.shape[:2], (60, 80))
+                decoded += 1
+        finally:
+            capture.release()
+        self.assertEqual(decoded, 3)
+
+    def test_gt_video_is_published_only_after_success_and_retries_after_interrupt(self) -> None:
+        """An interrupted MP4 never appears as complete; retry starts and publishes the whole sequence."""
+        ann, line, out = self.gt_video_input()
+        reads = 0
+
+        def interrupted(path: Path) -> NDArray[np.uint8]:
+            nonlocal reads
+            self.assertFalse(out.exists())
+            reads += 1
+            if reads == 3:
+                raise KeyboardInterrupt()
+            return read_frame(path)
+
+        with (patch("src.tracking.viz.read_frame", side_effect=interrupted),
+              self.assertRaises(KeyboardInterrupt)):
+            write_gt_video(ann, line, "MVI_1", [], out, raw_root=self.root)
+        self.assertFalse(out.exists())
+        self.assertFalse((self.root / ".gt_line_MVI_1.partial.mp4").exists())
+
+        write_gt_video(ann, line, "MVI_1", [], out, raw_root=self.root)
+        self.assert_complete_gt_video(out)
+        self.assertFalse((self.root / ".gt_line_MVI_1.partial.mp4").exists())
+
+    def test_gt_video_reuses_complete_export(self) -> None:
+        """A validated completed MP4 is not encoded again or modified on a repeated run."""
+        ann, line, out = self.gt_video_input()
+        write_gt_video(ann, line, "MVI_1", [], out, raw_root=self.root)
+        before = out.read_bytes(), out.stat().st_mtime_ns
+        with patch("src.tracking.viz.video_writer", side_effect=AssertionError("should reuse")):
+            write_gt_video(ann, line, "MVI_1", [], out, raw_root=self.root)
+        self.assertEqual((out.read_bytes(), out.stat().st_mtime_ns), before)
+
+    def test_gt_video_rebuilds_short_export(self) -> None:
+        """A readable but interrupted video from the old implementation is rebuilt rather than reused."""
+        ann, line, out = self.gt_video_input()
+        with video_writer(out, (80, 60)) as writer:
+            writer.write(np.zeros((60, 80, 3), dtype=np.uint8))
+        write_gt_video(ann, line, "MVI_1", [], out, raw_root=self.root)
+        self.assert_complete_gt_video(out)
+
+    def test_gt_video_discards_abandoned_temporary_export(self) -> None:
+        """A temporary file left by a hard-killed process does not block the next attempt."""
+        ann, line, out = self.gt_video_input()
+        partial = self.root / ".gt_line_MVI_1.partial.mp4"
+        partial.write_bytes(b"unfinished MP4")
+        write_gt_video(ann, line, "MVI_1", [], out, raw_root=self.root)
+        self.assert_complete_gt_video(out)
+        self.assertFalse(partial.exists())
+
+    def test_gt_video_rejects_incomplete_encoder_output(self) -> None:
+        """A writer that silently drops frames must not publish an incomplete MP4."""
+        ann, line, out = self.gt_video_input()
+        original_factory = cv2.VideoWriter
+
+        def short_writer(*args: object) -> SimpleNamespace:
+            writer = original_factory(*args)
+            written = False
+
+            def write_one(frame: NDArray[np.uint8]) -> None:
+                nonlocal written
+                if not written:
+                    writer.write(frame)
+                    written = True
+
+            return SimpleNamespace(isOpened=writer.isOpened, release=writer.release, write=write_one)
+
+        with (patch("src.tracking.viz.cv2.VideoWriter", side_effect=short_writer),
+              self.assertRaisesRegex(RuntimeError, "incomplete or unreadable")):
+            write_gt_video(ann, line, "MVI_1", [], out, raw_root=self.root)
+        self.assertFalse(out.exists())
+        self.assertFalse((self.root / ".gt_line_MVI_1.partial.mp4").exists())
 
     def written_tracking_frames(self, line: dict[str, list[int]] | None) -> list[NDArray[np.uint8]]:
         """Frames written by `write_tracking_video` for one car that crosses the vertical line x=60 in frame 2."""

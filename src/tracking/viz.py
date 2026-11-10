@@ -106,7 +106,8 @@ def draw_line(img: Image, p1: Point | None, p2: Point | None = None, cursor: Poi
     for p in (p1, end):
         if p is not None:
             cv2.circle(out, (int(p[0]), int(p[1])), 5, LINE_COLOR, -1, cv2.LINE_AA)
-            cv2.circle(out, (int(p[0]), int(p[1])), 6, (0, 0, 0), 1, cv2.LINE_AA)       # dark outline: visible on any background
+            # Dark outline stays visible on any background.
+            cv2.circle(out, (int(p[0]), int(p[1])), 6, (0, 0, 0), 1, cv2.LINE_AA)
     return out
 
 
@@ -132,45 +133,79 @@ def write_preview(frames: list[tuple[int, Path]], seq: str, line: dict[str, list
     Path(path).write_bytes(encoded.tobytes())
 
 
+def _complete_video(path: Path, size: tuple[int, int], frames: int, fps: int = FPS) -> bool:
+    """Recognize an existing complete export by its dimensions, frame count, rate and readable last frame."""
+    if not path.is_file():
+        return False
+    capture = cv2.VideoCapture(str(path))
+    try:
+        if (not capture.isOpened() or int(capture.get(cv2.CAP_PROP_FRAME_COUNT)) != frames
+                or int(capture.get(cv2.CAP_PROP_FRAME_WIDTH)) != size[0]
+                or int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT)) != size[1]
+                or abs(capture.get(cv2.CAP_PROP_FPS) - fps) > 0.01):
+            return False
+        capture.set(cv2.CAP_PROP_POS_FRAMES, frames - 1)
+        ok, last_frame = capture.read()
+        return ok and last_frame is not None and last_frame.shape[:2] == (size[1], size[0])
+    except (cv2.error, ValueError, OverflowError):
+        return False
+    finally:
+        capture.release()
+
+
 def write_gt_video(ann: SequenceAnn, line: dict[str, list[int]], seq: str, events: list[dict[str, Any]],
                    out_path: str | Path, raw_root: str | Path = RAW_ROOT) -> None:
     """Write a check video of the ground-truth counting of one sequence.
 
     Each frame shows the GT boxes (coloured by class), the counting line, a circle where a
     crossing happened (yellow at the crossing frame, grey for the next TRAIL_FRAMES frames) and a
-    running total of the `events`. It is meant for judging by eye whether the line catches the traffic.
+    running total of the `events`. Complete existing videos are reused. New videos are written to a
+    temporary MP4 and published after the writer closes successfully. A failed video restarts from
+    its first frame on the next invocation; completed videos of other sequences are retained.
     """
     frames = list_frames(seq, raw_root)
     offset = resolve_naming(frames[0][1].parent, sorted(ann.frames))
     height, width = read_frame(frames[0][1]).shape[:2]
     validate_line(line["p1"], line["p2"], (width, height))
 
+    out_path = Path(out_path)
+    partial = out_path.with_name(f".{out_path.stem}.partial.mp4")
+    partial.unlink(missing_ok=True)  # discard a temporary file left by a killed process
+    if _complete_video(out_path, (width, height), len(frames)):
+        tqdm.write(f"[video] {seq}: complete GT video reused -> {out_path}")
+        return
+
     crossings = crossing_points(events)
     p1, p2 = (tuple(map(int, line[key])) for key in ("p1", "p2"))
     running_total = 0
-    with video_writer(out_path, (width, height)) as writer:
-        for fid, path in tqdm(frames, desc=f"video {seq}", unit="frame", leave=False):
-            image = read_frame(path)
-            if image.shape[:2] != (height, width):
-                raise ValueError(f"Frame size changed at {path}")
+    try:
+        with video_writer(partial, (width, height)) as writer:
+            for fid, path in tqdm(frames, desc=f"video {seq}", unit="frame", leave=False):
+                image = read_frame(path)
+                if image.shape[:2] != (height, width):
+                    raise ValueError(f"Frame size changed at {path}")
 
-            # GT boxes. A frame may have no annotation entry at all; it is still written to the video.
-            frame_ann = ann.frames.get(fid - offset)
-            for target in frame_ann.targets if frame_ann is not None else []:
-                cid = DETRAC_TO_ID.get(target.cls)
-                if cid is not None:
-                    x1, y1, x2, y2 = map(int, target.box.as_xyxy())
-                    cv2.rectangle(image, (x1, y1), (x2, y2), CLASS_COLORS[cid], 2)
+                # A frame without annotations must still appear in the video.
+                frame_ann = ann.frames.get(fid - offset)
+                for target in frame_ann.targets if frame_ann is not None else []:
+                    cid = DETRAC_TO_ID.get(target.cls)
+                    if cid is not None:
+                        x1, y1, x2, y2 = map(int, target.box.as_xyxy())
+                        cv2.rectangle(image, (x1, y1), (x2, y2), CLASS_COLORS[cid], 2)
 
-            # The line, and markers for crossings from this frame and the previous TRAIL_FRAMES
-            cv2.line(image, p1, p2, LINE_COLOR, 2, cv2.LINE_AA)
-            draw_crossing_marks(image, crossings, fid)
+                cv2.line(image, p1, p2, LINE_COLOR, 2, cv2.LINE_AA)
+                draw_crossing_marks(image, crossings, fid)
 
-            running_total += len(crossings.get(fid, []))
-            cv2.rectangle(image, (0, 0), (400, 30), (0, 0, 0), -1)
-            cv2.putText(image, f"{seq} f{fid} crossed: {running_total}", (8, 21),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, TEXT_COLOR, 1, cv2.LINE_AA)
-            writer.write(image)
+                running_total += len(crossings.get(fid, []))
+                cv2.rectangle(image, (0, 0), (400, 30), (0, 0, 0), -1)
+                cv2.putText(image, f"{seq} f{fid} crossed: {running_total}", (8, 21),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, TEXT_COLOR, 1, cv2.LINE_AA)
+                writer.write(image)
+        if not _complete_video(partial, (width, height), len(frames)):
+            raise RuntimeError(f"GT video is incomplete or unreadable: {partial}")
+        partial.replace(out_path)
+    finally:
+        partial.unlink(missing_ok=True)
 
 
 def write_tracking_video(frames: list[tuple[int, Path]], mot_path: str | Path, regions: list[Region],

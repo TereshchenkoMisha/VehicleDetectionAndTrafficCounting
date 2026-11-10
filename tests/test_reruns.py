@@ -33,10 +33,11 @@ from unittest.mock import patch
 import pandas as pd
 from PIL import Image
 
-from scripts import evaluate_detectors, prepare_dataset, render_failure_cases, run_all, run_tracking
+from scripts import count_gt, evaluate_detectors, prepare_dataset, render_failure_cases, run_all, run_tracking
 from src.config import ROOT
 from src.data.detrac import Box, FrameAnn, SequenceAnn, SequenceMeta, Target
 from src.data.export import convert
+from src.data.sequences import read_frame
 from src.eval.validation import run_dirs, validate_tracking_run
 from src.utils import file_info, matches_file_hash, publish_directory, read_json, write_json
 
@@ -325,6 +326,70 @@ class RerunTests(unittest.TestCase):
 
         clean.assert_not_called()
         run.assert_not_called()
+
+    def test_gt_export_is_enabled_when_its_folder_already_exists(self) -> None:
+        """Resume GT export inside an existing folder, except when videos are explicitly disabled."""
+        for flags in ([], ["--no-video"]):
+            with self.subTest(flags=flags), patch("sys.argv", [
+                    "scripts/run_all.py", "--tag", "resume", "--from", "gtcounts", "--to", "gtcounts", *flags]):
+                run = run_all.Run(run_all.parse_args())
+            (self.root / run.videos / "gt").mkdir(parents=True, exist_ok=True)
+            with (patch.object(run_all, "ROOT", self.root), patch.object(run, "step") as step,
+                  contextlib.redirect_stdout(io.StringIO())):
+                run.run()
+            commands = [call.args[1] for call in step.call_args_list if call.args[1][0] == "scripts/count_gt.py"]
+            self.assertEqual(len(commands), 1)
+            self.assertEqual("--vis-dir" in commands[0], not flags)
+
+    def test_gt_stage_resumes_missing_video_after_interruption(self) -> None:
+        """An interrupted second sequence is rebuilt while the first sequence's completed video is retained."""
+        second = self.raw / "MVI_2"
+        second.mkdir()
+        for fid in range(1, FRAME_COUNT + 1):
+            Image.new("RGB", (80, 40)).save(second / f"img{fid:05d}.jpg")
+        annotations = {**self.anns, "MVI_2": SequenceAnn("MVI_2", {
+            fid: FrameAnn(fid, []) for fid in range(1, FRAME_COUNT + 1)})}
+        metadata = self.root / "metadata"
+        write_json(metadata / "splits.json", {"dev": ["MVI_1", "MVI_2"], "test": []})
+        write_json(metadata / "counting_lines.json", {"MVI_1": LINE, "MVI_2": LINE})
+        videos = self.root / "videos"
+        output = self.root / "gt_counts.json"
+        argv = ["count_gt.py", "--splits", "dev", "--raw", str(self.raw),
+                "--lines", str(metadata / "counting_lines.json"), "--vis-dir", str(videos),
+                "--out", str(output), "--md", str(self.root / "gt_counts.md")]
+        render = count_gt.write_gt_video
+
+        def interrupt_second(ann, line, seq, events, path, **kwargs):
+            if seq != "MVI_2":
+                return render(ann, line, seq, events, path, **kwargs)
+            reads = 0
+
+            def interrupted(frame_path):
+                nonlocal reads
+                reads += 1
+                if reads == 3:
+                    raise KeyboardInterrupt()
+                return read_frame(frame_path)
+
+            with patch("src.tracking.viz.read_frame", side_effect=interrupted):
+                return render(ann, line, seq, events, path, **kwargs)
+
+        with (patch("sys.argv", argv), patch.object(count_gt, "REPORTS_DIR", metadata),
+              patch.object(count_gt, "load_all", return_value=(annotations, {})),
+              contextlib.redirect_stdout(io.StringIO())):
+            with (patch.object(count_gt, "write_gt_video", side_effect=interrupt_second),
+                  self.assertRaises(KeyboardInterrupt)):
+                count_gt.main()
+            first = videos / "gt_line_MVI_1.mp4"
+            before = first.read_bytes(), first.stat().st_mtime_ns
+            self.assertFalse((videos / "gt_line_MVI_2.mp4").exists())
+            self.assertFalse(list(videos.glob("*.partial.mp4")))
+            self.assertFalse(output.exists())
+
+            count_gt.main()
+        self.assertEqual((first.read_bytes(), first.stat().st_mtime_ns), before)
+        self.assertTrue((videos / "gt_line_MVI_2.mp4").is_file())
+        self.assertEqual(set(read_json(output)["dev"]), {"MVI_1", "MVI_2"})
 
     def test_failure_candidate_can_be_rendered_without_manual_review(self) -> None:
         """Render a failure case before any review file exists."""

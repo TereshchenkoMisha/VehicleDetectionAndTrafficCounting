@@ -262,13 +262,9 @@ class Run:
 
     # ------------------------------------------------------------ videos
 
-    def video_args(self, directory: str, once: bool = False) -> list[str]:
-        """`--vis-dir <directory>` for a stage that can write videos, or nothing with --no-video.
-
-        `once` is for count_gt, which refuses to overwrite a video: when the folder already exists
-        (a repeat of the stage with the same tag), no videos are written instead of failing the stage.
-        """
-        if self.args.no_video or (once and (ROOT / directory).exists()):
+    def video_args(self, directory: str) -> list[str]:
+        """Enable video export unless explicitly disabled; GT export reuses completed files individually."""
+        if self.args.no_video:
             return []
         return ["--vis-dir", directory]
 
@@ -405,7 +401,7 @@ class Run:
         if self.will_run(6):
             self.step("6. Ground-truth line-crossing counts",
                       ["scripts/count_gt.py", "--splits", *s, "--out", f"{self.reports}/gt_counts.json",
-                       "--md", f"{self.reports}/gt_counts.md", *self.video_args(f"{self.videos}/gt", once=True)])
+                       "--md", f"{self.reports}/gt_counts.md", *self.video_args(f"{self.videos}/gt")])
 
         if self.will_run(7):
             self.step("7. Line-crossing counts from tracks",

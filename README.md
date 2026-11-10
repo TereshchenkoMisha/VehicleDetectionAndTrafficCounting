@@ -182,6 +182,14 @@ An interrupted threshold experiment resumes when its code, inputs, and environme
 if they have changed, use `uv run --all-extras python scripts/run_all.py` with a new tag.
 Ordinary reruns do not require `--clean`.
 
+GT video export resumes per file: completed videos are reused, while missing or incomplete videos
+are rebuilt from their first frame. A video is written to a temporary `.partial.mp4` and published
+only after successful completion. To resume from GT counting with the same tag:
+
+```bash
+uv run --all-extras python scripts/run_all.py --tag YOUR_TAG --from gtcounts --to verify
+```
+
 ### 5. Run failure analysis
 
 After the main pipeline:

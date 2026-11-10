@@ -15,7 +15,8 @@ Produces:
                                            (default reports/gt_counts.json)
     <md>                                   the same as tables (default reports/gt_counts.md)
     <vis-dir>/gt_line_<sequence>.mp4       check videos, with --vis-dir
-Splits that are not run keep their entries in an existing <out>.
+Splits that are not run keep their entries in an existing <out>. Completed GT videos are reused;
+missing or incomplete videos are rebuilt individually and published only after successful encoding.
 """
 import argparse
 from collections import Counter
