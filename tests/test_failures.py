@@ -26,16 +26,22 @@ Tests:
         test_tile                       the last row of a tile is padded
 """
 
+import contextlib
+import io
+import tempfile
 import unittest
 from pathlib import Path
 from typing import Any
+from unittest.mock import patch
 
 import numpy as np
 
+from scripts import report_failures
 from src.failure.diagnosis import classify_events, peers_of, saved_events, suggest_cases, summarize
 from src.failure.matching import MatchSettings, iou_matrix, match_boxes, match_events
-from src.failure.review import check_review, markdown_report
+from src.failure.review import candidate_markdown_report, check_review, markdown_report
 from src.failure.viz import crop_around, tile
+from src.utils import write_json
 
 SETTINGS = MatchSettings()
 
@@ -215,6 +221,36 @@ class ReviewTests(unittest.TestCase):
             check_review(cases, self.rows, self.predictions)
         with self.assertRaisesRegex(ValueError, "at least 3"):
             check_review(cases[1:], self.rows, self.predictions)
+
+    def test_candidate_report_does_not_claim_confirmed_causes(self) -> None:
+        """An automatic report contains evidence and images, while making pending manual review explicit."""
+        report = candidate_markdown_report([self.rows[0]["case_id"]], self.rows,
+                                           Path("pictures"), Path("reports/failure_cases.md"))
+        self.assertIn("manual review pending", report)
+        self.assertIn("no causes have been confirmed", report)
+        self.assertIn("missed_candidate", report)
+        self.assertIn("![comparison](../pictures/MVI_1__cfg__gt1__f10/comparison.png)", report)
+        self.assertNotIn("## MVI_1__cfg__gt2__f20", report)
+
+    def test_empty_candidate_report(self) -> None:
+        """No suggested failures must not turn into an invented case or completed review."""
+        report = candidate_markdown_report([], self.rows, Path("pictures"), Path("reports/failure_cases.md"))
+        self.assertIn("No failure candidates were suggested", report)
+        self.assertIn("manual review pending", report)
+
+    def test_report_command_without_review_writes_candidate_report(self) -> None:
+        """The report command runs without a manual-review file and without reading reviewed predictions."""
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            analysis = root / "analysis.json"
+            write_json(analysis, {"split": "dev", "rows": self.rows,
+                                  "suggested_cases": [row["case_id"] for row in self.rows]})
+            out = root / "report.md"
+            argv = ["report_failures.py", "--analysis", str(analysis), "--review", str(root / "absent.json"),
+                    "--tracks", str(root / "also_absent.json"), "--out", str(out)]
+            with patch("sys.argv", argv), contextlib.redirect_stdout(io.StringIO()):
+                report_failures.main()
+            self.assertIn("manual review pending", out.read_text(encoding="utf-8"))
 
 
 class DrawingHelperTests(unittest.TestCase):

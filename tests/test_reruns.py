@@ -16,7 +16,7 @@ Tests (all in RerunTests, on a temporary project with one three-frame sequence):
     test_cross_platform_hashes_allow_only_line_endings  a hash matches across LF and CRLF only for text files
     test_results_notebook_accepts_line_endings_but_rejects_changed_timing   the notebook checks timing by hash
     test_preparation_stage_does_not_skip_a_partial_images_folder   run_all prepares data when images are incomplete
-    test_default_includes_ablation_and_tag_cannot_escape_project   default stages and a safe run tag
+    test_default_includes_all_stages_and_tag_cannot_escape_project   default stages and a safe run tag
     test_input_check_never_runs_or_cleans               `--check` neither cleans nor runs any stage
     test_failure_candidate_can_be_rendered_without_manual_review   a failure case renders without a review file
 """
@@ -306,12 +306,68 @@ class RerunTests(unittest.TestCase):
 
         self.assertTrue(any(call.args[1][0] == "scripts/prepare_dataset.py" for call in step.call_args_list))
 
-    def test_default_includes_ablation_and_tag_cannot_escape_project(self) -> None:
-        """Run up to the ablation stage by default, and refuse a tag that points outside the project."""
+    def test_default_includes_all_stages_and_tag_cannot_escape_project(self) -> None:
+        """Include ablation and failure analysis by default, and refuse a tag outside the project."""
         with patch("sys.argv", ["scripts/run_all.py"]):
-            self.assertEqual(run_all.parse_args().last, 11)
+            args = run_all.parse_args()
+        self.assertEqual(args.last, 12)
+        run = run_all.Run(args)
+        self.assertTrue(run.will_run(11))
+        self.assertTrue(run.will_run(12))
 
         with (patch("sys.argv", ["scripts/run_all.py", "--tag", "../../outside"]),
+              contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit)):
+            run_all.parse_args()
+
+    def test_failure_stage_renders_candidates_and_reports_without_review(self) -> None:
+        """Missing manual review must not skip candidate pictures, clips or the pending-review report."""
+        with patch("sys.argv", ["scripts/run_all.py", "--tag", "candidates", "--from", "failures"]):
+            run = run_all.Run(run_all.parse_args())
+        write_json(self.root / run.reports / "failure_analysis_dev.json", {"suggested_cases": ["case_1", "case_2"]})
+        with (patch.object(run_all, "ROOT", self.root), patch.object(run, "step") as step,
+              contextlib.redirect_stdout(io.StringIO()) as output):
+            run.run()
+        commands = [call.args[1] for call in step.call_args_list]
+        self.assertEqual([a[0] for a in commands[1:]], [
+            "scripts/analyze_failures.py", "scripts/render_failure_cases.py", "scripts/report_failures.py"])
+        render = commands[2]
+        self.assertEqual(render[render.index("--case-id") + 1:][:2], ["case_1", "case_2"])
+        self.assertIn("--video", render)
+        self.assertIn("Manual review is pending", output.getvalue())
+
+    def test_failure_stage_uses_manual_selection_and_honours_no_video(self) -> None:
+        """An existing review selects the cases; --no-video also disables failure comparison clips."""
+        with patch("sys.argv", ["scripts/run_all.py", "--from", "failures", "--no-video"]):
+            run = run_all.Run(run_all.parse_args())
+        write_json(self.root / run_all.REVIEW_JSON, {"cases": []})
+        with (patch.object(run_all, "ROOT", self.root), patch.object(run, "step") as step,
+              contextlib.redirect_stdout(io.StringIO())):
+            run.run()
+        render = next(call.args[1] for call in step.call_args_list
+                      if call.args[1][0] == "scripts/render_failure_cases.py")
+        self.assertNotIn("--case-id", render)
+        self.assertNotIn("--video", render)
+        self.assertTrue(any(call.args[1][0] == "scripts/report_failures.py" for call in step.call_args_list))
+
+    def test_failure_stage_writes_report_when_no_candidates_are_suggested(self) -> None:
+        """An empty candidate set produces an honest report without launching a renderer with no cases."""
+        with patch("sys.argv", ["scripts/run_all.py", "--tag", "empty", "--from", "failures"]):
+            run = run_all.Run(run_all.parse_args())
+        write_json(self.root / run.reports / "failure_analysis_dev.json", {"suggested_cases": []})
+        with (patch.object(run_all, "ROOT", self.root), patch.object(run, "step") as step,
+              contextlib.redirect_stdout(io.StringIO())):
+            run.run()
+        commands = [call.args[1][0] for call in step.call_args_list]
+        self.assertNotIn("scripts/render_failure_cases.py", commands)
+        self.assertIn("scripts/report_failures.py", commands)
+
+    def test_test_only_runs_skip_dev_failure_analysis(self) -> None:
+        """Selecting test must neither launch nor require dev analysis; standalone failures require dev."""
+        with patch("sys.argv", ["scripts/run_all.py", "--splits", "test"]):
+            run = run_all.Run(run_all.parse_args())
+        self.assertTrue(run.will_run(11))
+        self.assertFalse(run.will_run(12))
+        with (patch("sys.argv", ["scripts/run_all.py", "--from", "failures", "--splits", "test"]),
               contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit)):
             run_all.parse_args()
 

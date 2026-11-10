@@ -92,3 +92,34 @@ def markdown_report(cases: Sequence[dict[str, Any]], rows: Sequence[FailureRow],
         md.append("")
     return "\n".join(md) + "\n"
 
+
+def candidate_markdown_report(case_ids: Sequence[str], rows: Sequence[FailureRow], picture_dir: Path,
+                              out_path: Path) -> str:
+    """Report automatic observations and pictures without presenting candidates as reviewed causes."""
+    md = ["# Failure candidates - manual review pending", "",
+          "These cases were selected automatically. They are not a completed manual failure review, "
+          "and no causes have been confirmed. Inspect the frames and complete `reports/failure_review.json` "
+          "before treating them as reviewed failure cases.", ""]
+    if not case_ids:
+        md += ["No failure candidates were suggested by the automatic analysis.", ""]
+    for case_id in case_ids:
+        row = find_case(rows, case_id)
+        image = picture_dir / case_id / "comparison.png"
+        picture = Path(os.path.relpath(image, out_path.parent))
+        md += [f"## {case_id}", "",
+               f"Sequence: `{row['sequence']}`; frame: {event_of(row)['frame']}; configuration: `{row['config']}`.",
+               f"Automatic outcome: `{row['outcome']}`.", ""]
+        for key, label in (("gt_event", "GT event"), ("pred_event", "Predicted event")):
+            event = row[key]
+            md.append(f"- {label}: ID {event['target']}, frame {event['frame']}, class {CLASSES[event['cls_id']]}."
+                      if event else f"- {label}: no paired event.")
+        flags = ", ".join(row["flags"]) or "none"
+        md += ["", f"Automatic evidence flags (not causes): {flags}.", "", f"![comparison]({picture.as_posix()})", ""]
+        video = image.with_suffix(".mp4")
+        if video.is_file():
+            relative = Path(os.path.relpath(video, out_path.parent))
+            md += [f"[Comparison clip]({relative.as_posix()})", ""]
+        md += ["Manual review pending: describe the observed failure, likely cause, confidence, counting impact, "
+               "limitations, and the outcome for the same vehicle in every configuration.", ""]
+    return "\n".join(md) + "\n"
+

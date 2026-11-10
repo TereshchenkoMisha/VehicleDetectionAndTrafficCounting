@@ -17,9 +17,9 @@ Stages, selected with --from / --to by number or name:
      9 notebook       tables and charts (needs jupyter)
     10 verify         verify_run
     11 ablation       run_ablation (confidence sweep on dev, 16 tracking runs) and its notebook;
-                      included by default; --from ablation runs it alone
+                      included by default; use --from ablation --to ablation to run only this stage
     12 failures       failure candidates, pictures and report of the reviewed cases (dev; saved files only, no
-                      inference); not in the default range: pass --to failures, or --from failures to run it alone
+                      inference); included by default; --from failures runs it alone
 
 Needs, before any stage runs (nothing runs if something is missing):
     external inputs of the selected stages: raw dataset, reports/splits.json, reports/ignored_regions.json,
@@ -34,7 +34,8 @@ Produces, per tag:
     outputs/ablation_<tag>/                confidence sweep (stage 11); an existing one is continued, not redone
     outputs/failures_<tag>/                pictures and clips of the reviewed failure cases (stage 12)
     outputs/videos_<tag>/<split>/          annotated tracking mp4 per configuration and sequence (stage 4)
-    outputs/videos_<tag>/gt/               GT check videos with the counting line (stage 6); --no-video skips both
+    outputs/videos_<tag>/gt/               GT check videos with the counting line (stage 6)
+--no-video skips tracking/GT videos and failure comparison clips, while retaining failure PNGs and reports.
 --clean first deletes what the selected stages produce for this tag (and the prepared dataset when stage 2
 is selected), after a confirmation. Normally each invocation has a unique tag. Repeating an explicit tag
 recomputes selected stages; completed tracking directories are archived before replacement.
@@ -61,7 +62,7 @@ from src.utils import CYAN, GREEN, RED, YELLOW, color, read_json  # noqa: E402
 
 STAGES: list[str] = ["tests", "prepare", "detectors", "tracking", "trackeval", "gtcounts", "trackcounts",
                      "countingeval", "notebook", "verify", "ablation", "failures"]
-DEFAULT_LAST: int = 11      # include the sensitivity experiment required by the course
+DEFAULT_LAST: int = len(STAGES)      # run every automatic stage, including ablation and failure analysis
 DETECTORS: list[str] = ["yolov8n", "yolov8s"]
 RAW = "data/raw/UA-DETRAC"
 PROCESSED = "data/processed/detrac_yolo"
@@ -111,6 +112,8 @@ class Run:
     def will_run(self, stage: int) -> bool:
         """True if the stage is inside the --from/--to range and not switched off by a --skip flag."""
         if stage == 1 and self.args.skip_tests or stage == 9 and self.args.skip_notebook:
+            return False
+        if stage == 12 and "dev" not in self.args.splits:
             return False
         return self.args.first <= stage <= self.args.last
 
@@ -357,6 +360,8 @@ class Run:
         splits in one call. New invocations use unique tags; explicit tag repeats recompute selected stages.
         """
         a, s = self.args, self.args.splits
+        if a.first <= 12 <= a.last and "dev" not in s:
+            print(color("Failure analysis uses dev only and is skipped for a test-only run.", YELLOW))
 
         # Print the interpreter and GPU first: the first thing to look at when a run is slow or fails
         self.step("Environment check", ["-c",
@@ -448,35 +453,39 @@ class Run:
                           ["-m", "jupyter", "nbconvert", "--to", "notebook", "--execute", "notebooks/ablation.ipynb",
                            "--output-dir", f"{self.ablation}/analysis", "--output", "ablation_executed.ipynb"])
 
-        # Stage 12: failure analysis of the dev tracks. Candidates, pictures of the reviewed cases, and the report
-        # of those cases, which is refused when the review contradicts the saved events. Test is not analysed.
+        # Stage 12: dev failure analysis, case pictures/clips and a report. Without a manual review,
+        # render suggested candidates and label the report as unreviewed. Test is not analysed.
         if self.will_run(12):
             analysis = f"{self.reports}/failure_analysis_dev.json"
             self.step("12. Failure candidates (dev)",
                       ["scripts/analyze_failures.py", "--splits", "dev", "--gt", f"{self.reports}/gt_counts.json",
                        "--tracks", f"{self.reports}/track_counts.json", "--tracks-dir", self.tracks,
                        "--out-prefix", f"{self.reports}/failure_analysis"])
-            if not (ROOT / REVIEW_JSON).is_file():
-                print(color(f"\nFailure candidates saved to {analysis}. Manual review is pending: inspect at least "
-                            f"three vehicles, create {REVIEW_JSON} (format: src/failure/review.py), then repeat "
-                            f"uv run --all-extras python scripts/run_all.py --tag {self.tag} --from failures. "
-                            "No reviewed report was generated.", YELLOW))
-            else:
-                self.review_failures(analysis)
+            self.failure_outputs(analysis)
 
         print(color("\n" + "=" * 100 + f"\nFINISHED stages {a.first}-{a.last}. Tag: {self.tag}", GREEN))
         self.summary()
         print(f"Results: {self.reports}   Tracks: {self.tracks}   Charts: {self.charts}")
 
-    def review_failures(self, analysis: str) -> None:
-        """Render and report an existing manual review after generating the candidates."""
-        self.step("12. Pictures of the reviewed failure cases",
+    def failure_outputs(self, analysis: str) -> None:
+        """Render reviewed cases or automatic suggestions, then report their review status honestly."""
+        reviewed = (ROOT / REVIEW_JSON).is_file()
+        candidates = [] if reviewed else read_json(ROOT / analysis)["suggested_cases"]
+        if reviewed or candidates:
+            selected = [] if reviewed else ["--case-id", *candidates]
+            video = [] if self.args.no_video else ["--video"]
+            self.step("12. Failure case pictures and clips",
                       ["scripts/render_failure_cases.py", "--analysis", analysis, "--tracks-dir", self.tracks,
-                       "--out-dir", self.failures, "--video", "--replace"])
-        self.step("12. Report of the reviewed failure cases",
-                      ["scripts/report_failures.py", "--analysis", analysis,
-                       "--tracks", f"{self.reports}/track_counts.json", "--picture-dir", f"{self.failures}/dev",
-                       "--out", f"{self.reports}/failure_cases.md"])
+                       "--out-dir", self.failures, "--replace", *selected, *video])
+        self.step("12. Failure case report",
+                  ["scripts/report_failures.py", "--analysis", analysis,
+                   "--tracks", f"{self.reports}/track_counts.json", "--picture-dir", f"{self.failures}/dev",
+                   "--out", f"{self.reports}/failure_cases.md"])
+        if not reviewed:
+            print(color(f"\nAutomatic failure analysis completed: {self.reports}/failure_cases.md. "
+                        f"Manual review is pending: inspect the candidates, create {REVIEW_JSON} "
+                        "(format: src/failure/review.py), then repeat "
+                        f"uv run --all-extras python scripts/run_all.py --tag {self.tag} --from failures.", YELLOW))
 
 
 def parse_args() -> argparse.Namespace:
@@ -491,7 +500,7 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--splits", nargs="+", choices=["dev", "test"], default=["dev", "test"])
     ap.add_argument("--skip-tests", action="store_true", help="skip stage 1 even if it is in range")
     ap.add_argument("--skip-notebook", action="store_true", help="skip the notebooks of stages 9 and 11")
-    ap.add_argument("--no-video", action="store_true", help="do not write the annotated videos of stages 4 and 6")
+    ap.add_argument("--no-video", action="store_true", help="do not write videos or failure-case clips")
     ap.add_argument("--clean", action="store_true",
                     help="delete what the selected stages produce for this tag before running (asks first)")
     ap.add_argument("--yes", action="store_true", help="do not ask for confirmation with --clean")
@@ -500,6 +509,8 @@ def parse_args() -> argparse.Namespace:
     args.last = args.last or max(args.first, DEFAULT_LAST)
     if args.first > args.last:
         ap.error("--from is after --to")
+    if args.first == 12 and "dev" not in args.splits:
+        ap.error("failure analysis uses dev; include dev in --splits")
     if not args.tag or any(not c.isascii() or not (c.isalnum() or c in "_-") for c in args.tag):
         ap.error("--tag may contain only letters, digits, underscores and hyphens")
     return args

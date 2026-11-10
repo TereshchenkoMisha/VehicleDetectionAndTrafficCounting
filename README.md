@@ -149,7 +149,7 @@ Check that the input files are available:
 uv run --all-extras python scripts/run_all.py --check
 ```
 
-Run the complete automated pipeline, including the threshold experiment:
+Run all automated stages, including the threshold experiment and dev failure analysis:
 
 ```bash
 uv run --all-extras python scripts/run_all.py
@@ -163,6 +163,8 @@ uv run --all-extras python scripts/run_all.py --device 0
 ```
 
 Using `--device 0` requires an NVIDIA GPU and a CUDA-enabled PyTorch installation.
+The default run covers all 12 stages. Failure analysis generates candidate comparisons and a report;
+manual cause review remains a separate human task. A test-only run skips dev failure analysis.
 Each ordinary invocation receives a new tag, printed on the `Tag:` line.
 Prepared data is validated and reused; incomplete preparation is rebuilt automatically.
 
@@ -171,12 +173,14 @@ Prepared data is validated and reused; incomplete preparation is rebuilt automat
 Replace `YOUR_TAG` with the tag of your run:
 
 ```bash
-uv run --all-extras python scripts/run_all.py --tag YOUR_TAG --from tracking --to verify
-uv run --all-extras python scripts/run_all.py --tag YOUR_TAG --from trackeval --to verify
+uv run --all-extras python scripts/run_all.py --tag YOUR_TAG --from tracking
+uv run --all-extras python scripts/run_all.py --tag YOUR_TAG --from trackeval
 uv run --all-extras python scripts/run_all.py --tag YOUR_TAG --from ablation
 ```
 
 The first command reruns tracking; the second continues after tracking.
+All three continue through the final failure-analysis stage. Use `--to verify` to stop before
+ablation and failure analysis, or `--from ablation --to ablation` to run only the threshold experiment.
 When tracking is repeated, the previous folders are archived in `outputs/tracks_YOUR_TAG/.previous/` after successful recomputation.
 An interrupted threshold experiment resumes when its code, inputs, and environment still match;
 if they have changed, use `uv run --all-extras python scripts/run_all.py` with a new tag.
@@ -187,19 +191,26 @@ are rebuilt from their first frame. A video is written to a temporary `.partial.
 only after successful completion. To resume from GT counting with the same tag:
 
 ```bash
-uv run --all-extras python scripts/run_all.py --tag YOUR_TAG --from gtcounts --to verify
+uv run --all-extras python scripts/run_all.py --tag YOUR_TAG --from gtcounts
 ```
 
-### 5. Run failure analysis
+### 5. Review failure-analysis output
 
-After the main pipeline:
+Failure analysis runs automatically at the end of the main pipeline. It saves summaries in
+`reports/YOUR_TAG/failure_analysis_dev.json` and `.md`, case comparisons in `outputs/failures_YOUR_TAG/dev/`,
+and a case report in `reports/YOUR_TAG/failure_cases.md`. Use `--no-video` to omit MP4 exports and comparison clips.
+
+Without `reports/failure_review.json`, suggested cases are rendered automatically and the report is
+labelled **manual review pending**. Automatic outcomes and evidence flags do not establish failure causes.
+If the review file exists, its selected cases are rendered and its statements are checked against the saved events.
+
+To repeat only failure analysis without rerunning inference or ablation:
 
 ```bash
 uv run --all-extras python scripts/run_all.py --tag YOUR_TAG --from failures
 ```
 
-If `reports/failure_review.json` does not exist yet, the command prepares candidates and prints the next steps.
-To inspect a candidate, replace the case ID with one from `suggested_cases`:
+To inspect another candidate, replace the case ID with one from `suggested_cases`:
 
 ```bash
 uv run --all-extras python -m scripts.render_failure_cases --analysis reports/YOUR_TAG/failure_analysis_dev.json --tracks-dir outputs/tracks_YOUR_TAG --out-dir outputs/failures_YOUR_TAG --case-id CASE_ID --video --replace
