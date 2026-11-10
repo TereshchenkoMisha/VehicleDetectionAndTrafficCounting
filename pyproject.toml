@@ -9,8 +9,8 @@ description = "Vehicle detection, tracking and line-crossing counting on UA-DETR
 requires-python = ">=3.12"
 dependencies = [
     "ultralytics>=8.2",
-    "torch>=2.1",
-    "torchvision",
+    "torch==2.11.0",
+    "torchvision==0.26.0",
     "torchmetrics[detection]",
     "opencv-python",
     "pandas",
@@ -22,11 +22,16 @@ dependencies = [
     "tabulate",
     "pillow",
     "tqdm",
+    "pyyaml>=6.0.3",
 ]
 
 [project.optional-dependencies]
 notebook = ["jupyter"]
 dev = ["pytest", "ruff", "mypy"]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
 
 [tool.setuptools.packages.find]
 where = ["."]
@@ -42,3 +47,7 @@ src = ["."]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "ARG", "SIM"]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+torchvision = { index = "pytorch-cu128" }
